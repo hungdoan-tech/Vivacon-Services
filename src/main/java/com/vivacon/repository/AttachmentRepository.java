@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
 
-    List<Attachment> findAllByInnovationId(Long innovationId);
+    List<Attachment> findAllByPostId(Long innovationId);
 
     Integer removeByUniqueNameEquals(String uniqueName);
 }

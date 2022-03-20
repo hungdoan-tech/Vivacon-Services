@@ -31,19 +31,19 @@ public class Attachment {
     private String uniqueName;
 
     @JsonIgnore
-    @ManyToOne(targetEntity = Innovation.class)
+    @ManyToOne(targetEntity = Post.class)
     @JoinColumn(name = "innovation_id")
-    private Innovation innovation;
+    private Post post;
 
     public Attachment() {
 
     }
 
-    public Attachment(String actualName, String uniqueName, String url, Innovation innovation) {
+    public Attachment(String actualName, String uniqueName, String url, Post post) {
         this.url = url;
         this.actualName = actualName;
         this.uniqueName = uniqueName;
-        this.innovation = innovation;
+        this.post = post;
     }
 
     public Long getId() {
@@ -62,12 +62,12 @@ public class Attachment {
         this.url = url;
     }
 
-    public Innovation getInnovation() {
-        return innovation;
+    public Post getPost() {
+        return post;
     }
 
-    public void setInnovation(Innovation innovation) {
-        this.innovation = innovation;
+    public void setPost(Post innovation) {
+        this.post = innovation;
     }
 
     public String getActualName() {
