@@ -34,6 +34,7 @@ public class Constants {
 
     public static final String ADMIN_AUTHORITY_VALUE = "ADMIN";
     public static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8";
+    public static final String STOMP_AUTHORIZATION_HEADER = "X-Authorization";
     public static final List<String> IMAGE_EXTENSIONS = List.of(".png", ".jpeg", ".jpg", ".svg", ".gif");
     public static final String OBJECT_NULL_CANT_CONVERT_TO_JSON = "Object is null and can not be used to convert to JSON";
     public static final String UNAUTHORIZED_REASON = "Unauthorized error: {}";

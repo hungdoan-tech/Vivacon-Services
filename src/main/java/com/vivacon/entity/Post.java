@@ -18,5 +18,5 @@ public class Post extends AuditableEntity {
     private String caption;
 
     @OneToOne(targetEntity = Account.class)
-    private Account account;
+    private Account author;
 }
