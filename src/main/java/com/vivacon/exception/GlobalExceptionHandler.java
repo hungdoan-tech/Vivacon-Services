@@ -1,7 +1,7 @@
 package com.vivacon.exception;
 
-import com.vivacon.dto.ResponseDTO;
 import com.vivacon.common.constant.Constants;
+import com.vivacon.dto.ResponseDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,11 +52,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseDTO<>(HttpStatus.BAD_REQUEST, listConstraintViolation.toString(), null);
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseDTO<Object> handleUnwantedException(Exception ex) {
-        return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, Constants.SERVER_ERROR_MESSAGE, null);
-    }
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ResponseDTO<Object> handleUnwantedException(Exception ex) {
+//        return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, Constants.SERVER_ERROR_MESSAGE, null);
+//    }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)

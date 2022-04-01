@@ -4,33 +4,35 @@ import com.vivacon.common.enum_type.PrivacyType;
 import com.vivacon.entity.Attachment;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 public class PostRequest {
 
-    private List<Attachment> lstAttachments;
-
     @NotBlank
     private String caption;
 
-    private PrivacyType privacyType;
+    @NotEmpty
+    private List<Attachment> attachments;
+
+    //    @EnumValidator(enumClass = PrivacyType.class)
+    private PrivacyType privacy;
 
     public PostRequest() {
-
     }
 
     public PostRequest(List<Attachment> lstAttachments, String caption, PrivacyType privacyType) {
-        this.lstAttachments = lstAttachments;
+        this.attachments = lstAttachments;
         this.caption = caption;
-        this.privacyType = privacyType;
+        this.privacy = privacyType;
     }
 
-    public List<Attachment> getLstAttachments() {
-        return lstAttachments;
+    public List<Attachment> getAttachments() {
+        return attachments;
     }
 
-    public void setLstAttachments(List<Attachment> lstAttachments) {
-        this.lstAttachments = lstAttachments;
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 
     public String getCaption() {
@@ -41,11 +43,11 @@ public class PostRequest {
         this.caption = caption;
     }
 
-    public PrivacyType getPrivacyType() {
-        return privacyType;
+    public PrivacyType getPrivacy() {
+        return privacy;
     }
 
-    public void setPrivacyType(PrivacyType privacyType) {
-        this.privacyType = privacyType;
+    public void setPrivacy(PrivacyType privacy) {
+        this.privacy = privacy;
     }
 }

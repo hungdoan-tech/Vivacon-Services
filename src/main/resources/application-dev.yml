@@ -34,9 +34,9 @@ innovation:
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
 
 aws:
-  access_key_id: AKIAV3KWG2VTG47Q667Q
-  secret_access_key: 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
+  access_key_id: AKIAV3KWG2VTMC3CBPXJ
+  secret_access_key: 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
   s3:
-    bucket: vivacon-bucket
+    bucket: vivacon-objects
     region: ap-southeast-1
 

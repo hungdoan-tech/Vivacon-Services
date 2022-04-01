@@ -19,7 +19,7 @@ import javax.persistence.Table;
 public class Post extends AuditableEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @JsonIgnore
@@ -32,7 +32,7 @@ public class Post extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "privacy_type")
-    private PrivacyType privacyType;
+    private PrivacyType privacy;
 
     public Post() {
 
@@ -42,7 +42,7 @@ public class Post extends AuditableEntity {
         this.id = id;
         this.author = author;
         this.caption = caption;
-        this.privacyType = privacyType;
+        this.privacy = privacyType;
     }
 
     public Long getId() {
@@ -69,11 +69,11 @@ public class Post extends AuditableEntity {
         this.caption = caption;
     }
 
-    public PrivacyType getPrivacyType() {
-        return privacyType;
+    public PrivacyType getPrivacy() {
+        return privacy;
     }
 
-    public void setPrivacyType(PrivacyType privacyType) {
-        this.privacyType = privacyType;
+    public void setPrivacy(PrivacyType privacyType) {
+        this.privacy = privacyType;
     }
 }

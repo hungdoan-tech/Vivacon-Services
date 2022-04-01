@@ -1,9 +1,9 @@
 package com.vivacon.service;
 
-import com.vivacon.dto.PostDTO;
 import com.vivacon.dto.request.PostRequest;
+import com.vivacon.dto.response.PostResponse;
 
 public interface PostService {
 
-    PostDTO createPost(PostRequest postRequest);
+    PostResponse createPost(PostRequest postRequest);
 }
