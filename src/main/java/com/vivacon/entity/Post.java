@@ -1,7 +1,6 @@
 package com.vivacon.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vivacon.common.enum_type.PrivacyType;
+import com.vivacon.common.enum_type.Privacy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,8 +9,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -22,25 +19,19 @@ public class Post extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne(targetEntity = Account.class)
-    @JoinColumn(name = "author")
-    private Account author;
-
     @Column(name = "caption", nullable = false)
     private String caption;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "privacy_type")
-    private PrivacyType privacy;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "privacy")
+    private Privacy privacy;
 
     public Post() {
 
     }
 
-    public Post(Long id, Account author, String caption, PrivacyType privacyType) {
+    public Post(Long id, String caption, Privacy privacyType) {
         this.id = id;
-        this.author = author;
         this.caption = caption;
         this.privacy = privacyType;
     }
@@ -53,14 +44,6 @@ public class Post extends AuditableEntity {
         this.id = id;
     }
 
-    public Account getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Account author) {
-        this.author = author;
-    }
-
     public String getCaption() {
         return caption;
     }
@@ -69,11 +52,11 @@ public class Post extends AuditableEntity {
         this.caption = caption;
     }
 
-    public PrivacyType getPrivacy() {
+    public Privacy getPrivacy() {
         return privacy;
     }
 
-    public void setPrivacy(PrivacyType privacyType) {
+    public void setPrivacy(Privacy privacyType) {
         this.privacy = privacyType;
     }
 }

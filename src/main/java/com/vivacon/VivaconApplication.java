@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableTransactionManagement
 @SpringBootApplication
-public class InnovationApplication {
+public class VivaconApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(InnovationApplication.class, args);
+        SpringApplication.run(VivaconApplication.class, args);
     }
 }

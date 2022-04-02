@@ -1,7 +1,13 @@
 package com.vivacon.service.impl;
 
+import com.vivacon.common.PageableBuilder;
+import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.PostResponse;
+import com.vivacon.dto.sorting_filtering.InnovationSpecification;
+import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.dto.sorting_filtering.PostFilter;
+import com.vivacon.dto.sorting_filtering.QueryCriteria;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Post;
@@ -10,12 +16,12 @@ import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.PostRepository;
-import com.vivacon.security.UserDetailImpl;
 import com.vivacon.service.PostService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -24,12 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private PostMapper postMapper;
 
@@ -52,11 +57,10 @@ public class PostServiceImpl implements PostService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public PostResponse createPost(PostRequest postRequest) {
-        UserDetails userDetail = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account account = accountRepository.findByUsernameIgnoreCase(userDetail.getUsername()).orElseThrow(() ->
-                new RecordNotFoundException("Not found a valid account to perform anything"));
+        Post post = postMapper.toPost(postRequest);
+        post.setActive(true);
+        Post savedPost = postRepository.save(post);
 
-        Post savedPost = postRepository.save(postMapper.toPost(postRequest, account));
         List<Attachment> attachments = postRequest.getAttachments()
                 .stream().map(attachment -> new Attachment(
                         attachment.getActualName(),
@@ -65,6 +69,56 @@ public class PostServiceImpl implements PostService {
                         savedPost))
                 .collect(Collectors.toList());
         attachmentRepository.saveAll(attachments);
+
         return postMapper.toResponse(savedPost);
+    }
+
+    @Override
+    public PageDTO<PostResponse> getAll(PostFilter innovationFilter, Optional<String> keyword, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex);
+        Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(innovationFilter, keyword);
+        Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
+        return postMapper.toPageDTO(entityPage);
+    }
+
+    private Specification<Post> createTheCombiningPostSpecification(PostFilter filter, Optional<String> keyword) {
+
+        Specification<Post> combinedSpecification = Specification.where(null);
+        if (!keyword.isEmpty()) {
+            combinedSpecification = combinedSpecification.and(new InnovationSpecification(new QueryCriteria("content", keyword.get())));
+        }
+        combinedSpecification = combinedSpecification.and(this.getPrivacySpecifications(filter));
+        if (filter.isOwn()) {
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Account account = accountRepository
+                    .findByUsernameIgnoreCase(userDetails.getUsername())
+                    .orElseThrow(RecordNotFoundException::new);
+            combinedSpecification = combinedSpecification.and(new InnovationSpecification(new QueryCriteria("account", account.getId())));
+        } else {
+            combinedSpecification = combinedSpecification.and(this.getAuthorSpecifications(filter));
+        }
+        return combinedSpecification;
+    }
+
+    private Specification<Post> getPrivacySpecifications(PostFilter filter) {
+        Specification<Post> typeSpecification = Specification.where(null);
+        Optional<List<Privacy>> filterPrivacy = filter.getPrivacy();
+        if (!filterPrivacy.isEmpty()) {
+            for (Privacy privacy : filterPrivacy.get()) {
+                typeSpecification = typeSpecification.or(new InnovationSpecification(new QueryCriteria("privacy", privacy)));
+            }
+        }
+        return typeSpecification;
+    }
+
+    private Specification<Post> getAuthorSpecifications(PostFilter filter) {
+        Specification<Post> projectNameSpecification = Specification.where(null);
+        Optional<List<Long>> filterAuthor = filter.getAuthor();
+        if (!filterAuthor.isEmpty()) {
+            for (Long authorId : filterAuthor.get()) {
+                projectNameSpecification = projectNameSpecification.or(new InnovationSpecification(new QueryCriteria("account", authorId)));
+            }
+        }
+        return projectNameSpecification;
     }
 }

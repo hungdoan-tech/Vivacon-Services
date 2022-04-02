@@ -1,6 +1,6 @@
 package com.vivacon.dto.response;
 
-import com.vivacon.common.enum_type.PrivacyType;
+import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.AuditableResponse;
 
@@ -12,7 +12,7 @@ public class PostResponse extends AuditableResponse {
 
     private String caption;
 
-    private PrivacyType privacy;
+    private Privacy privacy;
 
     private List<AttachmentDTO> attachments;
 
@@ -20,7 +20,7 @@ public class PostResponse extends AuditableResponse {
 
     }
 
-    public PostResponse(Long id, String caption, PrivacyType privacy) {
+    public PostResponse(Long id, String caption, Privacy privacy) {
         this.id = id;
         this.caption = caption;
         this.privacy = privacy;
@@ -42,11 +42,11 @@ public class PostResponse extends AuditableResponse {
         this.caption = caption;
     }
 
-    public PrivacyType getPrivacy() {
+    public Privacy getPrivacy() {
         return privacy;
     }
 
-    public void setPrivacy(PrivacyType privacy) {
+    public void setPrivacy(Privacy privacy) {
         this.privacy = privacy;
     }
 

@@ -1,6 +1,6 @@
 package com.vivacon.common.enum_type;
 
-public enum PrivacyType {
+public enum Privacy {
 
     ONLY_ME,
 

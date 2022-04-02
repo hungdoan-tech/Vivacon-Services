@@ -1,6 +1,6 @@
 package com.vivacon.dto.request;
 
-import com.vivacon.common.enum_type.PrivacyType;
+import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.entity.Attachment;
 
 import javax.validation.constraints.NotBlank;
@@ -16,12 +16,12 @@ public class PostRequest {
     private List<Attachment> attachments;
 
     //    @EnumValidator(enumClass = PrivacyType.class)
-    private PrivacyType privacy;
+    private Privacy privacy;
 
     public PostRequest() {
     }
 
-    public PostRequest(List<Attachment> lstAttachments, String caption, PrivacyType privacyType) {
+    public PostRequest(List<Attachment> lstAttachments, String caption, Privacy privacyType) {
         this.attachments = lstAttachments;
         this.caption = caption;
         this.privacy = privacyType;
@@ -43,11 +43,11 @@ public class PostRequest {
         this.caption = caption;
     }
 
-    public PrivacyType getPrivacy() {
+    public Privacy getPrivacy() {
         return privacy;
     }
 
-    public void setPrivacy(PrivacyType privacy) {
+    public void setPrivacy(Privacy privacy) {
         this.privacy = privacy;
     }
 }
