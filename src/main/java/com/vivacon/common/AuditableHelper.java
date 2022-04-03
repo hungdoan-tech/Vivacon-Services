@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Component
 public class AuditableHelper {
@@ -26,11 +27,12 @@ public class AuditableHelper {
         this.accountMapper = accountMapper;
     }
 
-    public AuditableEntity updateAuditingCreatedFields(AuditableEntity auditable) {
-
-        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account account = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
-                .orElseThrow(RecordNotFoundException::new);
+    public AuditableEntity updateAuditingCreatedFields(AuditableEntity auditable, Account account) {
+        if (Objects.isNull(account)) {
+            UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            account = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
+                    .orElseThrow(RecordNotFoundException::new);
+        }
         auditable.setCreatedAt(LocalDateTime.now());
         auditable.setCreatedBy(account);
         return auditable;

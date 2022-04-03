@@ -23,6 +23,8 @@ public abstract class AuditableEntity {
     @Column(name = "last_modified_at")
     protected LocalDateTime lastModifiedAt;
 
+    protected Boolean active;
+
     protected AuditableEntity() {
     }
 
@@ -56,5 +58,13 @@ public abstract class AuditableEntity {
 
     public void setLastModifiedAt(LocalDateTime lastModifiedAt) {
         this.lastModifiedAt = lastModifiedAt;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
