@@ -1,20 +1,18 @@
 package com.vivacon.controller;
 
 import com.vivacon.common.JwtUtils;
-import com.vivacon.dto.ResponseDTO;
+import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.LoginRequest;
 import com.vivacon.dto.request.TokenRefreshRequest;
 import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.dto.response.TokenRefreshResponse;
 import com.vivacon.exception.TokenRefreshException;
 import com.vivacon.service.RefreshTokenService;
-import com.vivacon.common.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -57,14 +55,13 @@ public class AuthenticationController {
             @ApiResponse(code = 200, message = Constants.LOGIN_SUCCESSFULLY),
             @ApiResponse(code = 401, message = Constants.BAD_CREDENTIALS)})
     @PostMapping("/login")
-    public ResponseDTO<AuthenticationResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public AuthenticationResponse login(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         UserDetails userDetail = (UserDetails) authenticate.getPrincipal();
         String accessToken = jwtTokenUtils.generateAccessToken(userDetail.getUsername());
         String refreshToken = refreshTokenService.createRefreshToken(userDetail.getUsername());
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse(userDetail, accessToken, refreshToken);
-        return new ResponseDTO<>(HttpStatus.OK, Constants.LOGIN_SUCCESSFULLY, authenticationResponse);
+        return new AuthenticationResponse(userDetail, accessToken, refreshToken);
     }
 
     /**
@@ -78,17 +75,14 @@ public class AuthenticationController {
             @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
             @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
     @PostMapping("/refresh-token")
-    public ResponseDTO<TokenRefreshResponse> generateNewAccessTokenByRefreshToken(@Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
+    public TokenRefreshResponse generateNewAccessTokenByRefreshToken(@Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
         String requestRefreshToken = tokenRefreshRequest.getRefreshToken();
         return refreshTokenService
                 .findAccountByRefreshToken(requestRefreshToken)
                 .map(refreshTokenService::verifyTokenExpiration)
                 .map(account -> {
                     String newAccessToken = jwtTokenUtils.generateAccessToken(account.getUsername());
-                    return new ResponseDTO<>(
-                            HttpStatus.OK,
-                            Constants.RETURN_NEW_ACCESS_TOKEN,
-                            new TokenRefreshResponse(newAccessToken, requestRefreshToken));
+                    return new TokenRefreshResponse(newAccessToken, requestRefreshToken);
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, Constants.REFRESH_TOKEN_NOT_STORE));
     }

@@ -1,17 +1,15 @@
 package com.vivacon.controller;
 
 import com.vivacon.common.FileUtils;
+import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.AttachmentDTO;
-import com.vivacon.dto.ResponseDTO;
 import com.vivacon.exception.UploadAttachmentException;
 import com.vivacon.service.AWSS3Service;
-import com.vivacon.common.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,10 +34,9 @@ public class AttachmentController {
             @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
             @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})
     @PostMapping(value = Constants.API_V1 + "/innovation" + "/attachment")
-    public ResponseDTO<AttachmentDTO> uploadImage(@RequestParam("file") MultipartFile file) {
+    public AttachmentDTO uploadImage(@RequestParam("file") MultipartFile file) {
         if (!file.isEmpty()) {
-            AttachmentDTO attachment = this.awsS3Service.uploadFile(file);
-            return new ResponseDTO<>(HttpStatus.OK, Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY, attachment);
+            return this.awsS3Service.uploadFile(file);
         }
         throw new UploadAttachmentException(Constants.EMPTY_FILE_UPLOAD_MESSAGE);
     }
@@ -49,9 +46,8 @@ public class AttachmentController {
             @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
             @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})
     @PostMapping(value = Constants.API_V1 + "/innovation" + "/attachments")
-    public ResponseDTO<List<AttachmentDTO>> uploadImages(@RequestParam("files") MultipartFile[] files) {
+    public List<AttachmentDTO> uploadImages(@RequestParam("files") MultipartFile[] files) {
         List<File> listImages = FileUtils.convertAndValidateListImages(files);
-        List<AttachmentDTO> attachmentDTOList = this.awsS3Service.uploadFile(listImages);
-        return new ResponseDTO<>(HttpStatus.OK, Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY, attachmentDTOList);
+        return this.awsS3Service.uploadFile(listImages);
     }
 }
