@@ -4,9 +4,9 @@ import com.vivacon.common.PageableBuilder;
 import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.PostResponse;
-import com.vivacon.dto.sorting_filtering.InnovationSpecification;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.dto.sorting_filtering.PostFilter;
+import com.vivacon.dto.sorting_filtering.PostSpecification;
 import com.vivacon.dto.sorting_filtering.QueryCriteria;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
@@ -85,7 +85,7 @@ public class PostServiceImpl implements PostService {
 
         Specification<Post> combinedSpecification = Specification.where(null);
         if (!keyword.isEmpty()) {
-            combinedSpecification = combinedSpecification.and(new InnovationSpecification(new QueryCriteria("content", keyword.get())));
+            combinedSpecification = combinedSpecification.and(new PostSpecification(new QueryCriteria("content", keyword.get())));
         }
         combinedSpecification = combinedSpecification.and(this.getPrivacySpecifications(filter));
         if (filter.isOwn()) {
@@ -93,7 +93,7 @@ public class PostServiceImpl implements PostService {
             Account account = accountRepository
                     .findByUsernameIgnoreCase(userDetails.getUsername())
                     .orElseThrow(RecordNotFoundException::new);
-            combinedSpecification = combinedSpecification.and(new InnovationSpecification(new QueryCriteria("account", account.getId())));
+            combinedSpecification = combinedSpecification.and(new PostSpecification(new QueryCriteria("account", account.getId())));
         } else {
             combinedSpecification = combinedSpecification.and(this.getAuthorSpecifications(filter));
         }
@@ -105,7 +105,7 @@ public class PostServiceImpl implements PostService {
         Optional<List<Privacy>> filterPrivacy = filter.getPrivacy();
         if (!filterPrivacy.isEmpty()) {
             for (Privacy privacy : filterPrivacy.get()) {
-                typeSpecification = typeSpecification.or(new InnovationSpecification(new QueryCriteria("privacy", privacy)));
+                typeSpecification = typeSpecification.or(new PostSpecification(new QueryCriteria("privacy", privacy)));
             }
         }
         return typeSpecification;
@@ -116,7 +116,7 @@ public class PostServiceImpl implements PostService {
         Optional<List<Long>> filterAuthor = filter.getAuthor();
         if (!filterAuthor.isEmpty()) {
             for (Long authorId : filterAuthor.get()) {
-                projectNameSpecification = projectNameSpecification.or(new InnovationSpecification(new QueryCriteria("account", authorId)));
+                projectNameSpecification = projectNameSpecification.or(new PostSpecification(new QueryCriteria("account", authorId)));
             }
         }
         return projectNameSpecification;

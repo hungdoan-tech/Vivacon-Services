@@ -10,11 +10,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.Locale;
 
-public class InnovationSpecification implements Specification<Post> {
+public class PostSpecification implements Specification<Post> {
 
     private transient QueryCriteria criteria;
 
-    public InnovationSpecification(QueryCriteria criteria) {
+    public PostSpecification(QueryCriteria criteria) {
         this.criteria = criteria;
     }
 
