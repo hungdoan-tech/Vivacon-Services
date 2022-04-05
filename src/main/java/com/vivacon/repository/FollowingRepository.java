@@ -1,5 +1,6 @@
 package com.vivacon.repository;
 
+import com.vivacon.entity.Account;
 import com.vivacon.entity.Following;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,9 +14,11 @@ import java.util.Optional;
 public interface FollowingRepository extends JpaRepository<Following, Long> {
 
     @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM Following following WHERE following.from.id = :fromId AND following.to.id = :toId")
+    @Query("DELETE FROM Following following WHERE following.fromAccount.id = :fromId AND following.toAccount.id = :toId")
     void unfollowById(@Param("fromId") long fromId, @Param("toId") long toId);
 
-    @Query("SELECT following FROM Following following WHERE following.from.id = :fromId AND following.to.id = :toId")
+    @Query("SELECT following FROM Following following WHERE following.fromAccount.id = :fromId AND following.toAccount.id = :toId")
     Optional<Following> findByIdComposition(@Param("fromId") long fromId, @Param("toId") long toId);
+
+    Optional<Following> findByFromAccountAndAndToAccount(Account fromAccount, Account toAccount);
 }

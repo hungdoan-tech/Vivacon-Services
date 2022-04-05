@@ -34,7 +34,7 @@ public class FollowingServiceImpl implements FollowingService {
         Account fromAccount = accountService.getCurrentAccount();
         Account toAccount = accountService.getAccountById(toAccountId);
 
-        if (followingRepository.findByIdComposition(fromAccount.getId(), toAccount.getId()).isPresent()) {
+        if (followingRepository.findByFromAccountAndAndToAccount(fromAccount, toAccount).isPresent()) {
             throw new NonUniqueResultException("The following table already have one record which contain this account follow that account");
         }
         Following following = new Following(fromAccount, toAccount);

@@ -1,7 +1,6 @@
 package com.vivacon.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,20 +19,20 @@ public class Following {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(targetEntity = Role.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Account.class)
     @JoinColumn(name = "from_account")
-    private Account from;
+    private Account fromAccount;
 
-    @ManyToOne(targetEntity = Role.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Account.class)
     @JoinColumn(name = "to_account")
-    private Account to;
+    private Account toAccount;
 
     public Following() {
     }
 
     public Following(Account fromPerson, Account toAccount) {
-        this.from = fromPerson;
-        this.to = toAccount;
+        this.fromAccount = fromPerson;
+        this.toAccount = toAccount;
     }
 
     public Long getId() {
@@ -44,19 +43,19 @@ public class Following {
         this.id = id;
     }
 
-    public Account getFrom() {
-        return from;
+    public Account getFromAccount() {
+        return fromAccount;
     }
 
-    public void setFrom(Account from) {
-        this.from = from;
+    public void setFromAccount(Account from) {
+        this.fromAccount = from;
     }
 
-    public Account getTo() {
-        return to;
+    public Account getToAccount() {
+        return toAccount;
     }
 
-    public void setTo(Account to) {
-        this.to = to;
+    public void setToAccount(Account to) {
+        this.toAccount = to;
     }
 }
