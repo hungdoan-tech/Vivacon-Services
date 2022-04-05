@@ -22,13 +22,13 @@ public class FollowingController {
     }
 
     @PostMapping("/{id}")
-    private ResponseEntity<Object> followOneAccount(@PathVariable(name = "id") String toAccountId) {
+    private ResponseEntity<Object> followOneAccount(@PathVariable(name = "id") Long toAccountId) {
         this.followingService.follow(toAccountId);
         return ResponseEntity.ok(null);
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<Object> unfollowOneAccount(@PathVariable(name = "id") String toAccountId) {
+    private ResponseEntity<Object> unfollowOneAccount(@PathVariable(name = "id") Long toAccountId) {
         this.followingService.unfollow(toAccountId);
         return ResponseEntity.ok(null);
     }

@@ -2,7 +2,6 @@ package com.vivacon.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,14 +27,14 @@ public class Account {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Role.class)
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column(nullable = true, name = "refresh_token", unique = true)
+    @Column(name = "refresh_token", unique = true)
     private String refreshToken;
 
-    @Column(nullable = true, name = "token_expired_date")
+    @Column(name = "token_expired_date")
     private Instant tokenExpiredDate;
 
     public Account() {
