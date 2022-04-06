@@ -1,9 +1,8 @@
 package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
+import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.entity.Account;
-import com.vivacon.entity.Following;
 import com.vivacon.service.FollowingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @Api(value = "Following Controller")
@@ -45,31 +43,24 @@ public class FollowingController {
     }
 
     @ApiOperation(value = "Get list follower of an account")
-    @GetMapping("/follower")
-    public PageDTO<Following> getAllFollower(
-            @RequestParam(value = "account", required = false) Optional<Long> account,
-            @RequestParam(value = "own", required = false) Optional<Boolean> own,
-            @RequestParam(value = "q", required = false) Optional<String> keyword,
+    @GetMapping("/follower/{account}")
+    public PageDTO<AccountResponse> getAllFollower(
+            @PathVariable(value = "account") Long account,
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-
-        List<Account> listFollower = followingService.findFollower(account);
-        return null;
+        return followingService.findFollower(account, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get list following of an account")
-    @GetMapping("/following")
-    public PageDTO<Following> getAllFollowing(
-            @RequestParam(value = "account", required = false) Optional<Long> account,
-            @RequestParam(value = "own", required = false) Optional<Boolean> own,
-            @RequestParam(value = "q", required = false) Optional<String> keyword,
+    @GetMapping("/following/{account}")
+    public PageDTO<AccountResponse> getAllFollowing(
+            @PathVariable(value = "account") Long account,
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        List<Account> listFollower = followingService.findFollowing(account);
-        return null;
+        return followingService.findFollowing(account, order, sort, pageSize, pageIndex);
     }
 }
