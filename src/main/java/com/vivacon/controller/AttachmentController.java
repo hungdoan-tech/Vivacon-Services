@@ -33,7 +33,7 @@ public class AttachmentController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
             @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})
-    @PostMapping(value = Constants.API_V1 + "/innovation" + "/attachment")
+    @PostMapping(value = Constants.API_V1 + "/attachment")
     public AttachmentDTO uploadImage(@RequestParam("file") MultipartFile file) {
         if (!file.isEmpty()) {
             return this.awsS3Service.uploadFile(file);
@@ -45,7 +45,7 @@ public class AttachmentController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
             @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})
-    @PostMapping(value = Constants.API_V1 + "/innovation" + "/attachments")
+    @PostMapping(value = Constants.API_V1 + "/attachments")
     public List<AttachmentDTO> uploadImages(@RequestParam("files") MultipartFile[] files) {
         List<File> listImages = FileUtils.convertAndValidateListImages(files);
         return this.awsS3Service.uploadFile(listImages);
