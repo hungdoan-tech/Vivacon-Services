@@ -1,6 +1,5 @@
 package com.vivacon.common;
 
-import com.vivacon.entity.Post;
 import com.vivacon.exception.NotValidSortingFieldName;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,9 +12,9 @@ public class PageableBuilder {
     private PageableBuilder() {
     }
 
-    public static Pageable buildPage(Optional<String> order, Optional<String> sortField, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public static Pageable buildPage(Optional<String> order, Optional<String> sortField, Optional<Integer> pageSize, Optional<Integer> pageIndex, Class<?> clazz) {
         String actualSortField = sortField.orElse("id");
-        if (!ReflectionUtils.checkValidField(actualSortField, Post.class)) {
+        if (!ReflectionUtils.checkValidField(actualSortField, clazz)) {
             throw new NotValidSortingFieldName();
         }
         return PageRequest.of(

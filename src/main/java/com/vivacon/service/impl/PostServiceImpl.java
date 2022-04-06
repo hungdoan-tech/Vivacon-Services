@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PageDTO<PostResponse> getAll(PostFilter innovationFilter, Optional<String> keyword, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex);
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(innovationFilter, keyword);
         Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
         return PageDTOMapper.toPageDTO(entityPage, PostResponse.class, entity -> this.postMapper.toResponse(entity));
