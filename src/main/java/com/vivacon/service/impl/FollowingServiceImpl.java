@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FollowingServiceImpl implements FollowingService {
@@ -53,5 +55,15 @@ public class FollowingServiceImpl implements FollowingService {
         }
         this.followingRepository.unfollowById(fromAccount.getId(), toAccount.getId());
         return true;
+    }
+
+    @Override
+    public List<Account> findFollower(Optional<Long> account) {
+        return null;
+    }
+
+    @Override
+    public List<Account> findFollowing(Optional<Long> account) {
+        return null;
     }
 }

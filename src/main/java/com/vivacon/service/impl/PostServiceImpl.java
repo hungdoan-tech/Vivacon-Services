@@ -12,6 +12,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
+import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
@@ -78,7 +79,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex);
         Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(innovationFilter, keyword);
         Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
-        return postMapper.toPageDTO(entityPage);
+        return PageDTOMapper.toPageDTO(entityPage, PostResponse.class, entity -> this.postMapper.toResponse(entity));
     }
 
     private Specification<Post> createTheCombiningPostSpecification(PostFilter filter, Optional<String> keyword) {
