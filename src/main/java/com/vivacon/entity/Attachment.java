@@ -32,8 +32,11 @@ public class Attachment {
     @JoinColumn(name = "innovation_id")
     private Post post;
 
-    public Attachment() {
+    @ManyToOne(targetEntity = Account.class)
+    @JoinColumn(name = "profile_id")
+    private Account profile;
 
+    public Attachment() {
     }
 
     public Attachment(String actualName, String uniqueName, String url, Post post) {
@@ -81,5 +84,13 @@ public class Attachment {
 
     public void setUniqueName(String uniqueName) {
         this.uniqueName = uniqueName;
+    }
+
+    public Account getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Account profile) {
+        this.profile = profile;
     }
 }
