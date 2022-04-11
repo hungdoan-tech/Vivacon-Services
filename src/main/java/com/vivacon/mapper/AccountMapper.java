@@ -1,6 +1,5 @@
 package com.vivacon.mapper;
 
-import com.vivacon.common.AuditableHelper;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.entity.Account;
 import org.modelmapper.ModelMapper;
@@ -15,12 +14,8 @@ public class AccountMapper {
 
     private ModelMapper mapper;
 
-    private AuditableHelper auditableHelper;
-
-    public AccountMapper(ModelMapper mapper,
-                         AuditableHelper auditableHelper) {
+    public AccountMapper(ModelMapper mapper) {
         this.mapper = mapper;
-        this.auditableHelper = auditableHelper;
     }
 
     public AccountResponse toResponse(Object object) {
@@ -28,8 +23,8 @@ public class AccountMapper {
         return this.mapper.map(account, AccountResponse.class);
     }
 
-    public Account toEntity(AccountResponse accountResponse) {
-        Account account = this.mapper.map(accountResponse, Account.class);
-        return (Account) auditableHelper.updateAuditingCreatedFields(account, null);
-    }
+//    public Account toEntity(AccountResponse accountResponse) {
+//        Account account = this.mapper.map(accountResponse, Account.class);
+//        return (Account) auditableHelper.updateAuditingCreatedFields(account, null);
+//    }
 }
