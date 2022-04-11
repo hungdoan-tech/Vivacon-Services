@@ -1,7 +1,5 @@
 package com.vivacon.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,7 +28,6 @@ public class Attachment {
     @Column(name = "unique_name")
     private String uniqueName;
 
-    @JsonIgnore
     @ManyToOne(targetEntity = Post.class)
     @JoinColumn(name = "innovation_id")
     private Post post;

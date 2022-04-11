@@ -2,21 +2,22 @@ package com.vivacon.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.Instant;
 
 @Entity
-@Table(name = "accounts")
-public class Account {
+@Table(name = "account")
+public class Account extends AuditableEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_id_generator")
+    @SequenceGenerator(name = "account_id_generator", sequenceName = "account_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "username", unique = true, nullable = false)
@@ -28,14 +29,14 @@ public class Account {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Role.class)
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column(nullable = true, name = "refresh_token", unique = true)
+    @Column(name = "refresh_token", unique = true)
     private String refreshToken;
 
-    @Column(nullable = true, name = "token_expired_date")
+    @Column(name = "token_expired_date")
     private Instant tokenExpiredDate;
 
     public Account() {
