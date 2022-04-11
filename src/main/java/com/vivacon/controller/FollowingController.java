@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Api(value = "Following Controller")
 @RestController
-@RequestMapping(value = Constants.API_V1 + "/following")
+@RequestMapping(value = Constants.API_V1)
 public class FollowingController {
 
     private FollowingService followingService;
@@ -29,28 +29,17 @@ public class FollowingController {
     }
 
     @ApiOperation(value = "Follow an account")
-    @PostMapping("/{id}")
+    @PostMapping(value = "/following/{id}")
     private ResponseEntity<Object> followOneAccount(@PathVariable(name = "id") Long toAccountId) {
         this.followingService.follow(toAccountId);
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "Unfollow an account")
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "following/{id}")
     private ResponseEntity<Object> unfollowOneAccount(@PathVariable(name = "id") Long toAccountId) {
         this.followingService.unfollow(toAccountId);
         return ResponseEntity.ok(null);
-    }
-
-    @ApiOperation(value = "Get list follower of an account")
-    @GetMapping("/follower/{account}")
-    public PageDTO<AccountResponse> getAllFollower(
-            @PathVariable(value = "account") Long account,
-            @RequestParam(value = "_order", required = false) Optional<String> order,
-            @RequestParam(value = "_sort", required = false) Optional<String> sort,
-            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
-            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return followingService.findFollower(account, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get list following of an account")
@@ -62,5 +51,16 @@ public class FollowingController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return followingService.findFollowing(account, order, sort, pageSize, pageIndex);
+    }
+
+    @ApiOperation(value = "Get list follower of an account")
+    @GetMapping("/follower/{account}")
+    public PageDTO<AccountResponse> getAllFollower(
+            @PathVariable(value = "account") Long account,
+            @RequestParam(value = "_order", required = false) Optional<String> order,
+            @RequestParam(value = "_sort", required = false) Optional<String> sort,
+            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
+            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
+        return followingService.findFollower(account, order, sort, pageSize, pageIndex);
     }
 }
