@@ -1,8 +1,8 @@
 package com.vivacon.service;
 
-import com.vivacon.entity.Account;
+import com.vivacon.dto.response.AccountResponse;
+import com.vivacon.dto.sorting_filtering.PageDTO;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface FollowingService {
@@ -11,7 +11,7 @@ public interface FollowingService {
 
     boolean unfollow(Long toAccountId);
 
-    List<Account> findFollower(Optional<Long> account);
+    PageDTO<AccountResponse> findFollower(Long fromAccount, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
-    List<Account> findFollowing(Optional<Long> account);
+    PageDTO<AccountResponse> findFollowing(Long fromAccount, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 }

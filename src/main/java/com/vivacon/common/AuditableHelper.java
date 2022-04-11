@@ -49,10 +49,10 @@ public class AuditableHelper {
     }
 
     public AuditableResponse setupDisplayAuditableRelatedToPersonFields(AuditableEntity auditableEntity, AuditableResponse auditableResponse) {
-        AccountResponse createdBy = this.accountMapper.convertToDto(auditableEntity.getCreatedBy());
+        AccountResponse createdBy = this.accountMapper.toResponse(auditableEntity.getCreatedBy());
         auditableResponse.setCreatedBy(createdBy);
         if (auditableEntity.getLastModifiedBy() != null) {
-            AccountResponse updatedBy = this.accountMapper.convertToDto(auditableEntity.getLastModifiedBy());
+            AccountResponse updatedBy = this.accountMapper.toResponse(auditableEntity.getLastModifiedBy());
             auditableResponse.setLastModifiedBy(updatedBy);
         }
         return auditableResponse;

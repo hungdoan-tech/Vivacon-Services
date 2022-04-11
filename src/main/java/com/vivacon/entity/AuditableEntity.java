@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public abstract class AuditableEntity {
 
     @ManyToOne
-    @JoinColumn(name = "created_by_account_id", nullable = false)
+    @JoinColumn(name = "created_by_account_id")
     protected Account createdBy;
 
     @Column(name = "created_at", nullable = false)
