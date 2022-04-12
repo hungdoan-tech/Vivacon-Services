@@ -32,7 +32,7 @@ public class Attachment {
     private LocalDateTime timestamp;
 
     @ManyToOne(targetEntity = Post.class)
-    @JoinColumn(name = "innovation_id")
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @ManyToOne(targetEntity = Account.class)

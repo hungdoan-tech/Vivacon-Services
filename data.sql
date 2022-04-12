@@ -30,16 +30,7 @@ VALUES (1, '2022-04-01 23:56:20.061855', NULL, 'Hello this is caption', 1, 1, NU
        (6, '2022-04-01 23:56:43.648472', NULL, 'Hello this is caption', 2, 2, NULL, true),
        (7, '2022-04-01 23:52:38.311749', NULL, 'Hello this is caption', 0, 3, NULL, true),
        (8, '2022-04-02 00:02:45.371366', NULL, 'Hello this is caption', 1, 4, NULL, true),
-       (9, '2022-04-02 00:08:00.991663', NULL, 'Hello this is caption', 2, 5, NULL, true),
-       (10, '2022-04-02 00:26:11.900023', NULL, 'Hello this is caption', 0, 6, NULL, true),
-       (11, '2022-04-02 00:13:12.155683', NULL, 'Hello this is caption', 1, 4, NULL, true),
-       (12, '2022-04-01 23:56:43.648472', NULL, 'Hello this is caption', 2, 3, NULL, true),
-       (13, '2022-04-01 23:52:38.311749', NULL, 'Hello this is caption', 0, 4, NULL, true),
-       (14, '2022-04-02 00:08:00.991663', NULL, 'Hello this is caption', 2, 5, NULL, true),
-       (15, '2022-04-02 00:26:11.900023', NULL, 'Hello this is caption', 0, 6, NULL, true),
-       (16, '2022-04-02 00:13:12.155683', NULL, 'Hello this is caption', 1, 6, NULL, true),
-       (17, '2022-04-01 23:56:43.648472', NULL, 'Hello this is caption', 2, 5, NULL, true),
-       (18, '2022-04-01 23:52:38.311749', NULL, 'Hello this is caption', 0, 4, NULL, true);
+       (9, '2022-04-02 00:08:00.991663', NULL, 'Hello this is caption', 2, 5, NULL, true);
 SELECT setval('post_id_seq', (SELECT MAX(id) FROM post) + 1);
 
 INSERT INTO "following" ("id", "from_account", "to_account")
@@ -51,15 +42,15 @@ VALUES (1, 1, 2),
        (6, 6, 1);
 SELECT setval('following_id_seq', (SELECT MAX(id) FROM FOLLOWING) + 1);
 
-INSERT INTO "attachment" ("id", "actual_name", "unique_name", "url", "timestamp", "innovation_id", "profile_id")
+INSERT INTO "attachment" ("id", "actual_name", "unique_name", "url", "timestamp", "post_id", "profile_id")
 VALUES (3, '272205323_4927332657326798_3776136439423965886_n.jpg',
         '2022-04-01T22:15:53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg',
         'https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-01T22%3A15%3A53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg',
-        '2022-04-02 00:08:00.991663', 2, 1),
+        '2022-04-02 00:08:00.991663', 1, 1),
        (4, 'spring-boot-authentication-spring-security-architecture.png',
         '2022-04-01T22:15:53.593384100_spring-boot-authentication-spring-security-architecture.png',
         'https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-01T22%3A15%3A53.593384100_spring-boot-authentication-spring-security-architecture.png',
-        '2022-04-02 00:08:00.991663', 2, NULL),
+        '2022-04-02 00:08:00.991663', 2, 1),
        (5, '272205323_4927332657326798_3776136439423965886_n.jpg',
         '2022-04-01T22:15:53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg',
         'https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-01T22%3A15%3A53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg',

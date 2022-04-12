@@ -7,6 +7,7 @@ import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
+import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageDTOMapper;
@@ -35,17 +36,21 @@ public class AccountServiceImpl implements AccountService {
 
     private FollowingRepository followingRepository;
 
+    private AccountService accountService;
+
     private PostMapper postMapper;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               AttachmentRepository attachmentRepository,
                               PostRepository postRepository,
                               FollowingRepository followingRepository,
+                              AccountService accountService,
                               PostMapper postMapper) {
         this.accountRepository = accountRepository;
         this.attachmentRepository = attachmentRepository;
         this.postRepository = postRepository;
         this.followingRepository = followingRepository;
+        this.accountService = accountService;
         this.postMapper = postMapper;
     }
 
@@ -76,7 +81,11 @@ public class AccountServiceImpl implements AccountService {
         Long followerCounting = followingRepository.getFollowerCountingByAccountId(profile.getId());
         Long followingCounting = followingRepository.getFollowingCountingByAccountId(profile.getId());
 
-        return new DetailProfile(profile, avatar.getUrl(), postCounting, followerCounting, followingCounting, listOutlinePost);
+        long fromAccountId = this.accountService.getCurrentAccount().getId();
+        long toAccountId = accountId;
+        Optional<Following> following = this.followingRepository.findByIdComposition(fromAccountId, toAccountId);
+
+        return new DetailProfile(profile, avatar.getUrl(), postCounting, followerCounting, followingCounting, following.isPresent(), listOutlinePost);
     }
 
     @Override

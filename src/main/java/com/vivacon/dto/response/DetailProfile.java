@@ -19,9 +19,11 @@ public class DetailProfile {
 
     private Long followingCount;
 
-    private PageDTO<OutlinePost> listPost;
+    private boolean isFollowing;
 
-    public DetailProfile(Account account, String avatar, Long postCount, Long followerCount, Long followingCount, PageDTO<OutlinePost> listPost) {
+    private PageDTO<OutlinePost> pagePost;
+
+    public DetailProfile(Account account, String avatar, Long postCount, Long followerCount, Long followingCount, boolean isFollowing, PageDTO<OutlinePost> listPost) {
         this.id = account.getId();
         this.username = account.getUsername();
         this.fullName = account.getFullName();
@@ -29,7 +31,8 @@ public class DetailProfile {
         this.postCount = postCount;
         this.followerCount = followerCount;
         this.followingCount = followingCount;
-        this.listPost = listPost;
+        this.isFollowing = isFollowing;
+        this.pagePost = listPost;
     }
 
     public Long getId() {
@@ -88,11 +91,19 @@ public class DetailProfile {
         this.followingCount = followingCount;
     }
 
-    public PageDTO<OutlinePost> getListPost() {
-        return listPost;
+    public PageDTO<OutlinePost> getPagePost() {
+        return pagePost;
     }
 
-    public void setListPost(PageDTO<OutlinePost> listPost) {
-        this.listPost = listPost;
+    public void setPagePost(PageDTO<OutlinePost> pagePost) {
+        this.pagePost = pagePost;
+    }
+
+    public boolean isFollowing() {
+        return isFollowing;
+    }
+
+    public void setFollowing(boolean following) {
+        isFollowing = following;
     }
 }

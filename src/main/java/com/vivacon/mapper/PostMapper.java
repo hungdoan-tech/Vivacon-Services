@@ -63,7 +63,7 @@ public class PostMapper {
             boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
             Long likeCount = 0L;
             Long commentCount = 0L;
-            return new OutlinePost(firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
+            return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
         } catch (ClassCastException ex) {
             LOGGER.info(ex.getMessage());
             return null;

@@ -47,12 +47,6 @@ public class ProfileController {
         return accountService.getOutlinePostByAccountId(accountId, order, sort, pageSize, pageIndex);
     }
 
-    @ApiOperation(value = "Change the profile avatar")
-    @PostMapping("/profile/avatar")
-    public AttachmentDTO changeProfileAvatar(@Valid @RequestBody AttachmentDTO avatar) {
-        return accountService.changeProfileAvatar(avatar);
-    }
-
     @ApiOperation(value = "Get the list of the profile avatar of an specific account")
     @GetMapping("/profile/{id}/avatar")
     public PageDTO<AttachmentDTO> getListProfileAvatars(@PathVariable(value = "id") Long accountId,
@@ -61,5 +55,11 @@ public class ProfileController {
                                                         @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
                                                         @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return accountService.getProfileAvatarsByAccountId(accountId, order, sort, pageSize, pageIndex);
+    }
+    
+    @ApiOperation(value = "Change the profile avatar")
+    @PostMapping("/profile/avatar")
+    public AttachmentDTO changeProfileAvatar(@Valid @RequestBody AttachmentDTO avatar) {
+        return accountService.changeProfileAvatar(avatar);
     }
 }
