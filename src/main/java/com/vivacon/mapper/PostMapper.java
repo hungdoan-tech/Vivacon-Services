@@ -45,7 +45,7 @@ public class PostMapper {
         try {
             Post post = (Post) object;
             PostResponse postResponse = mapper.map(post, PostResponse.class);
-            List<AttachmentDTO> attachmentDTOS = attachmentRepository.findAllByPostId(post.getId())
+            List<AttachmentDTO> attachmentDTOS = attachmentRepository.findByPost_Id(post.getId())
                     .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
                     .collect(Collectors.toList());
             postResponse.setAttachments(attachmentDTOS);

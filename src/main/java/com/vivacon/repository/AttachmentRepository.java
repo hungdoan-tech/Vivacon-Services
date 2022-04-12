@@ -1,6 +1,8 @@
 package com.vivacon.repository;
 
 import com.vivacon.entity.Attachment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +14,9 @@ import java.util.Optional;
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
 
-    List<Attachment> findAllByPostId(Long innovationId);
+    List<Attachment> findByPost_Id(Long innovationId);
+
+    Page<Attachment> findByProfile_Id(Long profileId, Pageable pageable);
 
     Optional<Attachment> findFirstByProfile_IdOrderByTimestampDesc(Long profileId);
 

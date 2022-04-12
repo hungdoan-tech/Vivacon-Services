@@ -9,6 +9,7 @@ import com.vivacon.entity.Account;
 import java.util.Optional;
 
 public interface AccountService {
+
     Account getCurrentAccount();
 
     Account getAccountById(Long accountId);
@@ -18,4 +19,6 @@ public interface AccountService {
     AttachmentDTO changeProfileAvatar(AttachmentDTO avatar);
 
     PageDTO<OutlinePost> getOutlinePostByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+
+    PageDTO<AttachmentDTO> getProfileAvatarsByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 }
