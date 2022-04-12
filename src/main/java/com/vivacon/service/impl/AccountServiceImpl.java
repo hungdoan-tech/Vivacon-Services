@@ -85,4 +85,12 @@ public class AccountServiceImpl implements AccountService {
         attachmentRepository.save(avatarEntity);
         return avatarDto;
     }
+
+    @Override
+    public PageDTO<OutlinePost> getOutlinePostByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
+        Page<Post> pagePost = postRepository.findByAuthorId(accountId, pageable);
+        PageDTO<OutlinePost> listOutlinePost = PageDTOMapper.toPageDTO(pagePost, OutlinePost.class, entity -> this.postMapper.toOutlinePost(entity));
+        return listOutlinePost;
+    }
 }
