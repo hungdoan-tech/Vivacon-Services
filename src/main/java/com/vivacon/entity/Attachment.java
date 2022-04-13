@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "attachment")
@@ -28,19 +29,34 @@ public class Attachment {
     @Column(name = "unique_name")
     private String uniqueName;
 
+    private LocalDateTime timestamp;
+
     @ManyToOne(targetEntity = Post.class)
-    @JoinColumn(name = "innovation_id")
+    @JoinColumn(name = "post_id")
     private Post post;
 
-    public Attachment() {
+    @ManyToOne(targetEntity = Account.class)
+    @JoinColumn(name = "profile_id")
+    private Account profile;
 
+    public Attachment() {
+        this.timestamp = LocalDateTime.now();
     }
 
     public Attachment(String actualName, String uniqueName, String url, Post post) {
+        this();
         this.url = url;
         this.actualName = actualName;
         this.uniqueName = uniqueName;
         this.post = post;
+    }
+
+    public Attachment(String actualName, String uniqueName, String url, Account profile) {
+        this();
+        this.url = url;
+        this.actualName = actualName;
+        this.uniqueName = uniqueName;
+        this.profile = profile;
     }
 
     public Long getId() {
@@ -81,5 +97,21 @@ public class Attachment {
 
     public void setUniqueName(String uniqueName) {
         this.uniqueName = uniqueName;
+    }
+
+    public Account getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Account profile) {
+        this.profile = profile;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

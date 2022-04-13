@@ -3,8 +3,11 @@ package com.vivacon.mapper;
 import com.vivacon.common.AuditableHelper;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.PostRequest;
+import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.PostResponse;
+import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Post;
+import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.repository.AttachmentRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -42,11 +45,25 @@ public class PostMapper {
         try {
             Post post = (Post) object;
             PostResponse postResponse = mapper.map(post, PostResponse.class);
-            List<AttachmentDTO> attachmentDTOS = attachmentRepository.findAllByPostId(post.getId())
+            List<AttachmentDTO> attachmentDTOS = attachmentRepository.findByPost_Id(post.getId())
                     .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
                     .collect(Collectors.toList());
             postResponse.setAttachments(attachmentDTOS);
             return postResponse;
+        } catch (ClassCastException ex) {
+            LOGGER.info(ex.getMessage());
+            return null;
+        }
+    }
+
+    public OutlinePost toOutlinePost(Object object) {
+        try {
+            Post post = (Post) object;
+            Attachment firstImage = attachmentRepository.findFirstByPost_IdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
+            boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
+            Long likeCount = 0L;
+            Long commentCount = 0L;
+            return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
         } catch (ClassCastException ex) {
             LOGGER.info(ex.getMessage());
             return null;

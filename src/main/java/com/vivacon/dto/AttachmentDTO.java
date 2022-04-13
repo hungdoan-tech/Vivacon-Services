@@ -1,5 +1,7 @@
 package com.vivacon.dto;
 
+import com.vivacon.entity.Attachment;
+
 public class AttachmentDTO {
 
     private String actualName;
@@ -9,7 +11,12 @@ public class AttachmentDTO {
     private String url;
 
     public AttachmentDTO() {
+    }
 
+    public AttachmentDTO(Attachment attachment) {
+        this.actualName = attachment.getActualName();
+        this.uniqueName = attachment.getUniqueName();
+        this.url = attachment.getUrl();
     }
 
     public AttachmentDTO(String actualName, String uniqueName, String url) {
