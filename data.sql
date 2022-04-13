@@ -113,15 +113,15 @@ SELECT setval('attachment_id_seq', (SELECT MAX(id) FROM attachment) + 1);
 INSERT INTO "comment" ("id", "created_at", "last_modified_at", "content", "parent_comment_id", "post_id", "created_by_account_id",
                     "last_modified_by_account_id", "active")
 VALUES (1, '2022-04-01 23:56:20.061855', NULL, 'Hello this is comment 1', NULL, 2, 1, NULL, true),
-VALUES (2, '2022-04-02 23:56:20.061855', NULL, 'Hello this is parent comment 2', NULL, 2, 1, NULL, true),
-VALUES (3, '2022-04-03 23:56:20.061855', NULL, 'Hello this is child comment 3', 2, 2, 1, NULL, true),
-VALUES (4, '2022-04-04 23:56:20.061855', NULL, 'Hello this is child comment 4', 2, 2, 1, NULL, true),
-VALUES (5, '2022-04-05 23:56:20.061855', NULL, 'Hello this is parent comment 5', 4, 3, 1, NULL, true),
-VALUES (6, '2022-04-06 23:56:20.061855', NULL, 'Hello this is comment 6', 5, 3, 1, NULL, true),
-VALUES (7, '2022-04-07 23:56:20.061855', NULL, 'Hello this is comment 7', 6, 3, 1, NULL, true),
-VALUES (8, '2022-04-08 23:56:20.061855', NULL, 'Hello this is comment 8', 6, 3, 1, NULL, true),
-VALUES (9, '2022-04-09 23:56:20.061855', NULL, 'Hello this is parent comment 9', 4, 4, 1, NULL, true),
-VALUES (10, '2022-04-10 23:56:20.061855', NULL, 'Hello this is child comment 10', 9, 4, 1, NULL, true);
+(2, '2022-04-02 23:56:20.061855', NULL, 'Hello this is parent comment 2', NULL, 2, 1, NULL, true),
+(3, '2022-04-03 23:56:20.061855', NULL, 'Hello this is child comment 3', 2, 2, 1, NULL, true),
+(4, '2022-04-04 23:56:20.061855', NULL, 'Hello this is child comment 4', 2, 2, 1, NULL, true),
+(5, '2022-04-05 23:56:20.061855', NULL, 'Hello this is parent comment 5', 4, 3, 1, NULL, true),
+(6, '2022-04-06 23:56:20.061855', NULL, 'Hello this is comment 6', 5, 3, 1, NULL, true),
+(7, '2022-04-07 23:56:20.061855', NULL, 'Hello this is comment 7', 6, 3, 1, NULL, true),
+(8, '2022-04-08 23:56:20.061855', NULL, 'Hello this is comment 8', 6, 3, 1, NULL, true),
+(9, '2022-04-09 23:56:20.061855', NULL, 'Hello this is parent comment 9', 4, 4, 1, NULL, true),
+(10, '2022-04-10 23:56:20.061855', NULL, 'Hello this is child comment 10', 9, 4, 1, NULL, true);
 SELECT setval('comment_id_seq', (SELECT MAX(id) FROM comment) + 1);
 
 
