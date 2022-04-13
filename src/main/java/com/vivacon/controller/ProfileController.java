@@ -1,5 +1,6 @@
 package com.vivacon.controller;
 
+import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +19,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
+@RequestMapping(value = Constants.API_V1)
 public class ProfileController {
 
     private AccountService accountService;
@@ -56,7 +59,7 @@ public class ProfileController {
                                                         @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return accountService.getProfileAvatarsByAccountId(accountId, order, sort, pageSize, pageIndex);
     }
-    
+
     @ApiOperation(value = "Change the profile avatar")
     @PostMapping("/profile/avatar")
     public AttachmentDTO changeProfileAvatar(@Valid @RequestBody AttachmentDTO avatar) {
