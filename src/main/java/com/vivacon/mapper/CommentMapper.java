@@ -29,16 +29,10 @@ public class CommentMapper {
         this.commentRepository = commentRepository;
     }
 
-//    public Comment toPost(CommentRe postResponse) {
-//        Post post = this.mapper.map(postResponse, Post.class);
-//        return (Post) auditableHelper.updateAuditingCreatedFields(post, null);
-//    }
-
     public CommentResponse toResponse(Object object) {
         try {
             Comment comment = (Comment) object;
             CommentResponse postResponse = mapper.map(comment, CommentResponse.class);
-            //Long parentCommentId = comment.getParentComment() == null ? null : comment.getParentComment().getId();
             long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), comment.getPost().getId());
             postResponse.setTotalChildComments(totalCountComment);
             return postResponse;
