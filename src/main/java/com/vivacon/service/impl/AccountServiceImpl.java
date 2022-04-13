@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
+
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -64,11 +66,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public DetailProfile getProfileByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Attachment avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(accountId).orElse(null);
+    public Account getAccountByUsernameIgnoreCase(String username) {
+        return this.accountRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(RecordNotFoundException::new);
+    }
 
+    @Override
+    public DetailProfile getProfileByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(accountId);
+        String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
         Account profile = accountRepository.findById(accountId).orElseThrow(RecordNotFoundException::new);
-        String blankAvatarUrl = "https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-13T21%3A17%3A26.245336500_Blank-Avatar.jpg";
 
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorId(accountId, pageable);
@@ -82,8 +89,7 @@ public class AccountServiceImpl implements AccountService {
         long toAccountId = accountId;
         Optional<Following> following = this.followingRepository.findByIdComposition(fromAccountId, toAccountId);
 
-        return new DetailProfile(profile, (avatar != null) ? avatar.getUrl() : blankAvatarUrl,
-                postCounting, followerCounting, followingCounting, following.isPresent(), listOutlinePost);
+        return new DetailProfile(profile, avatarUrl, postCounting, followerCounting, followingCounting, following.isPresent(), listOutlinePost);
     }
 
     @Override

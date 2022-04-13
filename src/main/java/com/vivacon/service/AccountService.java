@@ -21,4 +21,6 @@ public interface AccountService {
     PageDTO<OutlinePost> getOutlinePostByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
     PageDTO<AttachmentDTO> getProfileAvatarsByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+
+    Account getAccountByUsernameIgnoreCase(String username);
 }
