@@ -3,9 +3,10 @@ package com.vivacon.mapper;
 import com.vivacon.common.AuditableHelper;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.PostRequest;
+import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.response.OutlinePost;
-import com.vivacon.dto.response.PostResponse;
 import com.vivacon.entity.Attachment;
+import com.vivacon.entity.AuditableEntity;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.repository.AttachmentRepository;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,18 +40,24 @@ public class PostMapper {
 
     public Post toPost(PostRequest postResponse) {
         Post post = this.mapper.map(postResponse, Post.class);
-        return (Post) auditableHelper.updateAuditingCreatedFields(post, null);
+        AuditableEntity auditableEntity = auditableHelper.updateAuditingCreatedFields(post, null);
+        auditableEntity.setLastModifiedAt(LocalDateTime.now());
+        return (Post) auditableEntity;
     }
 
-    public PostResponse toResponse(Object object) {
+    public NewsfeedPost toNewsfeedPost(Object object) {
         try {
             Post post = (Post) object;
-            PostResponse postResponse = mapper.map(post, PostResponse.class);
-            List<AttachmentDTO> attachmentDTOS = attachmentRepository.findByPost_Id(post.getId())
+            NewsfeedPost newsfeedPost = mapper.map(post, NewsfeedPost.class);
+            List<AttachmentDTO> attachmentDTOS = attachmentRepository
+                    .findByPost_Id(post.getId())
                     .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
                     .collect(Collectors.toList());
-            postResponse.setAttachments(attachmentDTOS);
-            return postResponse;
+            newsfeedPost.setAttachments(attachmentDTOS);
+            newsfeedPost.setLikeCount(0L);
+            newsfeedPost.setCommentCount(0L);
+            auditableHelper.setupDisplayAuditableFields(post, newsfeedPost);
+            return newsfeedPost;
         } catch (ClassCastException ex) {
             LOGGER.info(ex.getMessage());
             return null;

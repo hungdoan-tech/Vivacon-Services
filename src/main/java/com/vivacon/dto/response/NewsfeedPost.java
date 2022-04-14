@@ -6,7 +6,7 @@ import com.vivacon.dto.AuditableResponse;
 
 import java.util.List;
 
-public class PostResponse extends AuditableResponse {
+public class NewsfeedPost extends AuditableResponse {
 
     private Long id;
 
@@ -16,11 +16,15 @@ public class PostResponse extends AuditableResponse {
 
     private List<AttachmentDTO> attachments;
 
-    public PostResponse() {
+    private Long likeCount;
+
+    private Long commentCount;
+
+    public NewsfeedPost() {
 
     }
 
-    public PostResponse(Long id, String caption, Privacy privacy) {
+    public NewsfeedPost(Long id, String caption, Privacy privacy) {
         this.id = id;
         this.caption = caption;
         this.privacy = privacy;
@@ -56,5 +60,21 @@ public class PostResponse extends AuditableResponse {
 
     public void setAttachments(List<AttachmentDTO> attachments) {
         this.attachments = attachments;
+    }
+
+    public Long getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Long getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
     }
 }

@@ -38,14 +38,20 @@ public class AuditableHelper {
         return auditable;
     }
 
-    public AuditableEntity updateAuditingModifiedFields(AuditableEntity auditable) {
-
-        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account account = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
-                .orElseThrow(RecordNotFoundException::new);
+    public AuditableEntity updateAuditingModifiedFields(AuditableEntity auditable, Account account) {
+        if (account == null) {
+            UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            account = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
+                    .orElseThrow(RecordNotFoundException::new);
+        }
         auditable.setLastModifiedAt(LocalDateTime.now());
         auditable.setLastModifiedBy(account);
         return auditable;
+    }
+
+    public AuditableResponse setupDisplayAuditableFields(AuditableEntity auditableEntity, AuditableResponse auditableResponse) {
+        auditableResponse = this.setupDisplayAuditableRelatedToPersonFields(auditableEntity, auditableResponse);
+        return this.setupDisplayAuditableRelatedToTimestampFields(auditableEntity, auditableResponse);
     }
 
     public AuditableResponse setupDisplayAuditableRelatedToPersonFields(AuditableEntity auditableEntity, AuditableResponse auditableResponse) {

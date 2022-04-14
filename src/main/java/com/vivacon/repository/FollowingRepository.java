@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,6 +27,11 @@ public interface FollowingRepository extends JpaRepository<Following, Long> {
             "FROM Following following " +
             "WHERE following.toAccount.id = :toAccountId")
     Page<Account> findFollower(@Param(value = "toAccountId") Long toAccountId, Pageable pageable);
+
+    @Query("SELECT following.toAccount " +
+            "FROM Following following " +
+            "WHERE following.fromAccount.id = :fromAccountId")
+    List<Account> findFollowing(@Param(value = "fromAccountId") Long fromAccountId);
 
     @Query("SELECT following.toAccount " +
             "FROM Following following " +
