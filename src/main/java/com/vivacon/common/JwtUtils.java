@@ -1,5 +1,8 @@
 package com.vivacon.common;
 
+import com.vivacon.entity.Account;
+import com.vivacon.entity.Attachment;
+import com.vivacon.repository.AttachmentRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 
 @Component
 public class JwtUtils {
@@ -23,6 +30,12 @@ public class JwtUtils {
 
     @Value("${innovation.jwt.jwt_issuer}")
     private String jwtIssuer;
+
+    private AttachmentRepository attachmentRepository;
+
+    public JwtUtils(AttachmentRepository attachmentRepository) {
+        this.attachmentRepository = attachmentRepository;
+    }
 
     /**
      * This method is used to get username from JWT access token
@@ -38,12 +51,21 @@ public class JwtUtils {
     /**
      * This method is used to generate a new JWT access token
      *
-     * @param username
+     * @param account, userDetails
      * @return String
      */
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(Account account, List<String> roles) {
+
         Claims claims = Jwts.claims();
-        claims.put("username", username);
+        claims.put("accountId", account.getId());
+        claims.put("username", account.getUsername());
+        claims.put("fullName", account.getFullName());
+        claims.put("roles", roles);
+
+        Optional<Attachment> optionalAvatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
+        String avatarUrl = optionalAvatar.isPresent() ? optionalAvatar.get().getUrl() : BLANK_AVATAR_URL;
+        claims.put("avatar", avatarUrl);
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuer(this.jwtIssuer)

@@ -40,8 +40,7 @@ public class CommentController {
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex,
-            @PathVariable(name = "postId", value = "postId", required = true) Long postId
-    ) {
+            @PathVariable(name = "postId", value = "postId", required = true) Long postId) {
         return commentService.getAll(sort, order, pageSize, pageIndex, postId);
     }
 
@@ -56,9 +55,7 @@ public class CommentController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex,
             @PathVariable(name = "parentCommentId", value = "parentCommentId", required = true) Long parentCommentId,
-            @PathVariable(name = "postId", value = "postId", required = true) Long postId
-    ) {
+            @PathVariable(name = "postId", value = "postId", required = true) Long postId) {
         return commentService.getAllChildComment(sort, order, pageSize, pageIndex, parentCommentId, postId);
     }
-
 }

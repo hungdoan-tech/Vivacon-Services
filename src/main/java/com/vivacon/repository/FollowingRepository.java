@@ -31,4 +31,14 @@ public interface FollowingRepository extends JpaRepository<Following, Long> {
             "FROM Following following " +
             "WHERE following.fromAccount.id = :fromAccountId")
     Page<Account> findFollowing(@Param(value = "fromAccountId") Long fromAccountId, Pageable pageable);
+
+    @Query("SELECT count(following.fromAccount.id)" +
+            "FROM Following following " +
+            "WHERE following.toAccount.id = :accountId")
+    Long getFollowerCountingByAccountId(@Param(value = "accountId") Long accountId);
+
+    @Query("SELECT count(following.toAccount.id) " +
+            "FROM Following following " +
+            "WHERE following.fromAccount.id = :accountId")
+    Long getFollowingCountingByAccountId(@Param(value = "accountId") Long accountId);
 }
