@@ -47,7 +47,7 @@ public class CommentController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = CREATE_SUCCESSFULLY),
             @ApiResponse(code = 400, message = BAD_REQUEST_COMMON_MESSAGE)})
-    @PostMapping(value = "/comment/creating")
+    @PostMapping(value = "/comment")
     public CommentResponse createComment(@Valid @RequestBody CommentRequest commentRequest) {
         return this.commentService.createComment(commentRequest);
     }
@@ -56,7 +56,7 @@ public class CommentController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = CREATE_SUCCESSFULLY),
             @ApiResponse(code = 400, message = BAD_REQUEST_COMMON_MESSAGE)})
-    @DeleteMapping(value = "/comment/deleting/{id}")
+    @DeleteMapping(value = "/comment/{id}")
     public ResponseEntity<Object> deleteComment(@PathVariable(name = "id") Long commentId) {
         this.commentService.deleteComment(commentId);
         return ResponseEntity.ok(null);
