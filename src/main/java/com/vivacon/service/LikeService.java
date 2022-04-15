@@ -7,6 +7,10 @@ import java.util.Optional;
 
 public interface LikeService {
 
+    boolean like(Long postId);
+
+    boolean unlike(Long id);
+
     PageDTO<OutlineAccount> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId);
 
 }

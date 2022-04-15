@@ -5,7 +5,6 @@ import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Following;
-import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.repository.FollowingRepository;
@@ -46,11 +45,12 @@ public class FollowingServiceImpl implements FollowingService {
         Account fromAccount = accountService.getCurrentAccount();
         Account toAccount = accountService.getAccountById(toAccountId);
 
-        if (followingRepository.findByIdComposition(fromAccount.getId(), toAccount.getId()).isPresent()) {
+        Following following = new Following(fromAccount, toAccount);
+        try {
+            this.followingRepository.save(following);
+        } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("The following table already have one record which contain this account follow that account");
         }
-        Following following = new Following(fromAccount, toAccount);
-        this.followingRepository.save(following);
         return true;
     }
 
@@ -59,10 +59,6 @@ public class FollowingServiceImpl implements FollowingService {
     public boolean unfollow(Long toAccountId) {
         Account fromAccount = accountService.getCurrentAccount();
         Account toAccount = this.accountService.getAccountById(toAccountId);
-
-        if (followingRepository.findByIdComposition(fromAccount.getId(), toAccount.getId()).isEmpty()) {
-            throw new RecordNotFoundException("The following table doesnt have any record which contain this account follow that account");
-        }
         this.followingRepository.unfollowById(fromAccount.getId(), toAccount.getId());
         return true;
     }
