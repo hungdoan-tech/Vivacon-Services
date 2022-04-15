@@ -3,7 +3,7 @@ package com.vivacon.controller;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
-import com.vivacon.dto.response.PostResponse;
+import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.dto.sorting_filtering.PostFilter;
 import com.vivacon.service.PostService;
@@ -48,7 +48,7 @@ public class PostController {
             @ApiResponse(code = 200, message = CREATE_SUCCESSFULLY),
             @ApiResponse(code = 400, message = BAD_REQUEST_COMMON_MESSAGE)})
     @PostMapping()
-    public PostResponse createPost(@Valid @RequestBody PostRequest postRequest) {
+    public NewsfeedPost createPost(@Valid @RequestBody PostRequest postRequest) {
         return this.postService.createPost(postRequest);
     }
 
@@ -57,7 +57,7 @@ public class PostController {
             @ApiResponse(code = 200, message = FETCHING_SUCCESSFULLY),
             @ApiResponse(code = 400, message = BAD_REQUEST_COMMON_MESSAGE)})
     @GetMapping()
-    public PageDTO<PostResponse> getAll(
+    public PageDTO<NewsfeedPost> getAll(
             @RequestParam(value = "author", required = false) Optional<List<Long>> authors,
             @RequestParam(value = "privacy", required = false) Optional<List<Privacy>> statuses,
             @RequestParam(value = "own", required = false) Optional<Boolean> own,
@@ -68,6 +68,6 @@ public class PostController {
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
 
         PostFilter innovationFilter = new PostFilter(authors, statuses, own.orElse(false), true);
-        return postService.getAll(innovationFilter, keyword, sort, order, pageSize, pageIndex);
+        return postService.getAll(innovationFilter, keyword, order, sort, pageSize, pageIndex);
     }
 }

@@ -10,6 +10,7 @@ import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.security.UserDetailImpl;
+import com.vivacon.repository.AttachmentRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+
+import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 
 @Component
 public class AccountMapper {
@@ -40,7 +43,11 @@ public class AccountMapper {
 
     public AccountResponse toResponse(Object object) {
         Account account = (Account) object;
-        return this.mapper.map(account, AccountResponse.class);
+        AccountResponse responseAccount = this.mapper.map(account, AccountResponse.class);
+         Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
+        String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
+        responseAccount.setAvatar(avatarUrl);
+        return responseAccount;
     }
 
     public OutlineAccount toOutlineAccount(Object object) {
@@ -55,7 +62,7 @@ public class AccountMapper {
             Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
             Optional<Attachment> attachment = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
 
-            String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : "https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-13T21%3A17%3A26.245336500_Blank-Avatar.jpg";
+            String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
 
             outlineAccountResponse.setFollowing(following.isPresent());
             outlineAccountResponse.setAvatar(avatarUrl);
@@ -65,5 +72,6 @@ public class AccountMapper {
             LOGGER.info(ex.getMessage());
             return null;
         }
+       
     }
 }

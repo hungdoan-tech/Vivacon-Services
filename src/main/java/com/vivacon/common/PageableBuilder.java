@@ -19,7 +19,7 @@ public class PageableBuilder {
         }
         return PageRequest.of(
                 pageIndex.orElse(0),
-                pageSize.orElse(10),
+                pageSize.orElse(12),
                 Sort.by(order.orElse("asc").equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, actualSortField
                 ));
     }

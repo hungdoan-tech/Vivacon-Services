@@ -56,9 +56,10 @@ public class Constants {
     public static final String UPDATE_SUCCESSFULLY = "Update innovation successfully";
     public static final String EMPTY_FILE_UPLOAD_MESSAGE = "The file which has been uploaded is empty";
     public static final String ERROR_WHEN_UPLOAD_TO_S3 = " encounter some error when upload to S3!";
-    public static final String RECORD_NOT_FOUND = "This received image has a invalid extension type";
+    public static final String RECORD_NOT_FOUND = "The request resource is not found ! Please check your bad request !";
     public static final String NOT_VALID_IMAGE_EXTENSION = "This received image has a invalid extension type";
     public static final String FETCHING_SUCCESSFULLY = "Fetching successfully";
+    public static final String BLANK_AVATAR_URL = "https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-13T21%3A17%3A26.245336500_Blank-Avatar.jpg";
 
     private Constants() {
 

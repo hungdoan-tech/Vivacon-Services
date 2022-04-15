@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Get page of outline posts of an profile",
+			"name": "Get page of outline posts of an profile by username",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -76,7 +76,7 @@
 			"response": []
 		},
 		{
-			"name": "Get a profile",
+			"name": "Get a profile by username",
 			"request": {
 				"auth": {
 					"type": "bearer",

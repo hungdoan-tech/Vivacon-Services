@@ -12,7 +12,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@Profile({"dev, test"})
+@Profile({"dev"})
 @EnableSwagger2
 public class SwaggerConfiguration {
 
@@ -20,7 +20,7 @@ public class SwaggerConfiguration {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.vivacon.controller"))
+                .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(metaInfo());
@@ -29,7 +29,7 @@ public class SwaggerConfiguration {
     private ApiInfo metaInfo() {
         return new ApiInfoBuilder()
                 .title("Rest API with Swagger 2")
-                .description("Innovation Management REST API Documentation")
+                .description("Vivacon Social Media Service REST API Documentation")
                 .version("1.0")
                 .build();
     }

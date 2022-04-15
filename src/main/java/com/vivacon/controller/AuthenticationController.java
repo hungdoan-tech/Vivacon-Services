@@ -5,8 +5,9 @@ import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.LoginRequest;
 import com.vivacon.dto.request.TokenRefreshRequest;
 import com.vivacon.dto.response.AuthenticationResponse;
-import com.vivacon.dto.response.TokenRefreshResponse;
+import com.vivacon.entity.Account;
 import com.vivacon.exception.TokenRefreshException;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.RefreshTokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(value = "Authentication Controller")
 @RestController
@@ -35,13 +40,17 @@ public class AuthenticationController {
 
     private RefreshTokenService refreshTokenService;
 
+    private AccountService accountService;
+
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     JwtUtils jwtTokenUtil,
-                                    RefreshTokenService refreshTokenService) {
+                                    RefreshTokenService refreshTokenService,
+                                    AccountService accountService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtils = jwtTokenUtil;
         this.refreshTokenService = refreshTokenService;
+        this.accountService = accountService;
     }
 
     /**
@@ -59,9 +68,14 @@ public class AuthenticationController {
 
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         UserDetails userDetail = (UserDetails) authenticate.getPrincipal();
-        String accessToken = jwtTokenUtils.generateAccessToken(userDetail.getUsername());
+
+        Account account = accountService.getAccountByUsernameIgnoreCase(userDetail.getUsername());
+        List<String> roles = userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+
+        String accessToken = jwtTokenUtils.generateAccessToken(account, roles);
         String refreshToken = refreshTokenService.createRefreshToken(userDetail.getUsername());
-        return new AuthenticationResponse(userDetail, accessToken, refreshToken);
+
+        return new AuthenticationResponse(accessToken, refreshToken);
     }
 
     /**
@@ -75,14 +89,15 @@ public class AuthenticationController {
             @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
             @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
     @PostMapping("/refresh-token")
-    public TokenRefreshResponse generateNewAccessTokenByRefreshToken(@Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
+    public AuthenticationResponse generateNewAccessTokenByRefreshToken(@Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
         String requestRefreshToken = tokenRefreshRequest.getRefreshToken();
         return refreshTokenService
                 .findAccountByRefreshToken(requestRefreshToken)
                 .map(refreshTokenService::verifyTokenExpiration)
                 .map(account -> {
-                    String newAccessToken = jwtTokenUtils.generateAccessToken(account.getUsername());
-                    return new TokenRefreshResponse(newAccessToken, requestRefreshToken);
+                    List<String> roles = Arrays.asList(account.getRole().getName());
+                    String newAccessToken = jwtTokenUtils.generateAccessToken(account, roles);
+                    return new AuthenticationResponse(newAccessToken, requestRefreshToken);
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, Constants.REFRESH_TOKEN_NOT_STORE));
     }
