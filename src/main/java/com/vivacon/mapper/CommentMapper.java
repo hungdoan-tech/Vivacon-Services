@@ -44,7 +44,13 @@ public class CommentMapper {
         try {
             Comment comment = (Comment) object;
             CommentResponse postResponse = mapper.map(comment, CommentResponse.class);
-            long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), comment.getPost().getId());
+            Long postId = Long.valueOf(0);
+            if (comment != null && comment.getPost() != null) {
+                postId = comment.getPost().getId();
+            } else {
+                postId = null;
+            }
+            long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), postId);
             postResponse.setTotalChildComments(totalCountComment);
             return postResponse;
         } catch (ClassCastException ex) {

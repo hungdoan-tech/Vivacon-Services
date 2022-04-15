@@ -5,9 +5,11 @@ import com.vivacon.dto.request.CommentRequest;
 import com.vivacon.dto.response.CommentResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Comment;
+import com.vivacon.entity.Post;
 import com.vivacon.mapper.CommentMapper;
 import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.repository.CommentRepository;
+import com.vivacon.repository.PostRepository;
 import com.vivacon.service.CommentService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
@@ -24,29 +26,28 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
+    private PostRepository postRepository;
+
     private CommentMapper commentMapper;
 
-    public CommentServiceImpl(CommentRepository commentRepository, CommentMapper commentMapper) {
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
         this.commentMapper = commentMapper;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
+        Post post = postRepository.findByPostId(commentRequest.getPostId());
+        Comment parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
         Comment comment = commentMapper.toComment(commentRequest);
         comment.setActive(true);
+
+        comment.setPost(post);
+        comment.setParentComment(parentComment);
         Comment savedComment = commentRepository.save(comment);
-
-//        List<Attachment> attachments = postRequest.getAttachments()
-//                .stream().map(attachment -> new Attachment(
-//                        attachment.getActualName(),
-//                        attachment.getUniqueName(),
-//                        attachment.getUrl(),
-//                        savedPost))
-//                .collect(Collectors.toList());
-//        commentRepository.saveAll(attachments);
-
+        
         return commentMapper.toResponse(savedComment);
     }
 
