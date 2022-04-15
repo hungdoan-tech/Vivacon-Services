@@ -14,11 +14,7 @@ public interface AccountService {
 
     Account getAccountById(Long accountId);
 
-    DetailProfile getProfileByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
-
     AttachmentDTO changeProfileAvatar(AttachmentDTO avatar);
-
-    PageDTO<OutlinePost> getOutlinePostByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
     PageDTO<AttachmentDTO> getProfileAvatarsByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 

@@ -29,17 +29,6 @@ public class ProfileController {
     }
 
     @ApiOperation(value = "Get list following of an account")
-    @GetMapping("/profile/{id}")
-    public DetailProfile getTheDetailProfile(
-            @PathVariable(value = "id") Long accountId,
-            @RequestParam(value = "_order", required = false) Optional<String> order,
-            @RequestParam(value = "_sort", required = false) Optional<String> sort,
-            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
-            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return accountService.getProfileByAccountId(accountId, order, sort, pageSize, pageIndex);
-    }
-
-    @ApiOperation(value = "Get list following of an account")
     @GetMapping("/profile/{username}")
     public DetailProfile getTheDetailProfile(
             @PathVariable(value = "username") String username,
@@ -48,18 +37,6 @@ public class ProfileController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return accountService.getProfileByUsername(username, order, sort, pageSize, pageIndex);
-    }
-
-
-    @ApiOperation(value = "Get list outlinePost of an account")
-    @GetMapping("/profile/{id}/outline-post")
-    public PageDTO<OutlinePost> getAll(
-            @PathVariable(value = "id") Long accountId,
-            @RequestParam(value = "_order", required = false) Optional<String> order,
-            @RequestParam(value = "_sort", required = false) Optional<String> sort,
-            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
-            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return accountService.getOutlinePostByAccountId(accountId, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get list outlinePost of an account")

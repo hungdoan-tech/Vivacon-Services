@@ -77,12 +77,6 @@ public class AccountServiceImpl implements AccountService {
         return this.getProfile(requestAccount, order, sort, pageSize, pageIndex);
     }
 
-    @Override
-    public DetailProfile getProfileByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Account requestAccount = accountRepository.findById(accountId).orElseThrow(RecordNotFoundException::new);
-        return this.getProfile(requestAccount, order, sort, pageSize, pageIndex);
-    }
-
     private DetailProfile getProfile(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(requestAccount.getId());
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
@@ -113,13 +107,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
-        return this.getOutlinePostByAccountId(requestAccount.getId(), order, sort, pageSize, pageIndex);
+        return this.getOutlinePost(requestAccount, order, sort, pageSize, pageIndex);
     }
 
-    @Override
-    public PageDTO<OutlinePost> getOutlinePostByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Page<Post> pagePost = postRepository.findByAuthorId(accountId, pageable);
+        Page<Post> pagePost = postRepository.findByAuthorId(requestAccount.getId(), pageable);
         PageDTO<OutlinePost> listOutlinePost = PageDTOMapper.toPageDTO(pagePost, OutlinePost.class, post -> this.postMapper.toOutlinePost(post));
         return listOutlinePost;
     }
