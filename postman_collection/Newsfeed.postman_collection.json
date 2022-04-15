@@ -1,0 +1,17 @@
+{
+	"info": {
+		"_postman_id": "d61260c8-9097-4303-a58c-8401dcc89908",
+		"name": "Newsfeed",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
