@@ -115,3 +115,10 @@ VALUES (1, '2022-04-01 23:56:20.061855', NULL, 'Hello this is comment 1', NULL, 
        (9, '2022-04-09 23:56:20.061855', NULL, 'Hello this is parent comment 9', 4, 4, 1, NULL, true),
        (10, '2022-04-10 23:56:20.061855', NULL, 'Hello this is child comment 10', 9, 4, 1, NULL, true);
 SELECT setval('comment_id_seq', (SELECT MAX(id) FROM comment) + 1);
+
+INSERT INTO "liking" ("id", "account_id", "post_id")
+VALUES
+(1, 2, 2),
+(2, 1, 2),
+(3, 1, 3);
+SELECT setval('like_id_seq', (SELECT MAX(id) FROM liking) + 1);

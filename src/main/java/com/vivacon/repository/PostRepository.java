@@ -17,4 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 
     @Query("select count(p.id) from Post p where p.createdBy.id = :account_id")
     Long getPostCountingByAccountId(@Param("account_id") Long accountId);
+
+    @Query("select p from Post p where p.id = :post_id")
+    Post findByPostId(@Param("post_id") Long postId);
 }
