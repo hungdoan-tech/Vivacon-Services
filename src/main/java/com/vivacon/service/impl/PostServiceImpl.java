@@ -3,7 +3,7 @@ package com.vivacon.service.impl;
 import com.vivacon.common.PageableBuilder;
 import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
-import com.vivacon.dto.response.PostResponse;
+import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.dto.sorting_filtering.PostFilter;
 import com.vivacon.dto.sorting_filtering.PostSpecification;
@@ -57,7 +57,7 @@ public class PostServiceImpl implements PostService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
-    public PostResponse createPost(PostRequest postRequest) {
+    public NewsfeedPost createPost(PostRequest postRequest) {
         Post post = postMapper.toPost(postRequest);
         post.setActive(true);
         Post savedPost = postRepository.save(post);
@@ -71,15 +71,15 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
         attachmentRepository.saveAll(attachments);
 
-        return postMapper.toResponse(savedPost);
+        return postMapper.toNewsfeedPost(savedPost);
     }
 
     @Override
-    public PageDTO<PostResponse> getAll(PostFilter innovationFilter, Optional<String> keyword, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public PageDTO<NewsfeedPost> getAll(PostFilter innovationFilter, Optional<String> keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(innovationFilter, keyword);
         Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, PostResponse.class, entity -> this.postMapper.toResponse(entity));
+        return PageDTOMapper.toPageDTO(entityPage, NewsfeedPost.class, entity -> this.postMapper.toNewsfeedPost(entity));
     }
 
     private Specification<Post> createTheCombiningPostSpecification(PostFilter filter, Optional<String> keyword) {

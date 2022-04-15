@@ -4,7 +4,27 @@ public class AccountResponse {
 
     private Long id;
 
+    private String fullName;
+
     private String username;
+
+    private String avatar;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public Long getId() {
         return id;

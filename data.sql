@@ -22,15 +22,15 @@ SELECT setval('account_id_seq', (SELECT MAX(id) FROM account) + 1);
 
 INSERT INTO "post" ("id", "created_at", "last_modified_at", "caption", "privacy", "created_by_account_id",
                     "last_modified_by_account_id", "active")
-VALUES (1, '2022-04-01 23:56:20.061855', NULL, 'Hello this is caption', 1, 1, NULL, true),
-       (2, '2022-04-02 00:02:45.371366', NULL, 'Hello this is caption', 1, 2, NULL, true),
-       (3, '2022-04-02 00:08:00.991663', NULL, 'Hello this is caption', 2, 2, NULL, true),
-       (4, '2022-04-02 00:26:11.900023', NULL, 'Hello this is caption', 0, 1, NULL, true),
-       (5, '2022-04-02 00:13:12.155683', NULL, 'Hello this is caption', 1, 2, NULL, true),
-       (6, '2022-04-01 23:56:43.648472', NULL, 'Hello this is caption', 2, 2, NULL, true),
-       (7, '2022-04-01 23:52:38.311749', NULL, 'Hello this is caption', 0, 3, NULL, true),
-       (8, '2022-04-02 00:02:45.371366', NULL, 'Hello this is caption', 1, 4, NULL, true),
-       (9, '2022-04-02 00:08:00.991663', NULL, 'Hello this is caption', 2, 5, NULL, true);
+VALUES (1, '2022-04-01 23:56:20.061855', '2022-04-01 23:56:20.061855', 'Hello this is caption', 1, 1, NULL, true),
+       (2, '2022-04-02 00:02:45.371366', '2022-04-01 23:56:20.061855', 'Hello this is caption', 1, 2, NULL, true),
+       (3, '2022-04-02 00:08:00.991663', '2022-04-01 23:56:20.061855', 'Hello this is caption', 2, 2, NULL, true),
+       (4, '2022-04-02 00:26:11.900023', '2022-04-01 23:56:20.061855', 'Hello this is caption', 0, 1, NULL, true),
+       (5, '2022-04-02 00:13:12.155683', '2022-04-01 23:56:20.061855', 'Hello this is caption', 1, 2, NULL, true),
+       (6, '2022-04-01 23:56:43.648472', '2022-04-01 23:56:20.061855', 'Hello this is caption', 2, 2, NULL, true),
+       (7, '2022-04-01 23:52:38.311749', '2022-04-01 23:56:20.061855', 'Hello this is caption', 0, 3, NULL, true),
+       (8, '2022-04-02 00:02:45.371366', '2022-04-01 23:56:20.061855', 'Hello this is caption', 1, 4, NULL, true),
+       (9, '2022-04-02 00:08:00.991663', '2022-04-01 23:56:20.061855', 'Hello this is caption', 2, 5, NULL, true);
 SELECT setval('post_id_seq', (SELECT MAX(id) FROM post) + 1);
 
 INSERT INTO "following" ("id", "from_account", "to_account")
