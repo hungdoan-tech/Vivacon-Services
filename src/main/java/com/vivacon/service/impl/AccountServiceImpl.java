@@ -72,13 +72,24 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public DetailProfile getProfileByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
+        return this.getProfile(requestAccount, order, sort, pageSize, pageIndex);
+    }
+
+    @Override
     public DetailProfile getProfileByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(accountId);
+        Account requestAccount = accountRepository.findById(accountId).orElseThrow(RecordNotFoundException::new);
+        return this.getProfile(requestAccount, order, sort, pageSize, pageIndex);
+    }
+
+    private DetailProfile getProfile(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(requestAccount.getId());
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
-        Account profile = accountRepository.findById(accountId).orElseThrow(RecordNotFoundException::new);
+        Account profile = accountRepository.findById(requestAccount.getId()).orElseThrow(RecordNotFoundException::new);
 
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Page<Post> pagePost = postRepository.findByAuthorId(accountId, pageable);
+        Page<Post> pagePost = postRepository.findByAuthorId(requestAccount.getId(), pageable);
         PageDTO<OutlinePost> listOutlinePost = PageDTOMapper.toPageDTO(pagePost, OutlinePost.class, entity -> this.postMapper.toOutlinePost(entity));
 
         Long postCounting = postRepository.getPostCountingByAccountId(profile.getId());
@@ -86,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
         Long followingCounting = followingRepository.getFollowingCountingByAccountId(profile.getId());
 
         long fromAccountId = getCurrentAccount().getId();
-        long toAccountId = accountId;
+        long toAccountId = requestAccount.getId();
         Optional<Following> following = this.followingRepository.findByIdComposition(fromAccountId, toAccountId);
 
         return new DetailProfile(profile, avatarUrl, postCounting, followerCounting, followingCounting, following.isPresent(), listOutlinePost);
@@ -97,6 +108,12 @@ public class AccountServiceImpl implements AccountService {
         Attachment avatarEntity = new Attachment(avatarDto.getActualName(), avatarDto.getUniqueName(), avatarDto.getUrl(), getCurrentAccount());
         attachmentRepository.save(avatarEntity);
         return avatarDto;
+    }
+
+    @Override
+    public PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
+        return this.getOutlinePostByAccountId(requestAccount.getId(), order, sort, pageSize, pageIndex);
     }
 
     @Override
