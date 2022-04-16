@@ -2,6 +2,8 @@ package com.vivacon.service.impl;
 
 import com.vivacon.common.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
+import com.vivacon.dto.request.RegistrationRequest;
+import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
@@ -18,11 +20,13 @@ import com.vivacon.repository.FollowingRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.security.UserDetailImpl;
 import com.vivacon.service.AccountService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NonUniqueResultException;
 import java.util.Optional;
 
 import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
@@ -108,6 +112,20 @@ public class AccountServiceImpl implements AccountService {
     public PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
         return this.getOutlinePost(requestAccount, order, sort, pageSize, pageIndex);
+    }
+
+    @Override
+    public AuthenticationResponse registerNewAccount(RegistrationRequest registrationRequest) {
+        if (registrationRequest.getMatchingPassword() != registrationRequest.getPassword()) {
+            throw new
+        }
+        try {
+            Account account = new Account();
+            accountRepository.save();
+        } catch (DataIntegrityViolationException e) {
+            throw new NonUniqueResultException("This email is already existing in our system");
+        }
+        return null;
     }
 
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {

@@ -23,6 +23,9 @@ public class Account extends AuditableEntity {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -32,6 +35,9 @@ public class Account extends AuditableEntity {
     @ManyToOne(targetEntity = Role.class)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Column(name = "bio", length = 50)
+    private String bio;
 
     @Column(name = "refresh_token", unique = true)
     private String refreshToken;
@@ -43,12 +49,10 @@ public class Account extends AuditableEntity {
 
     }
 
-    public Account(Long id, String username, String roleName) {
+    public Account(String fullName, String username, String email, String password, Role role) {
         this.id = id;
         this.username = username;
-        Role temporaryRole = new Role();
-        temporaryRole.setName(roleName);
-        this.role = temporaryRole;
+        this.role = role;
     }
 
     public long getId() {
@@ -105,5 +109,21 @@ public class Account extends AuditableEntity {
 
     public void setTokenExpiredDate(Instant expiryDate) {
         this.tokenExpiredDate = expiryDate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }

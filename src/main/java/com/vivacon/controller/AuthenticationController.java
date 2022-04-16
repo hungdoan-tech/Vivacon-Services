@@ -3,6 +3,7 @@ package com.vivacon.controller;
 import com.vivacon.common.JwtUtils;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.LoginRequest;
+import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.request.TokenRefreshRequest;
 import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.entity.Account;
@@ -100,5 +101,13 @@ public class AuthenticationController {
                     return new AuthenticationResponse(newAccessToken, requestRefreshToken);
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, Constants.REFRESH_TOKEN_NOT_STORE));
+    }
+
+    @ApiOperation(value = "Register new account")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
+            @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
+    public AuthenticationResponse registerNewAccount(@Valid RegistrationRequest registrationRequest) {
+        return accountService.registerNewAccount(registrationRequest);
     }
 }
