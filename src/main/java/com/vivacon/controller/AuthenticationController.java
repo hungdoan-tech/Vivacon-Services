@@ -107,7 +107,8 @@ public class AuthenticationController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
             @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
-    public AuthenticationResponse registerNewAccount(@Valid RegistrationRequest registrationRequest) {
+    @PostMapping("/registration")
+    public AuthenticationResponse registerNewAccount(@Valid @RequestBody RegistrationRequest registrationRequest) {
         return accountService.registerNewAccount(registrationRequest);
     }
 }

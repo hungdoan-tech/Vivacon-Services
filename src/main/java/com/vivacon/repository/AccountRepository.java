@@ -25,4 +25,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Modifying
     @Query("update Account a set a.refreshToken = null, a.tokenExpiredDate = null where a.username = :username")
     int setRefreshTokenToEmptyByUsername(@Param("username") String username);
+
+    Account findByEmail(String email);
 }

@@ -24,10 +24,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NonUniqueResultException;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 
@@ -44,16 +46,20 @@ public class AccountServiceImpl implements AccountService {
 
     private PostMapper postMapper;
 
+    private PasswordEncoder passwordEncoder;
+
     public AccountServiceImpl(AccountRepository accountRepository,
                               AttachmentRepository attachmentRepository,
                               PostRepository postRepository,
                               FollowingRepository followingRepository,
+                              PasswordEncoder passwordEncoder,
                               PostMapper postMapper) {
         this.accountRepository = accountRepository;
         this.attachmentRepository = attachmentRepository;
         this.postRepository = postRepository;
         this.followingRepository = followingRepository;
         this.postMapper = postMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -116,16 +122,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AuthenticationResponse registerNewAccount(RegistrationRequest registrationRequest) {
-        if (registrationRequest.getMatchingPassword() != registrationRequest.getPassword()) {
-            throw new
-        }
         try {
             Account account = new Account();
-            accountRepository.save();
+            account.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+            account.setEmail(registrationRequest.getEmail());
+            account.setUsername(registrationRequest.getFullName().replaceAll(" ", "") + UUID.randomUUID());
+            accountRepository.save(account);
+            return null;
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("This email is already existing in our system");
         }
-        return null;
     }
 
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {

@@ -23,6 +23,7 @@ public class Constants {
             "/idea512.png",
             API_V1 + "/login",
             API_V1 + "/refresh-token",
+            API_V1 + "/registration",
             "/login",
             "/checkHealth",
             "/"
