@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.NonUniqueResultException;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 
@@ -123,14 +122,17 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AuthenticationResponse registerNewAccount(RegistrationRequest registrationRequest) {
         try {
-            Account account = new Account();
-            account.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-            account.setEmail(registrationRequest.getEmail());
-            account.setUsername(registrationRequest.getFullName().replaceAll(" ", "") + UUID.randomUUID());
+            Account account = new Account.AccountBuilder()
+                    .fullName(registrationRequest.getFullName())
+                    .username()
+                    .email(registrationRequest.getEmail())
+                    .password(passwordEncoder.encode(registrationRequest.getPassword()))
+                    .role(null)
+                    .build();
             accountRepository.save(account);
             return null;
         } catch (DataIntegrityViolationException e) {
-            throw new NonUniqueResultException("This email is already existing in our system");
+            throw new NonUniqueResultException("Some fields in the request body are already existing in our system");
         }
     }
 

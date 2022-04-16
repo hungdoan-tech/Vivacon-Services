@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "account")
@@ -49,10 +50,13 @@ public class Account extends AuditableEntity {
 
     }
 
-    public Account(String fullName, String username, String email, String password, Role role) {
-        this.id = id;
+    public Account(String username, String email, String password, String fullName, Role role, String bio) {
         this.username = username;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
         this.role = role;
+        this.bio = bio;
     }
 
     public long getId() {
@@ -125,5 +129,61 @@ public class Account extends AuditableEntity {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public static class AccountBuilder {
+        private String username;
+
+        private String email;
+
+        private String password;
+
+        private String fullName;
+
+        private Role role;
+
+        private String bio;
+
+        public AccountBuilder username(String anyName) {
+            this.username = anyName.replaceAll(" ", "") + UUID.randomUUID();
+            return this;
+        }
+
+        public AccountBuilder username() {
+            if (this.fullName != null) {
+                return username(this.fullName);
+            }
+            this.username = UUID.randomUUID().toString();
+            return this;
+        }
+
+        public AccountBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public AccountBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public AccountBuilder fullName(String fullName) {
+            this.fullName = fullName;
+            return this;
+        }
+
+        public AccountBuilder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public AccountBuilder bio(String bio) {
+            this.bio = bio;
+            return this;
+        }
+
+        public Account build() {
+            return new Account(username, email, password, fullName, role, bio);
+        }
     }
 }
