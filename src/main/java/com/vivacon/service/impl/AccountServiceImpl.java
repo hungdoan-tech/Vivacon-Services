@@ -4,7 +4,6 @@ import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.RegistrationRequest;
-import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
@@ -28,8 +27,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import java.util.Optional;
@@ -75,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getCurrentAccount() {
-        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return accountRepository.findByUsernameIgnoreCase(principal.getUsername())
                 .orElseThrow(RecordNotFoundException::new);
     }
@@ -90,6 +91,24 @@ public class AccountServiceImpl implements AccountService {
     public Account getAccountByUsernameIgnoreCase(String username) {
         return this.accountRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(RecordNotFoundException::new);
+    }
+
+    @Override
+    public boolean checkUniqueUsername(String username) {
+        return accountRepository.findByUsernameIgnoreCase(username).isEmpty();
+    }
+
+    @Override
+    public boolean checkUniqueEmail(String email) {
+        return accountRepository.findByEmail(email).isEmpty();
+    }
+
+    @Override
+    @Transactional
+    public Account verifyAccount(String verificationCode) {
+        Account account = accountRepository.findByVerificationToken(verificationCode);
+        accountRepository.activateByVerificationToken(verificationCode);
+        return account;
     }
 
     @Override
@@ -132,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AuthenticationResponse registerNewAccount(RegistrationRequest registrationRequest) {
+    public Account registerNewAccount(RegistrationRequest registrationRequest) {
         try {
             Account account = new Account.AccountBuilder()
                     .fullName(registrationRequest.getFullName())
@@ -144,20 +163,10 @@ public class AccountServiceImpl implements AccountService {
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);
             applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount.getUsername()));
-            return null;
+            return savedAccount;
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("Some fields in the request body are already existing in our system");
         }
-    }
-
-    @Override
-    public boolean checkUniqueUsername(String username) {
-        return accountRepository.findByUsernameIgnoreCase(username).isEmpty();
-    }
-
-    @Override
-    public boolean checkUniqueEmail(String email) {
-        return accountRepository.findByEmail(email).isEmpty();
     }
 
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {

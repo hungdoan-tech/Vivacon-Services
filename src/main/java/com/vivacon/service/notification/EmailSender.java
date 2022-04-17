@@ -27,9 +27,9 @@ public class EmailSender implements NotificationProvider {
         String senderName = "Vivacon Social Media Company";
         String subject = "Please verify your registration";
         String content = "Dear [[name]],<br>"
-                + "Please click use the code below to verify your registration:<br>"
+                + "Please use the code below to verify your registration:<br>"
                 + "<h3>[[code]]</h3>"
-                + "Please notice that your code is unique and only take effect in 5 minutes"
+                + "Please notice that your code is unique and only take effect in <strong>5 minutes</strong><br>"
                 + "Thank you,<br>"
                 + "Vivacon Service.";
 

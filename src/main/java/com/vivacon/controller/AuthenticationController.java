@@ -59,6 +59,16 @@ public class AuthenticationController {
         this.accountService = accountService;
     }
 
+    private AuthenticationResponse generateAuthenticationResponse(String username, List<String> authorities) {
+        Account account = accountService.getAccountByUsernameIgnoreCase(username);
+        List<String> roles = authorities;
+
+        String accessToken = jwtTokenUtils.generateAccessToken(account, roles);
+        String refreshToken = refreshTokenService.createRefreshToken(username);
+
+        return new AuthenticationResponse(accessToken, refreshToken);
+    }
+
     /**
      * This endpoint is used to provide a username/password mechanism authentication
      *
@@ -72,16 +82,11 @@ public class AuthenticationController {
     @PostMapping("/login")
     public AuthenticationResponse login(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         UserDetails userDetail = (UserDetails) authenticate.getPrincipal();
-
-        Account account = accountService.getAccountByUsernameIgnoreCase(userDetail.getUsername());
-        List<String> roles = userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-
-        String accessToken = jwtTokenUtils.generateAccessToken(account, roles);
-        String refreshToken = refreshTokenService.createRefreshToken(userDetail.getUsername());
-
-        return new AuthenticationResponse(accessToken, refreshToken);
+        return generateAuthenticationResponse(userDetail.getUsername(),
+                userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
 
     /**
@@ -108,15 +113,6 @@ public class AuthenticationController {
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, Constants.REFRESH_TOKEN_NOT_STORE));
     }
 
-    @ApiOperation(value = "Register new account")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
-            @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
-    @PostMapping("/registration")
-    public AuthenticationResponse registerNewAccount(@Valid @RequestBody RegistrationRequest registrationRequest) {
-        return accountService.registerNewAccount(registrationRequest);
-    }
-
     @ApiOperation(value = "Check new unique username")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
@@ -138,5 +134,25 @@ public class AuthenticationController {
         return checkingResult
                 ? ResponseEntity.ok().body(null)
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+
+    @ApiOperation(value = "Register new account")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
+            @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
+    @PostMapping("/registration")
+    public ResponseEntity<Object> registerNewAccount(@Valid @RequestBody RegistrationRequest registrationRequest) {
+        accountService.registerNewAccount(registrationRequest);
+        return ResponseEntity.ok().body(null);
+    }
+
+    @ApiOperation(value = "Verify new account by verification code")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
+            @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
+    @PostMapping("/account/verify")
+    public AuthenticationResponse verifyAccount(@RequestParam(value = "code") String code) {
+        Account account = accountService.verifyAccount(code);
+        return generateAuthenticationResponse(account.getUsername(), Arrays.asList(account.getRole().toString()));
     }
 }

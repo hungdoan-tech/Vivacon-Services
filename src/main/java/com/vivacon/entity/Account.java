@@ -48,7 +48,7 @@ public class Account extends AuditableEntity {
     @Column(name = "token_expired_date")
     private Instant tokenExpiredDate;
 
-    @Column(name = "verification_token")
+    @Column(name = "verification_token", unique = true)
     private String verificationToken;
 
     @Column(name = "verification_expired_date")
@@ -174,7 +174,7 @@ public class Account extends AuditableEntity {
 
         private boolean active;
 
-        public AccountBuilder username(String anyName) {
+        public AccountBuilder username(String username) {
             this.username = username;
             return this;
         }
