@@ -5,7 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PasswordConstraintValidator implements ConstraintValidator<Password, String> {
+public class PasswordValidator implements ConstraintValidator<Password, String> {
 
     private String patternTemplate;
 

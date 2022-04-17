@@ -1,6 +1,6 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.PageableBuilder;
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.NewsfeedPost;

@@ -12,9 +12,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target(TYPE)
 @Retention(RUNTIME)
-@Constraint(validatedBy = FieldMatchingValidator.class)
+@Constraint(validatedBy = MatchingFieldsValidator.class)
 @Documented
-public @interface FieldMatching {
+public @interface MatchingFields {
 
     String message() default "The fields must match";
 
@@ -30,6 +30,6 @@ public @interface FieldMatching {
     @Retention(RUNTIME)
     @Documented
     @interface List {
-        FieldMatching[] value();
+        MatchingFields[] value();
     }
 }

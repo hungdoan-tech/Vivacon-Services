@@ -5,14 +5,14 @@ import javax.validation.ConstraintValidatorContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class FieldMatchingValidator implements ConstraintValidator<FieldMatching, Object> {
+public class MatchingFieldsValidator implements ConstraintValidator<MatchingFields, Object> {
 
     private String firstField;
 
     private String secondField;
 
     @Override
-    public void initialize(FieldMatching fieldMatching) {
+    public void initialize(MatchingFields fieldMatching) {
         this.firstField = fieldMatching.firstField();
         this.secondField = fieldMatching.secondField();
     }

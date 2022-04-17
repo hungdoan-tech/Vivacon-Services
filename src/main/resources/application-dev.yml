@@ -20,7 +20,7 @@ spring:
         format_sql: true
         schema_update:
           unique_constraint_strategy: RECREATE_QUIETLY
-        metadata_builder_contributor: com.vivacon.common.SQLFunctionsMetadataBuilderContributor
+        metadata_builder_contributor: com.vivacon.common.relational_db.SQLFunctionsMetadataBuilderContributor
   servlet:
     multipart:
       enabled: true
@@ -31,7 +31,7 @@ spring:
 vivacon:
   jwt:
     secret_salt: Vivacon@123456
-    jwt_validity: 3600000 # 1000 * 60 * 60 - 1 Hour
+    jwt_validity: 36000000 # 1000 * 60 * 60 - 1 Hour
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
   verification_token:

@@ -175,16 +175,18 @@ public class Account extends AuditableEntity {
         private boolean active;
 
         public AccountBuilder username(String anyName) {
-            this.username = anyName.replaceAll(" ", "") + UUID.randomUUID();
+            this.username = username;
             return this;
         }
 
         public AccountBuilder username() {
             if (this.fullName != null) {
-                return username(this.fullName);
+                this.username = fullName.replaceAll(" ", "") + UUID.randomUUID();
+                return this;
+            } else {
+                this.username = UUID.randomUUID().toString();
+                return this;
             }
-            this.username = UUID.randomUUID().toString();
-            return this;
         }
 
         public AccountBuilder email(String email) {

@@ -27,4 +27,8 @@ public interface AccountService {
     PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
     AuthenticationResponse registerNewAccount(RegistrationRequest registrationRequest);
+
+    boolean checkUniqueUsername(String username);
+
+    boolean checkUniqueEmail(String email);
 }

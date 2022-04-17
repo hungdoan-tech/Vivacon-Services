@@ -1,6 +1,6 @@
 package com.vivacon.mapper;
 
-import com.vivacon.common.AuditableHelper;
+import com.vivacon.common.utility.AuditableHelper;
 import com.vivacon.dto.response.CommentResponse;
 import com.vivacon.entity.Comment;
 import com.vivacon.repository.CommentRepository;

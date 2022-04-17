@@ -1,22 +1,28 @@
 package com.vivacon.dto.request;
 
-import com.vivacon.common.validation.EmailExistsConstraint;
-import com.vivacon.common.validation.FieldMatching;
+import com.vivacon.common.validation.MatchingFields;
 import com.vivacon.common.validation.Password;
+import com.vivacon.common.validation.UniqueEmail;
+import com.vivacon.common.validation.Username;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@FieldMatching.List({
-        @FieldMatching(firstField = "Password", secondField = "MatchingPassword", message = "The matching password is not correct !")
+@MatchingFields.List({
+        @MatchingFields(firstField = "Password", secondField = "MatchingPassword", message = "The matching password is not correct !")
 })
 public class RegistrationRequest {
 
     @NotEmpty
     @Email
-    @EmailExistsConstraint
+    @UniqueEmail
     private String email;
+
+    @NotEmpty
+    @Size(min = 3)
+    @Username
+    private String username;
 
     @NotEmpty
     @Size(min = 1, max = 50)
@@ -35,6 +41,14 @@ public class RegistrationRequest {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFullName() {

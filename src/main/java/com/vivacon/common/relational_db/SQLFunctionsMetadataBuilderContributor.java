@@ -1,4 +1,4 @@
-package com.vivacon.common;
+package com.vivacon.common.relational_db;
 
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.spi.MetadataBuilderContributor;

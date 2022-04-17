@@ -1,7 +1,7 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.PageableBuilder;
 import com.vivacon.common.enum_type.RoleType;
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.response.AuthenticationResponse;
@@ -136,7 +136,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             Account account = new Account.AccountBuilder()
                     .fullName(registrationRequest.getFullName())
-                    .username()
+                    .username(registrationRequest.getUsername())
                     .email(registrationRequest.getEmail())
                     .password(passwordEncoder.encode(registrationRequest.getPassword()))
                     .role(roleRepository.findByName(RoleType.USER.toString()))
@@ -148,6 +148,16 @@ public class AccountServiceImpl implements AccountService {
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("Some fields in the request body are already existing in our system");
         }
+    }
+
+    @Override
+    public boolean checkUniqueUsername(String username) {
+        return accountRepository.findByUsernameIgnoreCase(username).isEmpty();
+    }
+
+    @Override
+    public boolean checkUniqueEmail(String email) {
+        return accountRepository.findByEmail(email).isEmpty();
     }
 
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {

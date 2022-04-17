@@ -1,6 +1,6 @@
 package com.vivacon.mapper;
 
-import com.vivacon.common.AuditableHelper;
+import com.vivacon.common.utility.AuditableHelper;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.NewsfeedPost;

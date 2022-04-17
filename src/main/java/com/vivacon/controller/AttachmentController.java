@@ -1,6 +1,6 @@
 package com.vivacon.controller;
 
-import com.vivacon.common.FileUtils;
+import com.vivacon.common.utility.FileUtils;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.exception.UploadAttachmentException;
