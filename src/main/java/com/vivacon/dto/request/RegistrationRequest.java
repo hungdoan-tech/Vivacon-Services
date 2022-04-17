@@ -8,7 +8,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@FieldMatching(firstField = "Password", secondField = "MatchingPassword", message = "The matching password is not correct !")
+@FieldMatching.List({
+        @FieldMatching(firstField = "Password", secondField = "MatchingPassword", message = "The matching password is not correct !")
+})
 public class RegistrationRequest {
 
     @NotEmpty
@@ -25,7 +27,6 @@ public class RegistrationRequest {
     private String password;
 
     @NotEmpty
-    @Password
     private String matchingPassword;
 
     public String getEmail() {

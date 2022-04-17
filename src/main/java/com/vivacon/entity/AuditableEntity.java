@@ -23,6 +23,7 @@ public abstract class AuditableEntity {
     @Column(name = "last_modified_at")
     protected LocalDateTime lastModifiedAt;
 
+    @Column(nullable = false)
     protected Boolean active;
 
     protected AuditableEntity() {

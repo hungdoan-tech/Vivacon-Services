@@ -1,6 +1,7 @@
 package com.vivacon.service.impl;
 
 import com.vivacon.common.PageableBuilder;
+import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.response.AuthenticationResponse;
@@ -11,6 +12,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
+import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.mapper.PostMapper;
@@ -18,8 +20,10 @@ import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.repository.PostRepository;
+import com.vivacon.repository.RoleRepository;
 import com.vivacon.security.UserDetailImpl;
 import com.vivacon.service.AccountService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,22 +47,30 @@ public class AccountServiceImpl implements AccountService {
 
     private FollowingRepository followingRepository;
 
+    private RoleRepository roleRepository;
+
     private PostMapper postMapper;
 
     private PasswordEncoder passwordEncoder;
+
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               AttachmentRepository attachmentRepository,
                               PostRepository postRepository,
                               FollowingRepository followingRepository,
+                              RoleRepository roleRepository,
                               PasswordEncoder passwordEncoder,
-                              PostMapper postMapper) {
+                              PostMapper postMapper,
+                              ApplicationEventPublisher applicationEventPublisher) {
         this.accountRepository = accountRepository;
         this.attachmentRepository = attachmentRepository;
         this.postRepository = postRepository;
         this.followingRepository = followingRepository;
+        this.roleRepository = roleRepository;
         this.postMapper = postMapper;
         this.passwordEncoder = passwordEncoder;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -127,9 +139,11 @@ public class AccountServiceImpl implements AccountService {
                     .username()
                     .email(registrationRequest.getEmail())
                     .password(passwordEncoder.encode(registrationRequest.getPassword()))
-                    .role(null)
+                    .role(roleRepository.findByName(RoleType.USER.toString()))
+                    .active(false)
                     .build();
-            accountRepository.save(account);
+            Account savedAccount = accountRepository.saveAndFlush(account);
+            applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount.getUsername()));
             return null;
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("Some fields in the request body are already existing in our system");

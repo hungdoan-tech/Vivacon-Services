@@ -4,20 +4,20 @@ VALUES (1, 'ADMIN'),
 
 INSERT INTO "account" ("id", "full_name", "password", "refresh_token", "token_expired_date", "username", "role_id",
                        "created_at", "created_by_account_id", "last_modified_at", "last_modified_by_account_id", "bio",
-                       "email", "active")
+                       "email", "verification_token", verification_expired_date, "active")
 VALUES (1, 'Hung Doan', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi',
         'd68b5f73-d337-4959-8316-f6fdf603b36c', '2022-04-07 03:01:52.457204', 'hungdoan', 2,
-        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'hungdoan@gmail.com', true),
+        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'hungdoan@gmail.com', NULL, NULL, true),
        (2, 'Thao Van', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, 'thaovan', 2,
-        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'thaovan@gmail.com', true),
+        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'thaovan@gmail.com', NULL, NULL, true),
        (3, 'My Han', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, 'myhan', 2,
-        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'myhan@gmail.com', true),
+        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'myhan@gmail.com', NULL, NULL, true),
        (4, 'Thanh Thuy', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, 'thanhthuy', 2,
-        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'thanhthuy@gmail.com', true),
+        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'thanhthuy@gmail.com', NULL, NULL, true),
        (5, 'Truc Van', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, 'trucvan', 2,
-        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'trucvan@gmail.com', true),
+        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'trucvan@gmail.com', NULL, NULL, true),
        (6, 'Xuan Thuy', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, 'xuanthuy', 2,
-        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'xuanthuy@gmail.com', true);
+        '2022-04-01 23:56:20.061855', NULL, NULL, NULL, NULL, 'xuanthuy@gmail.com', NULL, NULL, true);
 SELECT setval('account_id_seq', (SELECT MAX(id) FROM account) + 1);
 
 INSERT INTO "post" ("id", "created_at", "last_modified_at", "caption", "privacy", "created_by_account_id",

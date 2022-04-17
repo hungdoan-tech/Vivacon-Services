@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -19,6 +20,7 @@ public class Account extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_id_generator")
     @SequenceGenerator(name = "account_id_generator", sequenceName = "account_id_seq", allocationSize = 1)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name = "username", unique = true, nullable = false)
@@ -46,21 +48,29 @@ public class Account extends AuditableEntity {
     @Column(name = "token_expired_date")
     private Instant tokenExpiredDate;
 
+    @Column(name = "verification_token")
+    private String verificationToken;
+
+    @Column(name = "verification_expired_date")
+    private Instant verificationExpiredDate;
+
     public Account() {
 
     }
 
-    public Account(String username, String email, String password, String fullName, Role role, String bio) {
+    public Account(String username, String email, String password, String fullName, Role role, String bio, boolean active) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.role = role;
         this.bio = bio;
+        this.active = active;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public long getId() {
-        return id;
+    public Long getId() {
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -131,6 +141,22 @@ public class Account extends AuditableEntity {
         this.bio = bio;
     }
 
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public Instant getVerificationExpiredDate() {
+        return verificationExpiredDate;
+    }
+
+    public void setVerificationExpiredDate(Instant verificationExpiredDate) {
+        this.verificationExpiredDate = verificationExpiredDate;
+    }
+
     public static class AccountBuilder {
         private String username;
 
@@ -143,6 +169,10 @@ public class Account extends AuditableEntity {
         private Role role;
 
         private String bio;
+
+        private LocalDateTime createdAt;
+
+        private boolean active;
 
         public AccountBuilder username(String anyName) {
             this.username = anyName.replaceAll(" ", "") + UUID.randomUUID();
@@ -182,8 +212,13 @@ public class Account extends AuditableEntity {
             return this;
         }
 
+        public AccountBuilder active(boolean active) {
+            this.active = active;
+            return this;
+        }
+
         public Account build() {
-            return new Account(username, email, password, fullName, role, bio);
+            return new Account(username, email, password, fullName, role, bio, active);
         }
     }
 }

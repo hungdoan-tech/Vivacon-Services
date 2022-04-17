@@ -54,7 +54,7 @@ public class Constants {
     public static final String BAD_REQUEST_COMMON_MESSAGE = "Invalid field values have been provided";
     public static final String CREATE_SUCCESSFULLY = "Created successfully";
     public static final String DELETE_SUCCESSFULLY = "Delete Successfully";
-    public static final String UPDATE_SUCCESSFULLY = "Update innovation successfully";
+    public static final String UPDATE_SUCCESSFULLY = "Update successfully";
     public static final String EMPTY_FILE_UPLOAD_MESSAGE = "The file which has been uploaded is empty";
     public static final String ERROR_WHEN_UPLOAD_TO_S3 = " encounter some error when upload to S3!";
     public static final String RECORD_NOT_FOUND = "The request resource is not found ! Please check your bad request !";
