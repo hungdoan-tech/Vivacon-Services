@@ -11,15 +11,10 @@ import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.CommentService;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
@@ -36,7 +31,6 @@ public class CommentServiceImpl implements CommentService {
         this.commentMapper = commentMapper;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
         Post post = postRepository.findByPostId(commentRequest.getPostId());
@@ -47,12 +41,11 @@ public class CommentServiceImpl implements CommentService {
         comment.setPost(post);
         comment.setParentComment(parentComment);
         Comment savedComment = commentRepository.save(comment);
-        
+
         return commentMapper.toResponse(savedComment);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean deleteComment(Long commentId) {
         this.commentRepository.deleteById(commentId);
         return true;

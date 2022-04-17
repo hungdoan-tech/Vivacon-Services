@@ -1,14 +1,18 @@
 package com.vivacon.dto.request;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class CommentRequest {
 
-    @NotBlank
+    @NotEmpty
+    @Size(min = 1, max = 1200)
     private String content;
-
+    
     private Long parentCommentId;
 
+    @NotNull
     private Long postId;
 
     public CommentRequest() {
