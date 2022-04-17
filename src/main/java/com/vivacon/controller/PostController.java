@@ -3,6 +3,7 @@ package com.vivacon.controller;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
+import com.vivacon.dto.response.DetailPost;
 import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.dto.sorting_filtering.PostFilter;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,4 +72,40 @@ public class PostController {
         PostFilter innovationFilter = new PostFilter(authors, statuses, own.orElse(false), true);
         return postService.getAll(innovationFilter, keyword, order, sort, pageSize, pageIndex);
     }
+
+    @ApiOperation(value = "Get detail post")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = FETCHING_SUCCESSFULLY),
+            @ApiResponse(code = 400, message = BAD_REQUEST_COMMON_MESSAGE)})
+    @GetMapping(value = "/{id}")
+    public DetailPost getDetailPost(
+            @RequestParam(value = "_order", required = false) Optional<String> order,
+            @RequestParam(value = "_sort", required = false) Optional<String> sort,
+            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
+            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex,
+            @PathVariable(name = "id") Long postId) {
+        return postService.getDetailPost(order, sort, pageSize, pageIndex, postId);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
