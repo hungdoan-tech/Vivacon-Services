@@ -43,10 +43,14 @@ public class AccountMapper {
     public AccountResponse toResponse(Account currentAccount, Object object) {
         Account account = (Account) object;
         AccountResponse responseAccount = this.mapper.map(account, AccountResponse.class);
+
         Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
         responseAccount.setAvatar(avatarUrl);
-        followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
+
+        Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
+        responseAccount.setFollowing(following.isPresent());
+        
         return responseAccount;
     }
 
