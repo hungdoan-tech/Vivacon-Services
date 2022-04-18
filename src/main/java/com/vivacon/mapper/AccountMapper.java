@@ -10,7 +10,6 @@ import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.security.UserDetailImpl;
-import com.vivacon.repository.AttachmentRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +40,17 @@ public class AccountMapper {
         this.accountRepository = accountRepository;
     }
 
-    public AccountResponse toResponse(Object object) {
+    public AccountResponse toResponse(Account currentAccount, Object object) {
         Account account = (Account) object;
         AccountResponse responseAccount = this.mapper.map(account, AccountResponse.class);
-         Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
+
+        Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
         responseAccount.setAvatar(avatarUrl);
+
+        Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
+        responseAccount.setFollowing(following.isPresent());
+        
         return responseAccount;
     }
 
@@ -72,6 +76,6 @@ public class AccountMapper {
             LOGGER.info(ex.getMessage());
             return null;
         }
-       
+
     }
 }

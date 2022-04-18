@@ -55,10 +55,13 @@ public class AuditableHelper {
     }
 
     public AuditableResponse setupDisplayAuditableRelatedToPersonFields(AuditableEntity auditableEntity, AuditableResponse auditableResponse) {
-        AccountResponse createdBy = this.accountMapper.toResponse(auditableEntity.getCreatedBy());
+        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
+                .orElseThrow(RecordNotFoundException::new);
+        AccountResponse createdBy = this.accountMapper.toResponse(currentAccount, auditableEntity.getCreatedBy());
         auditableResponse.setCreatedBy(createdBy);
         if (auditableEntity.getLastModifiedBy() != null) {
-            AccountResponse updatedBy = this.accountMapper.toResponse(auditableEntity.getLastModifiedBy());
+            AccountResponse updatedBy = this.accountMapper.toResponse(currentAccount, auditableEntity.getLastModifiedBy());
             auditableResponse.setLastModifiedBy(updatedBy);
         }
         return auditableResponse;
