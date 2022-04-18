@@ -64,16 +64,16 @@ public class FollowingServiceImpl implements FollowingService {
     }
 
     @Override
-    public PageDTO<AccountResponse> findFollower(Long fromAccount, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public PageDTO<AccountResponse> findFollower(Long fromAccountId, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Account.class);
-        Page<Account> listFollower = this.followingRepository.findFollower(accountService.getCurrentAccount().getId(), pageable);
+        Page<Account> listFollower = this.followingRepository.findFollower(fromAccountId, pageable);
         return PageDTOMapper.toPageDTO(listFollower, AccountResponse.class, account -> accountMapper.toResponse(account));
     }
 
     @Override
-    public PageDTO<AccountResponse> findFollowing(Long fromAccount, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public PageDTO<AccountResponse> findFollowing(Long fromAccountId, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Account.class);
-        Page<Account> listFollower = this.followingRepository.findFollowing(accountService.getCurrentAccount().getId(), pageable);
+        Page<Account> listFollower = this.followingRepository.findFollowing(fromAccountId, pageable);
         return PageDTOMapper.toPageDTO(listFollower, AccountResponse.class, account -> accountMapper.toResponse(account));
     }
 }
