@@ -1,6 +1,5 @@
 package com.vivacon.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vivacon.dto.response.AccountResponse;
 
 import java.time.LocalDateTime;
@@ -16,9 +15,6 @@ public abstract class AuditableResponse {
     private AccountResponse lastModifiedBy;
 
     private Boolean active;
-
-    @JsonProperty(value = "isFollowing")
-    private Boolean isFollowing;
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -58,13 +54,5 @@ public abstract class AuditableResponse {
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public Boolean getFollowing() {
-        return isFollowing;
-    }
-
-    public void setFollowing(Boolean following) {
-        isFollowing = following;
     }
 }

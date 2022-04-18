@@ -1,5 +1,7 @@
 package com.vivacon.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AccountResponse {
 
     private Long id;
@@ -9,6 +11,9 @@ public class AccountResponse {
     private String username;
 
     private String avatar;
+
+    @JsonProperty(value = "isFollowing")
+    private Boolean isFollowing;
 
     public String getFullName() {
         return fullName;
@@ -40,5 +45,13 @@ public class AccountResponse {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Boolean getFollowing() {
+        return isFollowing;
+    }
+
+    public void setFollowing(Boolean following) {
+        isFollowing = following;
     }
 }
