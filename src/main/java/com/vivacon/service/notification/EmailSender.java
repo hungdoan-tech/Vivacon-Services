@@ -21,27 +21,17 @@ public class EmailSender implements NotificationProvider {
     }
 
     @Override
-    public void sendVerificationCode(Account account, String code) {
-        String toAddress = account.getEmail();
+    public void sendNotification(Account recipient, String title, String content) {
+        String toAddress = recipient.getEmail();
         String fromAddress = "vivacon.service@gmail.com";
         String senderName = "Vivacon Social Media Company";
-        String subject = "Please verify your registration";
-        String content = "Dear [[name]],<br>"
-                + "Please use the code below to verify your registration:<br>"
-                + "<h3>[[code]]</h3>"
-                + "Please notice that your code is unique and only take effect in <strong>5 minutes</strong><br>"
-                + "Thank you,<br>"
-                + "Vivacon Service.";
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-
-        content = content.replace("[[name]]", account.getFullName());
-        content = content.replace("[[code]]", code);
         try {
             helper.setFrom(fromAddress, senderName);
             helper.setTo(toAddress);
-            helper.setSubject(subject);
+            helper.setSubject(title);
             helper.setText(content, true);
             mailSender.send(message);
         } catch (MessagingException e) {

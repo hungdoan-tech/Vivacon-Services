@@ -4,5 +4,5 @@ import com.vivacon.entity.Account;
 
 public interface NotificationProvider {
 
-    void sendVerificationCode(Account account, String code);
+    void sendNotification(Account recipient, String title, String content);
 }

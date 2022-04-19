@@ -32,4 +32,6 @@ public interface AccountService {
     boolean checkUniqueEmail(String email);
 
     Account verifyAccount(String verificationCode);
+
+    Account resendVerificationToken(String email);
 }

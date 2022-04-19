@@ -3,11 +3,11 @@ package com.vivacon.event;
 import com.vivacon.entity.Account;
 import org.springframework.context.ApplicationEvent;
 
-public class RegistrationCompleteEvent extends ApplicationEvent {
+public class GeneratingVerificationTokenEvent extends ApplicationEvent {
 
     private Account account;
 
-    public RegistrationCompleteEvent(Object source, Account account) {
+    public GeneratingVerificationTokenEvent(Object source, Account account) {
         super(source);
         this.account = account;
     }

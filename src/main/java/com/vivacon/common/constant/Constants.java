@@ -25,6 +25,7 @@ public class Constants {
             API_V1 + "/refresh-token",
             API_V1 + "/registration",
             API_V1 + "/account/verify",
+            API_V1 + "/account/verification_token",
             "/login",
             "/checkHealth",
             "/"

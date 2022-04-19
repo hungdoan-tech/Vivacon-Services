@@ -11,6 +11,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
+import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.VerificationTokenException;
@@ -118,6 +119,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Account resendVerificationToken(String email) {
+        Optional<Account> account = accountRepository.findByEmail(email);
+        if (account.isPresent() && account.get().getActive() == false) {
+            applicationEventPublisher.publishEvent(new GeneratingVerificationTokenEvent(this, account.get()));
+            return account.get();
+        } else {
+            throw new RecordNotFoundException("The request verification token is invalid because of wrong email");
+        }
+    }
+
+    @Override
     public DetailProfile getProfileByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
         return this.getProfile(requestAccount, order, sort, pageSize, pageIndex);
@@ -168,7 +180,7 @@ public class AccountServiceImpl implements AccountService {
                     .active(false)
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);
-            applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount.getUsername()));
+            applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount));
             return savedAccount;
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("Some fields in the request body are already existing in our system");
