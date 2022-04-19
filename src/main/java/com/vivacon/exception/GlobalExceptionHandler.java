@@ -77,6 +77,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseDTO<>(HttpStatus.UNAUTHORIZED, ex.getMessage(), null);
     }
 
+    @ExceptionHandler(value = VerificationTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseDTO<Object> handleTokenRefreshException(VerificationTokenException ex) {
+        return new ResponseDTO<>(HttpStatus.UNAUTHORIZED, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(value = RecordNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<Object> handleRecordNotFoundException(RecordNotFoundException ex) {

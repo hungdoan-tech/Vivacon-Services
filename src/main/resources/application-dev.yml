@@ -35,7 +35,7 @@ vivacon:
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
   verification_token:
-    expiration: 18000 # 5 * 60 * 60 - 5 minutes
+    expiration: 300000 # 10 * 60 * 1000 - 10 minutes
   email:
     address: vivacon.service@gmail.com
     password: Admin123*

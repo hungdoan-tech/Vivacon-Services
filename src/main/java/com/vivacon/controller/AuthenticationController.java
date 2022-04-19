@@ -150,7 +150,7 @@ public class AuthenticationController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
             @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
-    @PostMapping("/account/verify")
+    @GetMapping("/account/verify")
     public AuthenticationResponse verifyAccount(@RequestParam(value = "code") String code) {
         Account account = accountService.verifyAccount(code);
         return generateAuthenticationResponse(account.getUsername(), Arrays.asList(account.getRole().toString()));

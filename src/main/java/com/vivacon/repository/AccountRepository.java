@@ -31,6 +31,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Account a set a.active = true, a.verificationToken = null, a.verificationExpiredDate = null where a.verificationToken = :token")
     int activateByVerificationToken(@Param("token") String token);
-    
-    Account findByVerificationToken(String token);
+
+    Optional<Account> findByVerificationToken(String token);
 }

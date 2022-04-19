@@ -13,6 +13,7 @@ import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
 import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.exception.RecordNotFoundException;
+import com.vivacon.exception.VerificationTokenException;
 import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
+import java.time.Instant;
 import java.util.Optional;
 
 import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
@@ -106,9 +108,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public Account verifyAccount(String verificationCode) {
-        Account account = accountRepository.findByVerificationToken(verificationCode);
-        accountRepository.activateByVerificationToken(verificationCode);
-        return account;
+        Optional<Account> account = accountRepository.findByVerificationToken(verificationCode);
+        if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
+            accountRepository.activateByVerificationToken(verificationCode);
+            return account.get();
+        } else {
+            throw new VerificationTokenException(account.get().getRefreshToken(), "Verification token was expired. Please make a new sign in request");
+        }
     }
 
     @Override
