@@ -12,8 +12,7 @@ public class AccountResponse {
 
     private String avatar;
 
-    @JsonProperty(value = "isFollowing")
-    private Boolean isFollowing;
+    private boolean isFollowing;
 
     public String getFullName() {
         return fullName;
@@ -47,11 +46,12 @@ public class AccountResponse {
         this.username = username;
     }
 
-    public Boolean getFollowing() {
+    @JsonProperty("isFollowing")
+    public boolean isFollowing() {
         return isFollowing;
     }
 
-    public void setFollowing(Boolean following) {
+    public void setFollowing(boolean following) {
         isFollowing = following;
     }
 }
