@@ -1,6 +1,6 @@
 package com.vivacon.controller;
 
-import com.vivacon.common.FileUtils;
+import com.vivacon.common.utility.FileUtils;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.exception.UploadAttachmentException;
@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.List;
 
-@Api(value = "Innovation Controller")
+@Api(value = "Attachment Controller")
 @RestController
 public class AttachmentController {
 
@@ -29,7 +29,7 @@ public class AttachmentController {
         this.awsS3Service = awsS3Service;
     }
 
-    @ApiOperation(value = "Upload attachment which relate to innovation to the cloud storage")
+    @ApiOperation(value = "Upload attachment to the cloud storage")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
             @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})
@@ -41,7 +41,7 @@ public class AttachmentController {
         throw new UploadAttachmentException(Constants.EMPTY_FILE_UPLOAD_MESSAGE);
     }
 
-    @ApiOperation(value = "Upload attachments which relate to innovation to the cloud storage")
+    @ApiOperation(value = "Upload attachment to the cloud storage")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
             @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})

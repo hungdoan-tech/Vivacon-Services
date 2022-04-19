@@ -1,4 +1,4 @@
-package com.vivacon.common;
+package com.vivacon.common.utility;
 
 import com.vivacon.exception.NotValidSortingFieldName;
 import org.springframework.data.domain.PageRequest;

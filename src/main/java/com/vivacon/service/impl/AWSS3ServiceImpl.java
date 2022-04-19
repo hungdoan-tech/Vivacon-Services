@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.vivacon.common.FileUtils;
+import com.vivacon.common.utility.FileUtils;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.exception.UploadAttachmentException;
 import com.vivacon.service.AWSS3Service;

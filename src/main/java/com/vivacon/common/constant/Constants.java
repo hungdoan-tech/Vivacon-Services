@@ -23,6 +23,9 @@ public class Constants {
             "/idea512.png",
             API_V1 + "/login",
             API_V1 + "/refresh-token",
+            API_V1 + "/registration",
+            API_V1 + "/account/verify",
+            API_V1 + "/account/verification_token",
             "/login",
             "/checkHealth",
             "/"
@@ -36,7 +39,7 @@ public class Constants {
     public static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8";
     public static final List<String> IMAGE_EXTENSIONS = List.of(".png", ".jpeg", ".jpg", ".svg", ".gif");
     public static final String OBJECT_NULL_CANT_CONVERT_TO_JSON = "Object is null and can not be used to convert to JSON";
-    public static final String UNAUTHORIZED_REASON = "Unauthorized error: {}";
+    public static final String UNAUTHORIZED_REASON = "Catch exceptions through filters in AuthenticationEntryPoint error: {}";
     public static final String ERROR_MESSAGE_ATTRIBUTE_HTTP_REQUEST = "errorMessage";
     public static final String AUTHORIZATION_BEARER = "Bearer ";
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -53,13 +56,14 @@ public class Constants {
     public static final String BAD_REQUEST_COMMON_MESSAGE = "Invalid field values have been provided";
     public static final String CREATE_SUCCESSFULLY = "Created successfully";
     public static final String DELETE_SUCCESSFULLY = "Delete Successfully";
-    public static final String UPDATE_SUCCESSFULLY = "Update innovation successfully";
+    public static final String UPDATE_SUCCESSFULLY = "Update successfully";
     public static final String EMPTY_FILE_UPLOAD_MESSAGE = "The file which has been uploaded is empty";
     public static final String ERROR_WHEN_UPLOAD_TO_S3 = " encounter some error when upload to S3!";
     public static final String RECORD_NOT_FOUND = "The request resource is not found ! Please check your bad request !";
     public static final String NOT_VALID_IMAGE_EXTENSION = "This received image has a invalid extension type";
     public static final String FETCHING_SUCCESSFULLY = "Fetching successfully";
     public static final String BLANK_AVATAR_URL = "https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-13T21%3A17%3A26.245336500_Blank-Avatar.jpg";
+    public static final String ACCOUNT_STATUS_EXCEPTION_MESSAGE_KEY = "accountStatusMessageKey";
 
     private Constants() {
 

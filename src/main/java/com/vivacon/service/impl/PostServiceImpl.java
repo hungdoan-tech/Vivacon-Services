@@ -1,6 +1,6 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.PageableBuilder;
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.DetailPost;
@@ -76,9 +76,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PageDTO<NewsfeedPost> getAll(PostFilter innovationFilter, Optional<String> keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public PageDTO<NewsfeedPost> getAll(PostFilter postFilter, Optional<String> keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(innovationFilter, keyword);
+        Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(postFilter, keyword);
         Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
         return PageDTOMapper.toPageDTO(entityPage, NewsfeedPost.class, entity -> this.postMapper.toNewsfeedPost(entity));
     }

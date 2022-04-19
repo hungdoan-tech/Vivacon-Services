@@ -32,12 +32,12 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private JWTRequestFilter jwtRequestFilter;
 
-    private AuthenticationEntryPointHandler authenticationEntryPointHandler;
+    private AuthenticationEntryPointImpl authenticationEntryPointHandler;
 
     @Autowired
     public HTTPSecurityConfiguration(UserDetailServiceImpl userDetailsService,
                                      JWTRequestFilter jwtRequestFilter,
-                                     AuthenticationEntryPointHandler authenticationEntryPointHandler) {
+                                     AuthenticationEntryPointImpl authenticationEntryPointHandler) {
         this.userDetailsService = userDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;

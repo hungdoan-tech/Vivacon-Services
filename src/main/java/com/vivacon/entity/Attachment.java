@@ -79,8 +79,8 @@ public class Attachment {
         return post;
     }
 
-    public void setPost(Post innovation) {
-        this.post = innovation;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public String getActualName() {

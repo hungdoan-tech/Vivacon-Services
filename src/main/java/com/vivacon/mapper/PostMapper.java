@@ -1,6 +1,6 @@
 package com.vivacon.mapper;
 
-import com.vivacon.common.AuditableHelper;
+import com.vivacon.common.utility.AuditableHelper;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.CommentResponse;
@@ -12,7 +12,6 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.AuditableEntity;
 import com.vivacon.entity.Comment;
-import com.vivacon.entity.Following;
 import com.vivacon.entity.Like;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
@@ -136,9 +135,6 @@ public class PostMapper {
             Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
             detailPost.setLikeCount(likeCount);
             detailPost.setLiked(like.isPresent());
-
-            Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), post.getCreatedBy().getId());
-            detailPost.setFollowing(following.isPresent());
 
             return detailPost;
         } catch (ClassCastException ex) {

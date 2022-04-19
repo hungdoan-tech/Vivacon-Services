@@ -54,7 +54,7 @@ public class PostController {
         return this.postService.createPost(postRequest);
     }
 
-    @ApiOperation(value = "Get list innovation/improvement/idea based on criteria")
+    @ApiOperation(value = "Get list post based on criteria")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = FETCHING_SUCCESSFULLY),
             @ApiResponse(code = 400, message = BAD_REQUEST_COMMON_MESSAGE)})
@@ -69,8 +69,8 @@ public class PostController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
 
-        PostFilter innovationFilter = new PostFilter(authors, statuses, own.orElse(false), true);
-        return postService.getAll(innovationFilter, keyword, order, sort, pageSize, pageIndex);
+        PostFilter postFilter = new PostFilter(authors, statuses, own.orElse(false), true);
+        return postService.getAll(postFilter, keyword, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get detail post")

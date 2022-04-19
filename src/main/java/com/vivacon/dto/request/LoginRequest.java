@@ -1,6 +1,7 @@
 package com.vivacon.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class LoginRequest {
 
@@ -9,6 +10,9 @@ public class LoginRequest {
 
     @NotBlank
     private String password;
+
+    @Size(min = 10, max = 50)
+    private String silly;
 
     public LoginRequest() {
 

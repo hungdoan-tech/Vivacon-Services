@@ -22,7 +22,15 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findByRefreshToken(String token);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Account a set a.refreshToken = null, a.tokenExpiredDate = null where a.username = :username")
     int setRefreshTokenToEmptyByUsername(@Param("username") String username);
+
+    Optional<Account> findByEmail(String email);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Account a set a.active = true, a.verificationToken = null, a.verificationExpiredDate = null where a.verificationToken = :token")
+    int activateByVerificationToken(@Param("token") String token);
+
+    Optional<Account> findByVerificationToken(String token);
 }

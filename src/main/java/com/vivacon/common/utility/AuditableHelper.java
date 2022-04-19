@@ -1,4 +1,4 @@
-package com.vivacon.common;
+package com.vivacon.common.utility;
 
 import com.vivacon.dto.AuditableResponse;
 import com.vivacon.dto.response.AccountResponse;
