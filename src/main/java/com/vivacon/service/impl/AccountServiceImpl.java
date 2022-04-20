@@ -3,6 +3,7 @@ package com.vivacon.service.impl;
 import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
+import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
@@ -121,11 +122,23 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account resendVerificationToken(String email) {
         Optional<Account> account = accountRepository.findByEmail(email);
-        if (account.isPresent() && account.get().getActive() == false) {
+        if (account.isPresent()) {
             applicationEventPublisher.publishEvent(new GeneratingVerificationTokenEvent(this, account.get()));
             return account.get();
         } else {
             throw new RecordNotFoundException("The request verification token is invalid because of wrong email");
+        }
+    }
+
+    @Override
+    public Account changePassword(ForgotPasswordRequest forgotPasswordRequest) {
+        Optional<Account> account = accountRepository.findByVerificationToken(forgotPasswordRequest.getVerificationToken());
+        String requestOldPassword = passwordEncoder.encode(forgotPasswordRequest.getOldPassword());
+        if (account.isPresent() && (requestOldPassword == account.get().getPassword())) {
+            account.get().setPassword(passwordEncoder.encode(forgotPasswordRequest.getNewPassword()));
+            return accountRepository.saveAndFlush(account.get());
+        } else {
+            throw new VerificationTokenException(forgotPasswordRequest.getVerificationToken(), "The request verification token is invalid");
         }
     }
 

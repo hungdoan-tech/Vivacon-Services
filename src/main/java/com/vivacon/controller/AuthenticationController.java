@@ -3,6 +3,7 @@ package com.vivacon.controller;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.common.utility.JwtUtils;
 import com.vivacon.common.validation.UniqueEmail;
+import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.LoginRequest;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.request.TokenRefreshRequest;
@@ -167,6 +168,16 @@ public class AuthenticationController {
     @PutMapping("/account/verification_token")
     public ResponseEntity<Object> resendVerificationToken(@Email @UniqueEmail @RequestBody String email) {
         accountService.resendVerificationToken(email);
+        return ResponseEntity.ok().body(null);
+    }
+
+    @ApiOperation(value = "Resend verification token")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = Constants.RETURN_NEW_ACCESS_TOKEN),
+            @ApiResponse(code = 401, message = Constants.REFRESH_TOKEN_NOT_STORE)})
+    @PutMapping("/account/password")
+    public ResponseEntity<Object> changePassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        accountService.changePassword(forgotPasswordRequest);
         return ResponseEntity.ok().body(null);
     }
 }
