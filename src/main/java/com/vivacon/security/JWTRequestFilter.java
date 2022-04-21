@@ -57,7 +57,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         AccountStatusUserDetailsChecker statusUserDetailsChecker = new AccountStatusUserDetailsChecker();
         String requestURI = request.getRequestURI();
 
-        if (WHITELIST_URL_REGEX.stream().noneMatch(url -> requestURI.matches(url)) &&
+        if (WHITELIST_URL_REGEX.stream().noneMatch(requestURI::matches) &&
                 URL_WHITELIST.stream().noneMatch(url -> url.equals(requestURI))) {
             try {
                 String token = getTokenFromRequest(request);

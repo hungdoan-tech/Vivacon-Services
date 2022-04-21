@@ -5,7 +5,7 @@ import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.service.AccountService;
+import com.vivacon.service.ProfileService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +22,10 @@ import java.util.Optional;
 @RequestMapping(value = Constants.API_V1)
 public class ProfileController {
 
-    private AccountService accountService;
+    private ProfileService profileService;
 
-    public ProfileController(AccountService accountService) {
-        this.accountService = accountService;
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
     }
 
     @ApiOperation(value = "Get list following of an account")
@@ -36,7 +36,7 @@ public class ProfileController {
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return accountService.getProfileByUsername(username, order, sort, pageSize, pageIndex);
+        return profileService.getProfileByUsername(username, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get list outlinePost of an account")
@@ -47,7 +47,7 @@ public class ProfileController {
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return accountService.getOutlinePostByUsername(username, order, sort, pageSize, pageIndex);
+        return profileService.getOutlinePostByUsername(username, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get the list of the profile avatar of an specific account")
@@ -57,12 +57,12 @@ public class ProfileController {
                                                         @RequestParam(value = "_sort", required = false) Optional<String> sort,
                                                         @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
                                                         @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return accountService.getProfileAvatarsByAccountId(accountId, order, sort, pageSize, pageIndex);
+        return profileService.getProfileAvatarsByAccountId(accountId, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Change the profile avatar")
     @PostMapping("/profile/avatar")
     public AttachmentDTO changeProfileAvatar(@Valid @RequestBody AttachmentDTO avatar) {
-        return accountService.changeProfileAvatar(avatar);
+        return profileService.changeProfileAvatar(avatar);
     }
 }

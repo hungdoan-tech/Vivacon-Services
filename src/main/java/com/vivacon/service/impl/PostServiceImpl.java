@@ -1,7 +1,7 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.common.enum_type.Privacy;
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.DetailPost;
 import com.vivacon.dto.response.NewsfeedPost;
@@ -11,6 +11,7 @@ import com.vivacon.dto.sorting_filtering.PostSpecification;
 import com.vivacon.dto.sorting_filtering.QueryCriteria;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
+import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageDTOMapper;
@@ -84,8 +85,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public DetailPost getDetailPost(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
-        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
+    public DetailPost getDetailPost(Long postId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
         Post post = postRepository.findById(postId).orElse(null);
         return this.postMapper.toDetailPost(post, pageable);
     }

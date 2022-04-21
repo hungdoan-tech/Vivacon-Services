@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEvent;
 
 public class RegistrationCompleteEvent extends ApplicationEvent {
 
-    private Account account;
+    private transient Account account;
 
     public RegistrationCompleteEvent(Object source, Account account) {
         super(source);

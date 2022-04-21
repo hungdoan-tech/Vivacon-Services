@@ -25,7 +25,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -135,28 +134,28 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "Verify new account by verification token")
-    @PostMapping("/account/verification_token")
+    @PostMapping("/account/verify")
     public AuthenticationResponse verifyAccount(@NotEmpty @RequestBody String token) {
         Account account = accountService.verifyAccount(token);
         return generateAuthenticationResponse(account.getUsername(), Arrays.asList(account.getRole().toString()));
     }
 
     @ApiOperation(value = "Resend verification token")
-    @PutMapping("/account/verification_token")
+    @PostMapping("/account/verification_token")
     public ResponseEntity<Object> resendVerificationToken(@Email @UniqueEmail @RequestBody String email) {
         accountService.resendVerificationToken(email);
         return ResponseEntity.ok().body(null);
     }
 
-    @ApiOperation(value = "Resend verification token")
-    @PostMapping("/account/password")
+    @ApiOperation(value = "Forgot password")
+    @PostMapping("/account/password/forgot")
     public ResponseEntity<Object> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         accountService.forgotPassword(forgotPasswordRequest);
         return ResponseEntity.ok().body(null);
     }
 
-    @ApiOperation(value = "Resend verification token")
-    @PutMapping("/account/password")
+    @ApiOperation(value = "Change authenticated account password")
+    @PostMapping("/account/password/change")
     public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         accountService.changePassword(changePasswordRequest);
         return ResponseEntity.ok().body(null);

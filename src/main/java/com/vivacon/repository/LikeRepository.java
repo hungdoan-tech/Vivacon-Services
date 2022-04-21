@@ -15,18 +15,16 @@ import java.util.Optional;
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
-    @Query("SELECT liking.account, liking.id " +
-            "FROM Like liking " +
-            "WHERE liking.post.id = :postId")
-    Page<Account> findAllLikeByAccount(@Param("postId") Long postId, Pageable pageable);
-
     @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM Like liking WHERE liking.id = :id")
-    void unlikeById(@Param("id") long id);
+    @Query("DELETE FROM Like liking WHERE liking.post.id = :postId and liking.account.id = :accountId")
+    void unlikeById(@Param("accountId") long accountId, @Param("postId") long postId);
 
     @Query("SELECT COUNT(liking.id) FROM Like liking WHERE liking.post.id= :post_id")
     Long getCountingLike(@Param(value = "post_id") Long postId);
 
     @Query("SELECT liking FROM Like liking WHERE liking.account.id = :accountId AND liking.post.id = :postId")
     Optional<Like> findByIdComposition(@Param("accountId") long accountId, @Param("postId") long postId);
+
+    @Query("SELECT liking.account, liking.id FROM Like liking WHERE liking.post.id = :postId")
+    Page<Account> findAllLikeByPostId(@Param("postId") Long postId, Pageable pageable);
 }

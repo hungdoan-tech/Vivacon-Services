@@ -14,13 +14,13 @@ import java.util.Optional;
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
 
-    List<Attachment> findByPost_Id(Long postId);
+    List<Attachment> findByPostId(Long postId);
 
-    Page<Attachment> findByProfile_Id(Long profileId, Pageable pageable);
+    Page<Attachment> findByProfileId(Long profileId, Pageable pageable);
 
-    Optional<Attachment> findFirstByProfile_IdOrderByTimestampDesc(Long profileId);
+    Optional<Attachment> findFirstByProfileIdOrderByTimestampDesc(Long profileId);
 
-    Optional<Attachment> findFirstByPost_IdOrderByTimestampAsc(Long postId);
+    Optional<Attachment> findFirstByPostIdOrderByTimestampAsc(Long postId);
 
     @Query("select count(a.id) from Attachment a where a.post.id = :postId")
     Long getAttachmentCountByPostId(@Param("postId") Long postId);

@@ -58,16 +58,16 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
-    public boolean unlike(Long id) {
+    public boolean unlike(Long postId) {
         Account currentAccount = accountService.getCurrentAccount();
-        this.likeRepository.unlikeById(id);
+        this.likeRepository.unlikeById(currentAccount.getId(), postId);
         return true;
     }
 
     @Override
-    public PageDTO<OutlineAccount> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
+    public PageDTO<OutlineAccount> getAll(Long postId, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Like.class);
-        Page<Account> entityPage = likeRepository.findAllLikeByAccount(postId, pageable);
+        Page<Account> entityPage = likeRepository.findAllLikeByPostId(postId, pageable);
         return PageDTOMapper.toPageDTO(entityPage, OutlineAccount.class, entity -> this.accountMapper.toOutlineAccount(entity));
     }
 }

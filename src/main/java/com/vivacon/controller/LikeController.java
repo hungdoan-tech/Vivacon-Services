@@ -6,8 +6,6 @@ import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.service.LikeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
-
-import static com.vivacon.common.constant.Constants.BAD_REQUEST_COMMON_MESSAGE;
-import static com.vivacon.common.constant.Constants.FETCHING_SUCCESSFULLY;
 
 @Api(value = "Like Controller")
 @RestController
@@ -35,33 +30,28 @@ public class LikeController {
 
     @ApiOperation(value = "Like a post")
     @PostMapping(value = "/{id}")
-    private ResponseEntity<Object> likeOnePost(@PathVariable(name = "id") Long postId) {
+    public ResponseEntity<Object> likeOnePost(@PathVariable(name = "id") Long postId) {
         this.likeService.like(postId);
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "Unlike a post")
     @DeleteMapping(value = "/{id}")
-    private ResponseEntity<Object> unlikeOnePost(@PathVariable(name = "id") Long id) {
-        this.likeService.unlike(id);
+    public ResponseEntity<Object> unlikeOnePost(@PathVariable(name = "id") Long postId) {
+        this.likeService.unlike(postId);
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "Get list like based on criteria")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = FETCHING_SUCCESSFULLY),
-            @ApiResponse(code = 400, message = BAD_REQUEST_COMMON_MESSAGE)})
     @GetMapping("/post/{postId}")
     public PageDTO<OutlineAccount> getAll(
+            @PathVariable(value = "postId") Long postId,
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
-            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex,
-            @PathVariable(value = "postId") Long postId) {
-
-        return likeService.getAll(sort, order, pageSize, pageIndex, postId);
+            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
+        return likeService.getAll(postId, sort, order, pageSize, pageIndex);
     }
-
 }
 
 

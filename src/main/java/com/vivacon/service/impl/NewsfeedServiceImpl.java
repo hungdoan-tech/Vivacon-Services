@@ -37,11 +37,10 @@ public class NewsfeedServiceImpl implements NewsfeedService {
     public PageDTO<NewsfeedPost> getNewsfeed(Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account currentAccount = accountService.getCurrentAccount();
         List<Account> followingAccounts = this.followingRepository.findFollowing(currentAccount.getId());
-        List<Long> listAccountId = followingAccounts.stream().map(account -> account.getId()).collect(Collectors.toList());
+        List<Long> listAccountId = followingAccounts.stream().map(Account::getId).collect(Collectors.toList());
         PostFilter postFilter = new PostFilter(Optional.of(listAccountId), Optional.of(Arrays.asList(Privacy.PUBLIC,
                 Privacy.FOLLOWER)), false, true);
-        PageDTO<NewsfeedPost> newsfeedPosts = postService.getAll(postFilter, Optional.empty(),
+        return postService.getAll(postFilter, Optional.empty(),
                 Optional.of("DESC"), Optional.of("lastModifiedAt"), pageSize, pageIndex);
-        return newsfeedPosts;
     }
 }

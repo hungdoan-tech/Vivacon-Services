@@ -62,7 +62,7 @@ public class JwtUtils {
         claims.put("fullName", account.getFullName());
         claims.put("roles", roles);
 
-        Optional<Attachment> optionalAvatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
+        Optional<Attachment> optionalAvatar = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
         String avatarUrl = optionalAvatar.isPresent() ? optionalAvatar.get().getUrl() : BLANK_AVATAR_URL;
         claims.put("avatar", avatarUrl);
 

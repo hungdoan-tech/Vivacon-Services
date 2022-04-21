@@ -43,19 +43,14 @@ public class CommentMapper {
     public CommentResponse toResponse(Object object) {
         try {
             Comment comment = (Comment) object;
-            CommentResponse postResponse = mapper.map(comment, CommentResponse.class);
-            Long postId = Long.valueOf(0);
-            if (comment != null && comment.getPost() != null) {
-                postId = comment.getPost().getId();
-            } else {
-                postId = null;
-            }
+            CommentResponse commentResponse = mapper.map(comment, CommentResponse.class);
+            Long postId = comment.getPost().getId();
             long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), postId);
-            postResponse.setTotalChildComments(totalCountComment);
-            return postResponse;
+            commentResponse.setTotalChildComments(totalCountComment);
+            return commentResponse;
         } catch (ClassCastException ex) {
             LOGGER.info(ex.getMessage());
-            return null;
+            return new CommentResponse();
         }
     }
 }
