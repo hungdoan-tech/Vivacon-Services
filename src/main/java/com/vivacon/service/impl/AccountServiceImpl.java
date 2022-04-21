@@ -121,9 +121,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
         Optional<Account> account = accountRepository.findByVerificationToken(forgotPasswordRequest.getVerificationToken());
-        String requestOldPassword = passwordEncoder.encode(forgotPasswordRequest.getOldPassword());
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
-            if ((requestOldPassword.equals(account.get().getPassword()))) {
+            if (passwordEncoder.matches(forgotPasswordRequest.getOldPassword(), account.get().getPassword())) {
                 account.get().setPassword(passwordEncoder.encode(forgotPasswordRequest.getNewPassword()));
                 return accountRepository.saveAndFlush(account.get());
             } else {
@@ -137,8 +136,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account changePassword(ChangePasswordRequest changePasswordRequest) {
         Account account = getCurrentAccount();
-        String requestOldPassword = passwordEncoder.encode(changePasswordRequest.getOldPassword());
-        if (requestOldPassword.equals(account.getPassword())) {
+        if (passwordEncoder.matches(changePasswordRequest.getOldPassword(), account.getPassword())) {
             account.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
             return accountRepository.saveAndFlush(account);
         } else {

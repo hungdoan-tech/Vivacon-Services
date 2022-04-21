@@ -25,6 +25,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -148,14 +149,14 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "Forgot password")
-    @PostMapping("/account/password/forgot")
+    @PostMapping("/account/password")
     public ResponseEntity<Object> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         accountService.forgotPassword(forgotPasswordRequest);
         return ResponseEntity.ok().body(null);
     }
 
     @ApiOperation(value = "Change authenticated account password")
-    @PostMapping("/account/password/change")
+    @PutMapping("/account/password")
     public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         accountService.changePassword(changePasswordRequest);
         return ResponseEntity.ok().body(null);
