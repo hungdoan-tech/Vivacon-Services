@@ -23,7 +23,7 @@ import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 @Component
 public class AccountMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PostMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountMapper.class);
 
     private ModelMapper mapper;
 
@@ -44,13 +44,13 @@ public class AccountMapper {
         Account account = (Account) object;
         AccountResponse responseAccount = this.mapper.map(account, AccountResponse.class);
 
-        Optional<Attachment> avatar = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
+        Optional<Attachment> avatar = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
         responseAccount.setAvatar(avatarUrl);
 
         Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
         responseAccount.setFollowing(following.isPresent());
-        
+
         return responseAccount;
     }
 
@@ -64,7 +64,7 @@ public class AccountMapper {
                     .orElseThrow(RecordNotFoundException::new);
 
             Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
-            Optional<Attachment> attachment = attachmentRepository.findFirstByProfile_IdOrderByTimestampDesc(account.getId());
+            Optional<Attachment> attachment = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
 
             String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
 
@@ -74,8 +74,7 @@ public class AccountMapper {
             return outlineAccountResponse;
         } catch (ClassCastException ex) {
             LOGGER.info(ex.getMessage());
-            return null;
+            return new OutlineAccount();
         }
-
     }
 }

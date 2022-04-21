@@ -14,5 +14,5 @@ public interface PostService {
 
     PageDTO<NewsfeedPost> getAll(PostFilter postFilter, Optional<String> keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
-    DetailPost getDetailPost(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId);
+    DetailPost getDetailPost(Long postId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 }

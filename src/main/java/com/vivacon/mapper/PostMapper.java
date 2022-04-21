@@ -18,7 +18,6 @@ import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.CommentRepository;
-import com.vivacon.repository.FollowingRepository;
 import com.vivacon.repository.LikeRepository;
 import com.vivacon.security.UserDetailImpl;
 import org.modelmapper.ModelMapper;
@@ -49,24 +48,24 @@ public class PostMapper {
 
     private LikeRepository likeRepository;
 
-    private FollowingRepository followingRepository;
-
     private AccountRepository accountRepository;
+
+    private CommentMapper commentMapper;
 
     public PostMapper(ModelMapper mapper,
                       AuditableHelper auditableHelper,
                       AttachmentRepository attachmentRepository,
                       CommentRepository commentRepository,
                       LikeRepository likeRepository,
-                      FollowingRepository followingRepository,
-                      AccountRepository accountRepository) {
+                      AccountRepository accountRepository,
+                      CommentMapper commentMapper) {
         this.mapper = mapper;
         this.auditableHelper = auditableHelper;
         this.attachmentRepository = attachmentRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
-        this.followingRepository = followingRepository;
         this.accountRepository = accountRepository;
+        this.commentMapper = commentMapper;
     }
 
     public Post toPost(PostRequest postResponse) {
@@ -81,7 +80,7 @@ public class PostMapper {
             Post post = (Post) object;
             NewsfeedPost newsfeedPost = mapper.map(post, NewsfeedPost.class);
             List<AttachmentDTO> attachmentDTOS = attachmentRepository
-                    .findByPost_Id(post.getId())
+                    .findByPostId(post.getId())
                     .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
                     .collect(Collectors.toList());
             newsfeedPost.setAttachments(attachmentDTOS);
@@ -98,7 +97,7 @@ public class PostMapper {
     public OutlinePost toOutlinePost(Object object) {
         try {
             Post post = (Post) object;
-            Attachment firstImage = attachmentRepository.findFirstByPost_IdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
+            Attachment firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
             boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
             Long likeCount = 0L;
             Long commentCount = 0L;
@@ -116,13 +115,13 @@ public class PostMapper {
             auditableHelper.setupDisplayAuditableFields(post, detailPost);
 
             List<AttachmentDTO> attachmentDTOS = attachmentRepository
-                    .findByPost_Id(post.getId())
+                    .findByPostId(post.getId())
                     .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
                     .collect(Collectors.toList());
             detailPost.setAttachments(attachmentDTOS);
 
             Page<Comment> allFirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), pageable);
-            PageDTO<CommentResponse> commentResponsePageDTO = PageDTOMapper.toPageDTO(allFirstLevelComments, CommentResponse.class, entity -> this.toResponse(entity));
+            PageDTO<CommentResponse> commentResponsePageDTO = PageDTOMapper.toPageDTO(allFirstLevelComments, CommentResponse.class, commentMapper::toResponse);
 
             Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
             detailPost.setCommentCount(commentCount);
@@ -139,29 +138,9 @@ public class PostMapper {
             return detailPost;
         } catch (ClassCastException ex) {
             LOGGER.info(ex.getMessage());
-            return null;
+            return new DetailPost();
         }
     }
-
-    public CommentResponse toResponse(Object object) {
-        try {
-            Comment comment = (Comment) object;
-            CommentResponse postResponse = mapper.map(comment, CommentResponse.class);
-            Long postId = Long.valueOf(0);
-            if (comment != null && comment.getPost() != null) {
-                postId = comment.getPost().getId();
-            } else {
-                postId = null;
-            }
-            long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), postId);
-            postResponse.setTotalChildComments(totalCountComment);
-            return postResponse;
-        } catch (ClassCastException ex) {
-            LOGGER.info(ex.getMessage());
-            return null;
-        }
-    }
-
 }
 
 

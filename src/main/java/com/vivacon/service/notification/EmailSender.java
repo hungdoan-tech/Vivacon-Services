@@ -34,9 +34,7 @@ public class EmailSender implements NotificationProvider {
             helper.setSubject(title);
             helper.setText(content, true);
             mailSender.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }

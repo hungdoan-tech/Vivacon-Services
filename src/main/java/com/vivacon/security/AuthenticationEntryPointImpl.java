@@ -50,16 +50,14 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
                 || authException instanceof DisabledException
                 || authException instanceof CredentialsExpiredException) {
             sendErrorHandlerResponse(response, HttpStatus.FORBIDDEN.value(), authException.getMessage());
-            return;
         }
     }
 
     private void sendErrorHandlerResponse(HttpServletResponse response, int httpStatusCode, String message) throws IOException {
-        ResponseDTO<Object> responseDTO = new ResponseDTO(httpStatusCode == 403 ? HttpStatus.FORBIDDEN : HttpStatus.UNAUTHORIZED, message);
+        ResponseDTO<Object> responseDTO = new ResponseDTO<>(httpStatusCode == 403 ? HttpStatus.FORBIDDEN : HttpStatus.UNAUTHORIZED, message);
         response.setStatus(httpStatusCode);
         response.setContentType(JSON_CONTENT_TYPE);
         response.getWriter().write(convertObjectToJson(responseDTO));
-        return;
     }
 
     public static String convertObjectToJson(Object object) throws JsonProcessingException {

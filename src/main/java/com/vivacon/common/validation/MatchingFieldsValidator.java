@@ -25,11 +25,7 @@ public class MatchingFieldsValidator implements ConstraintValidator<MatchingFiel
             Object firstFieldValue = firstFieldGetter.invoke(object);
             Object secondFieldValue = secondFieldGetter.invoke(object);
             return (firstFieldValue == null && secondFieldValue == null) || (firstFieldValue != null && firstFieldValue.equals(secondFieldValue));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return false;

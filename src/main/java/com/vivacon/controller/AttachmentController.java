@@ -1,14 +1,12 @@
 package com.vivacon.controller;
 
-import com.vivacon.common.utility.FileUtils;
 import com.vivacon.common.constant.Constants;
+import com.vivacon.common.utility.FileUtils;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.exception.UploadAttachmentException;
 import com.vivacon.service.AWSS3Service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,9 +28,6 @@ public class AttachmentController {
     }
 
     @ApiOperation(value = "Upload attachment to the cloud storage")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
-            @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})
     @PostMapping(value = Constants.API_V1 + "/attachment")
     public AttachmentDTO uploadImage(@RequestParam("file") MultipartFile file) {
         if (!file.isEmpty()) {
@@ -42,9 +37,6 @@ public class AttachmentController {
     }
 
     @ApiOperation(value = "Upload attachment to the cloud storage")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = Constants.UPLOAD_ATTACHMENT_SUCCESSFULLY),
-            @ApiResponse(code = 400, message = Constants.EMPTY_FILE_UPLOAD_MESSAGE)})
     @PostMapping(value = Constants.API_V1 + "/attachments")
     public List<AttachmentDTO> uploadImages(@RequestParam("files") MultipartFile[] files) {
         List<File> listImages = FileUtils.convertAndValidateListImages(files);

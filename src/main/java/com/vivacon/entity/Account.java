@@ -158,6 +158,7 @@ public class Account extends AuditableEntity {
     }
 
     public static class AccountBuilder {
+
         private String username;
 
         private String email;
@@ -170,8 +171,6 @@ public class Account extends AuditableEntity {
 
         private String bio;
 
-        private LocalDateTime createdAt;
-
         private boolean active;
 
         public AccountBuilder username(String username) {
@@ -181,7 +180,7 @@ public class Account extends AuditableEntity {
 
         public AccountBuilder username() {
             if (this.fullName != null) {
-                this.username = fullName.replaceAll(" ", "") + UUID.randomUUID();
+                this.username = fullName.replace(" ", "") + UUID.randomUUID();
                 return this;
             } else {
                 this.username = UUID.randomUUID().toString();

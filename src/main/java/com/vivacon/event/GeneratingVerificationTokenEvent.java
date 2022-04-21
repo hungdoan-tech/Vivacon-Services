@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEvent;
 
 public class GeneratingVerificationTokenEvent extends ApplicationEvent {
 
-    private Account account;
+    private transient Account account;
 
     public GeneratingVerificationTokenEvent(Object source, Account account) {
         super(source);

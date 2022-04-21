@@ -20,16 +20,18 @@ public class VerificationTokenEventHandler {
     @Qualifier("emailSender")
     private NotificationProvider emailSender;
 
-    private AccountRepository accountRepository;
-
     private Environment environment;
 
+    private AccountRepository accountRepository;
+
+    private Random rnd = new Random();
+
     public VerificationTokenEventHandler(NotificationProvider emailSender,
-                                         AccountRepository accountRepository,
-                                         Environment environment) {
+                                         Environment environment,
+                                         AccountRepository accountRepository) {
+        this.environment = environment;
         this.emailSender = emailSender;
         this.accountRepository = accountRepository;
-        this.environment = environment;
     }
 
     @Async
@@ -37,16 +39,18 @@ public class VerificationTokenEventHandler {
     public void handleUserRegistration(RegistrationCompleteEvent userRegistrationEvent) {
         Account account = userRegistrationEvent.getAccount();
         String code = generateVerificationCodePerUsername(account);
+        Integer expirationInMinutes = Integer.valueOf(environment.getProperty("vivacon.verification_token.expiration")) / 60000;
 
         String subject = "Please verify your registration";
         String content = "Dear [[name]],<br/>"
                 + "Please use the code below to verify your registration:<br/>"
                 + "<h3>[[code]]</h3><br/>"
-                + "Please notice that your code is unique and only take effect in <strong>5 minutes</strong><br/>"
+                + "Please notice that your code is unique and only take effect in <strong> [[expirationTime]] minutes</strong><br/>"
                 + "Thank you,<br/>"
                 + "Vivacon Service.";
         content = content.replace("[[name]]", account.getFullName());
         content = content.replace("[[code]]", code);
+        content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
 
         emailSender.sendNotification(account, subject, content);
     }
@@ -56,26 +60,27 @@ public class VerificationTokenEventHandler {
     public void handleGeneratingVerificationToken(GeneratingVerificationTokenEvent generatingVerificationTokenEvent) {
         Account account = generatingVerificationTokenEvent.getAccount();
         String code = generateVerificationCodePerUsername(account);
+        Integer expirationInMinutes = Integer.valueOf(environment.getProperty("vivacon.verification_token.expiration")) / 60000;
 
         String subject = "Renew your verification token";
         String content = "Dear [[name]],<br/>"
                 + "Please use the code below to verify your account:<br/>"
                 + "<h3>[[code]]</h3><br/>"
-                + "Please notice that your code is unique and only take effect in <strong>5 minutes</strong><br/>"
+                + "Please notice that your code is unique and only take effect in <strong> [[expirationTime]] minutes</strong><br/>"
                 + "Thank you,<br/>"
                 + "Vivacon Service.";
         content = content.replace("[[name]]", account.getFullName());
         content = content.replace("[[code]]", code);
+        content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
 
         emailSender.sendNotification(account, subject, content);
     }
 
 
     private String generateVerificationCodePerUsername(Account account) {
-        Integer expirationInstant = Integer.valueOf(environment.getProperty("vivacon.verification_token.expiration"));
-        Random rnd = new Random();
         int number = rnd.nextInt(999999);
         String code = String.format("%06d", number);
+        Integer expirationInstant = Integer.valueOf(environment.getProperty("vivacon.verification_token.expiration"));
 
         account.setVerificationToken(code);
         account.setVerificationExpiredDate(Instant.now().plusMillis(expirationInstant));

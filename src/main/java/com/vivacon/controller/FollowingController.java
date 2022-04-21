@@ -30,14 +30,14 @@ public class FollowingController {
 
     @ApiOperation(value = "Follow an account")
     @PostMapping(value = "/following/{id}")
-    private ResponseEntity<Object> followOneAccount(@PathVariable(name = "id") Long toAccountId) {
+    public ResponseEntity<Object> followOneAccount(@PathVariable(name = "id") Long toAccountId) {
         this.followingService.follow(toAccountId);
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "Unfollow an account")
     @DeleteMapping(value = "following/{id}")
-    private ResponseEntity<Object> unfollowOneAccount(@PathVariable(name = "id") Long toAccountId) {
+    public ResponseEntity<Object> unfollowOneAccount(@PathVariable(name = "id") Long toAccountId) {
         this.followingService.unfollow(toAccountId);
         return ResponseEntity.ok(null);
     }

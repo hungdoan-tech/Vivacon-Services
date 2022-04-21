@@ -3,6 +3,7 @@ package com.vivacon.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import static com.vivacon.common.constant.Constants.API_V1;
 import static com.vivacon.common.constant.Constants.URL_WHITELIST;
 
 /**
@@ -117,6 +119,7 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(urlWhitelistArray).permitAll()
+                .antMatchers(HttpMethod.POST, API_V1 + "/account/password").permitAll()
 //                .antMatchers(HttpMethod.PUT, API_V1 + "/innovation/{id}").access("@securityService.isAccessibleToInnovationResource(#id)")
 //                .antMatchers(HttpMethod.DELETE, API_V1 + "/innovation/{id}").access("@securityService.isAccessibleToInnovationResource(#id)")
 //                .antMatchers(HttpMethod.PATCH, API_V1 + "/innovation/approve/{id}").hasAnyAuthority(ADMIN_AUTHORITY_VALUE)

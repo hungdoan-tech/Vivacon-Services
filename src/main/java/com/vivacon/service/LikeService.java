@@ -9,8 +9,7 @@ public interface LikeService {
 
     boolean like(Long postId);
 
-    boolean unlike(Long id);
+    boolean unlike(Long postId);
 
-    PageDTO<OutlineAccount> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId);
-
+    PageDTO<OutlineAccount> getAll(Long postId, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 }
