@@ -2,6 +2,7 @@ package com.vivacon.dto.sorting_filtering;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PageDTO<T> {
@@ -28,6 +29,20 @@ public class PageDTO<T> {
     private boolean isLast;
 
     private boolean isEmpty;
+
+    public static <T> PageDTO<T> getEmptyPageInstance() {
+        PageDTO<T> pageDTO = new PageDTO<>();
+        pageDTO.setContent(new ArrayList<>());
+        pageDTO.setCurrentPage(0);
+        pageDTO.setTotalPages(0);
+        pageDTO.setEmpty(true);
+        pageDTO.setFirst(true);
+        pageDTO.setLast(true);
+        pageDTO.setNumberOfElement(0);
+        pageDTO.setSize(0);
+        pageDTO.setTotalElements(0);
+        return pageDTO;
+    }
 
     public List<T> getContent() {
         return content;

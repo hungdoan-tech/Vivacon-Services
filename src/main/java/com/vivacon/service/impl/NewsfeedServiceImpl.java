@@ -37,6 +37,9 @@ public class NewsfeedServiceImpl implements NewsfeedService {
     public PageDTO<NewsfeedPost> getNewsfeed(Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account currentAccount = accountService.getCurrentAccount();
         List<Account> followingAccounts = this.followingRepository.findFollowing(currentAccount.getId());
+        if (followingAccounts.isEmpty()) {
+            return PageDTO.getEmptyPageInstance();
+        }
         List<Long> listAccountId = followingAccounts.stream().map(Account::getId).collect(Collectors.toList());
         PostFilter postFilter = new PostFilter(Optional.of(listAccountId), Optional.of(Arrays.asList(Privacy.PUBLIC,
                 Privacy.FOLLOWER)), false, true);

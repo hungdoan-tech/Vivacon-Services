@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "login",
+			"name": "Login",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -22,7 +22,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\" : \"vinhhung\",\r\n    \"password\": \"Admin123*\"\r\n}",
+					"raw": "{\r\n    \"username\" : \"vinhhung\",\r\n    \"password\": \"Admin1234*5\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -45,7 +45,7 @@
 			"response": []
 		},
 		{
-			"name": "refresh-token",
+			"name": "Refresh-token",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -83,7 +83,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "080554"
+					"raw": "470908"
 				},
 				"url": {
 					"raw": "localhost:8080/api/v1/account/verification_token",
@@ -131,13 +131,18 @@
 			"response": []
 		},
 		{
-			"name": "resend verification_token",
+			"name": "Resend verification token",
 			"request": {
-				"method": "PUT",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "hungdoan426@gmail.com"
+					"raw": "hungdoan426@gmail.com",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
 				},
 				"url": {
 					"raw": "localhost:8080/api/v1/account/verification_token",
@@ -150,6 +155,79 @@
 						"v1",
 						"account",
 						"verification_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Forgot Password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"verificationToken\" : \"054203\",\r\n    \"oldPassword\" : \"Admin123*\",\r\n    \"newPassword\" : \"Admin1234*\",\r\n    \"matchingNewPassword\" : \"Admin1234*\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/password",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50SWQiOjIzLCJ1c2VybmFtZSI6InZpbmhodW5nIiwiZnVsbE5hbWUiOiJWaW5oIEh1bmciLCJyb2xlcyI6WyJVU0VSIl0sImF2YXRhciI6Imh0dHBzOi8vdml2YWNvbi1vYmplY3RzLnMzLWFwLXNvdXRoZWFzdC0xLmFtYXpvbmF3cy5jb20vMjAyMi0wNC0xM1QyMSUzQTE3JTNBMjYuMjQ1MzM2NTAwX0JsYW5rLUF2YXRhci5qcGciLCJpc3MiOiJWaXZhY29uX0tob2FfVHJ1Y19IdW5nIiwiZXhwIjoxNjUwNTk1ODc3fQ.wz4vho1KccY4nymlVPr5tm-pCc2lXtelyfgBPTipK9DyKhrcMCXgXapojMAGOnIeV_wOiiSamh9UOR-VVaYgnQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"oldPassword\" : \"Admin1234*\",\r\n    \"newPassword\" : \"Admin1234*5\",\r\n    \"matchingNewPassword\" : \"Admin1234*5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/password",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"password"
 					]
 				}
 			},
