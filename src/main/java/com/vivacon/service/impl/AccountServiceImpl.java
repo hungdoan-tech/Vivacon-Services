@@ -3,6 +3,7 @@ package com.vivacon.service.impl;
 import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
+import com.vivacon.dto.request.ChangePasswordRequest;
 import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.response.DetailProfile;
@@ -14,6 +15,7 @@ import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
+import com.vivacon.exception.InvalidPasswordException;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.VerificationTokenException;
 import com.vivacon.mapper.PageDTOMapper;
@@ -131,7 +133,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account changePassword(ForgotPasswordRequest forgotPasswordRequest) {
+    public Account forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
         Optional<Account> account = accountRepository.findByVerificationToken(forgotPasswordRequest.getVerificationToken());
         String requestOldPassword = passwordEncoder.encode(forgotPasswordRequest.getOldPassword());
         if (account.isPresent() && (requestOldPassword == account.get().getPassword())) {
@@ -139,6 +141,18 @@ public class AccountServiceImpl implements AccountService {
             return accountRepository.saveAndFlush(account.get());
         } else {
             throw new VerificationTokenException(forgotPasswordRequest.getVerificationToken(), "The request verification token is invalid");
+        }
+    }
+
+    @Override
+    public Account changePassword(ChangePasswordRequest changePasswordRequest) {
+        Account account = getCurrentAccount();
+        String requestOldPassword = passwordEncoder.encode(changePasswordRequest.getOldPassword());
+        if (requestOldPassword == account.getPassword()) {
+            account.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+            return accountRepository.saveAndFlush(account);
+        } else {
+            throw new InvalidPasswordException();
         }
     }
 

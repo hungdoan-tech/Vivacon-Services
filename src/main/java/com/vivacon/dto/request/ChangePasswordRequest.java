@@ -8,10 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @MatchingFields.List({
         @MatchingFields(firstField = "NewPassword", secondField = "MatchingNewPassword", message = "The matching password is not correct !")
 })
-public class ForgotPasswordRequest {
-
-    @NotEmpty
-    private String verificationToken;
+public class ChangePasswordRequest {
 
     @Password
     private String oldPassword;
@@ -21,14 +18,6 @@ public class ForgotPasswordRequest {
 
     @NotEmpty
     private String matchingNewPassword;
-
-    public String getVerificationToken() {
-        return verificationToken;
-    }
-
-    public void setVerificationToken(String verificationToken) {
-        this.verificationToken = verificationToken;
-    }
 
     public String getOldPassword() {
         return oldPassword;

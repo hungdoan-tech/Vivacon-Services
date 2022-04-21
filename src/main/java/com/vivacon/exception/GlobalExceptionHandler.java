@@ -89,6 +89,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseDTO<>(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
     }
 
+    @ExceptionHandler(value = InvalidPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<Object> handleInvalidPasswordException(InvalidPasswordException ex) {
+        return new ResponseDTO<>(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(value = NonUniqueResultException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<Object> handleNonUniqueResultException(NonUniqueResultException ex) {

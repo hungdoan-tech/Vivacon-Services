@@ -1,6 +1,7 @@
 package com.vivacon.service;
 
 import com.vivacon.dto.AttachmentDTO;
+import com.vivacon.dto.request.ChangePasswordRequest;
 import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.response.DetailProfile;
@@ -36,5 +37,7 @@ public interface AccountService {
 
     Account resendVerificationToken(String email);
 
-    Account changePassword(ForgotPasswordRequest forgotPasswordRequest);
+    Account forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
+
+    Account changePassword(ChangePasswordRequest changePasswordRequest);
 }
