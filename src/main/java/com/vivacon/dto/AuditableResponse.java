@@ -14,8 +14,6 @@ public abstract class AuditableResponse {
 
     private AccountResponse lastModifiedBy;
 
-    private Boolean active;
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -46,13 +44,5 @@ public abstract class AuditableResponse {
 
     public void setLastModifiedBy(AccountResponse lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

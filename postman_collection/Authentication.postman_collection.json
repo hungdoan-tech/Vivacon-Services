@@ -8,11 +8,21 @@
 		{
 			"name": "login",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50SWQiOjgsInVzZXJuYW1lIjoiaHVuZ2RvYW43ODM2MjJmZjE5LWM0YzQtNDBhYy1hMWQ1LTY2NmJhYzIzZmUzMSIsImZ1bGxOYW1lIjoiVmluaCBIdW5nIiwicm9sZXMiOlsiVVNFUiJdLCJhdmF0YXIiOiJodHRwczovL3ZpdmFjb24tb2JqZWN0cy5zMy1hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tLzIwMjItMDQtMTNUMjElM0ExNyUzQTI2LjI0NTMzNjUwMF9CbGFuay1BdmF0YXIuanBnIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY1MDI0OTMzNX0.6Ur8hCsRgVWWzOf-JvhydO-LJ4_aMw8mt-9fPCxrNrfC3EQk6_FSJ-2OkgrpreP1y1Rec1oyxClk_82bwWQu5A",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\" : \"hungdoan\",\r\n    \"password\": \"Admin123*\"\r\n}",
+					"raw": "{\r\n    \"username\" : \"vinhhung\",\r\n    \"password\": \"Admin123*\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -58,6 +68,88 @@
 						"api",
 						"v1",
 						"refresh-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm verification token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "080554"
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/verification_token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"verification_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"hungdoan426@gmail.com\",\r\n    \"fullName\" : \"Vinh Hung\",\r\n    \"username\" : \"vinhhung\",\r\n    \"password\": \"Admin123*\",\r\n    \"matchingPassword\": \"Admin123*\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/registration",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resend verification_token",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "hungdoan426@gmail.com"
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/verification_token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"verification_token"
 					]
 				}
 			},

@@ -1,4 +1,4 @@
-package com.vivacon.common;
+package com.vivacon.common.relational_db;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

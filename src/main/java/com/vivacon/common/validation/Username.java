@@ -6,22 +6,22 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({PARAMETER})
-@Retention(RUNTIME)
-@Constraint(validatedBy = OptionalIntegerValueValidator.class)
 @Documented
-public @interface OptionalIntegerValue {
+@Constraint(validatedBy = UsernameValidator.class)
+@Target(FIELD)
+@Retention(RUNTIME)
+public @interface Username {
 
-    String message() default "Optional value is over the boundary";
+    String message() default "Invalid username";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    int min() default Integer.MIN_VALUE;
+    String pattern() default "^[a-zA-Z0-9._-]{3,}$";
 
-    int max() default Integer.MAX_VALUE;
+    boolean unique() default false;
 }

@@ -1,4 +1,4 @@
-package com.vivacon.common;
+package com.vivacon.common.utility;
 
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
@@ -22,13 +22,13 @@ import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 @Component
 public class JwtUtils {
 
-    @Value("${innovation.jwt.secret_salt}")
+    @Value("${vivacon.jwt.secret_salt}")
     private String jwtSecret;
 
-    @Value("${innovation.jwt.jwt_validity}")
+    @Value("${vivacon.jwt.jwt_validity}")
     private long jwtValidity;
 
-    @Value("${innovation.jwt.jwt_issuer}")
+    @Value("${vivacon.jwt.jwt_issuer}")
     private String jwtIssuer;
 
     private AttachmentRepository attachmentRepository;

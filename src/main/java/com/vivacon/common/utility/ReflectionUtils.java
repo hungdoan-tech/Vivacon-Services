@@ -1,4 +1,4 @@
-package com.vivacon.common;
+package com.vivacon.common.utility;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

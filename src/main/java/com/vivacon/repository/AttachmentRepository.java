@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
 
-    List<Attachment> findByPost_Id(Long innovationId);
+    List<Attachment> findByPost_Id(Long postId);
 
     Page<Attachment> findByProfile_Id(Long profileId, Pageable pageable);
 

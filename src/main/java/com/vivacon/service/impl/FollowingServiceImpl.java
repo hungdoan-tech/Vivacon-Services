@@ -1,6 +1,6 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.PageableBuilder;
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;

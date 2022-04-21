@@ -1,4 +1,4 @@
-package com.vivacon.common;
+package com.vivacon.common.utility;
 
 import com.vivacon.exception.NotValidImageExtensionException;
 import com.vivacon.exception.UploadAttachmentException;

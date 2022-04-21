@@ -21,7 +21,7 @@ public class Post extends AuditableEntity {
     @SequenceGenerator(name = "post_id_generator", sequenceName = "post_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "caption", nullable = false)
+    @Column(name = "caption", nullable = false, length = 1500)
     private String caption;
 
     @Enumerated(EnumType.ORDINAL)

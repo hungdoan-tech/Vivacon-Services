@@ -1,6 +1,6 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.PageableBuilder;
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.CommentRequest;
 import com.vivacon.dto.response.CommentResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
@@ -21,6 +21,7 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
+
     private PostRepository postRepository;
 
     private CommentMapper commentMapper;
