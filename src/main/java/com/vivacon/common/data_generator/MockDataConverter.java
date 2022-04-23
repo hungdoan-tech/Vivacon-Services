@@ -10,13 +10,14 @@ import java.io.InputStreamReader;
 
 public class MockDataConverter {
 
+    private final String BASE_DIR = "./mock_data/txt/";
+
     @FunctionalInterface
     public interface FileWritingOperation {
         void write(String filePath, String inputData);
     }
 
     public void writeMockNamesToFile() {
-        final String BASE_DIR = "./mock_data/txt/";
         final String FINAL_FIRST_NAMES_PATH = BASE_DIR + "final_first_name.txt";
 
         changeLineBreakIntoComma(BASE_DIR + "male_first_name.txt", FINAL_FIRST_NAMES_PATH, this::writeDataToFile);
