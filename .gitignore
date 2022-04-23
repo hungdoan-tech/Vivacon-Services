@@ -34,3 +34,4 @@ build/
 
 ## Project ##
 logs/
+mock_data/sql
