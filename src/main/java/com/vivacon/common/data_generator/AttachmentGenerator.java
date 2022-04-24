@@ -18,7 +18,7 @@ public class AttachmentGenerator extends DataGenerator {
     public List<String> generateSQLStatements(int startPostIndex, int endPostIndex) {
         List<String> values = new LinkedList<>();
 
-        String insertStatement = "INSERT INTO \"attachment\" (\"id\", \"actual_name\", \"unique_name\", \"url\", \"timestamp\", \"post_id\", NULL) \nVALUES ";
+        String insertStatement = "INSERT INTO \"attachment\" (\"id\", \"actual_name\", \"unique_name\", \"url\", \"timestamp\", \"post_id\", \"profile_id\") \nVALUES ";
         values.add(insertStatement);
 
         String value;
@@ -28,7 +28,7 @@ public class AttachmentGenerator extends DataGenerator {
             int attachmentCount = ThreadLocalRandom.current().nextInt(1, 3);
             for (int attachmentIndex = 0; attachmentIndex < attachmentCount; attachmentIndex++) {
 
-                value = "([[id]], '[[actual_name]]', '[[unique_name]]', '[[url]]', [[timestamp]], [[post_id]], [[profile_id]]),\n";
+                value = "([[id]], '[[actual_name]]', '[[unique_name]]', '[[url]]', '[[timestamp]]', [[post_id]], NULL),\n";
 
                 String timestamp = getRandomTimestamp();
                 String actualName = UUID.randomUUID().toString();

@@ -17,12 +17,13 @@ public class CommentGenerator extends DataGenerator {
 
             int firstLevelCommentCount = ThreadLocalRandom.current().nextInt(0, 30);
             for (int firstLevelCommentIndex = 0; firstLevelCommentIndex < firstLevelCommentCount; firstLevelCommentIndex++) {
-                int accountId = RANDOM.nextInt(10000) + 1;
+                int accountId = RANDOM.nextInt(10000 - 1) + 1;
+                int parentCommentId = counting;
                 statements.add(generateCommentStatement(counting++, postId, accountId));
 
                 int secondLevelCommentCount = ThreadLocalRandom.current().nextInt(0, 5);
                 for (int secondLevelCommentIndex = 0; secondLevelCommentIndex < secondLevelCommentCount; secondLevelCommentIndex++) {
-                    statements.add(generateCommentStatement(counting++, counting, postId, accountId));
+                    statements.add(generateCommentStatement(counting++, parentCommentId, postId, accountId));
                 }
             }
         }

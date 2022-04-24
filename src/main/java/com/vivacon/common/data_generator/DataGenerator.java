@@ -63,18 +63,21 @@ public abstract class DataGenerator {
 
     public static void main(String[] args) {
 
-        int amountOfAccount = 10000;
-        DataGenerator generator = new AccountGenerator();
-        amountOfAccount = generator.exportMockDataToSQLFile(1, amountOfAccount, "accounts.sql");
-
-        generator = new PostGenerator();
-        int amountOfPost = generator.exportMockDataToSQLFile(1, amountOfAccount, "post.sql");
-
-        generator = new CommentGenerator();
-        int amountOfComment = generator.exportMockDataToSQLFile(1, amountOfAccount, "comment.sql");
+//        System.out.println("Start the account domain");
+//        int amountOfAccount = 10000;
+//        DataGenerator generator = new AccountGenerator();
+//        generator.exportMockDataToSQLFile(1, amountOfAccount, "accounts.sql");
+//
+//        System.out.println("Start the post domain");
+//        generator = new PostGenerator();
+//        int amountOfPost = generator.exportMockDataToSQLFile(1, amountOfAccount, "post.sql");
+//
+//        System.out.println("Start the comment domain");
+//        generator = new CommentGenerator();
+//        int amountOfComment = generator.exportMockDataToSQLFile(1, amountOfAccount, "comment.sql");
 
         System.out.println("Start the attachment domain");
-        generator = new AttachmentGenerator();
-        int amountOfAttachment = generator.exportMockDataToSQLFile(1, amountOfPost, "attachment.sql");
+        DataGenerator generator = new AttachmentGenerator();
+        int amountOfAttachment = generator.exportMockDataToSQLFile(1, 120130, "attachment.sql");
     }
 }

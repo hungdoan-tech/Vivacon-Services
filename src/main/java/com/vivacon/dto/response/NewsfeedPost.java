@@ -1,5 +1,6 @@
 package com.vivacon.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.AuditableResponse;
@@ -15,6 +16,8 @@ public class NewsfeedPost extends AuditableResponse {
     private Privacy privacy;
 
     private List<AttachmentDTO> attachments;
+
+    private boolean isLiked;
 
     private Long likeCount;
 
@@ -76,5 +79,14 @@ public class NewsfeedPost extends AuditableResponse {
 
     public void setCommentCount(Long commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    @JsonProperty("isLiked")
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 }
