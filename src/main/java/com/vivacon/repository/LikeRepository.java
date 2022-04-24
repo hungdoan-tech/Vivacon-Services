@@ -17,7 +17,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     @Modifying(clearAutomatically = true)
     @Query("DELETE FROM Like liking WHERE liking.post.id = :postId and liking.account.id = :accountId")
-    void unlikeById(@Param("accountId") long accountId, @Param("postId") long postId);
+    void unlikeByAccountIdAndPostId(@Param("accountId") long accountId, @Param("postId") long postId);
 
     @Query("SELECT COUNT(liking.id) FROM Like liking WHERE liking.post.id= :post_id")
     Long getCountingLike(@Param(value = "post_id") Long postId);
