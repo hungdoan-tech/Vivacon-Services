@@ -70,6 +70,10 @@ public abstract class DataGenerator {
         generator = new PostGenerator();
         int amountOfPost = generator.exportMockDataToSQLFile(1, amountOfAccount, "post.sql");
 
+        generator = new CommentGenerator();
+        int amountOfComment = generator.exportMockDataToSQLFile(1, amountOfAccount, "comment.sql");
+
+        System.out.println("Start the attachment domain");
         generator = new AttachmentGenerator();
         int amountOfAttachment = generator.exportMockDataToSQLFile(1, amountOfPost, "attachment.sql");
     }

@@ -14,7 +14,7 @@ public class PostGenerator extends DataGenerator {
         values.add(insertStatement);
 
         String value;
-        long counting = 0L;
+        long counting = 1L;
         for (int accountIndex = startAccountIndex; accountIndex <= endAccountIndex; accountIndex++) {
 
             int postCount = ThreadLocalRandom.current().nextInt(5, 20);

@@ -7,6 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.ExecutionException;
 
 public class MockDataConverter {
 
@@ -56,6 +61,42 @@ public class MockDataConverter {
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void writeMockImagesToFile(String[] args) {
+        final String BASE_DIR = "./mock_data/txt/";
+        final String FINAL_IMAGES_PATH = BASE_DIR + "final_image.txt";
+        MockDataConverter converter = new MockDataConverter();
+        converter.changeImageUrlToString(FINAL_IMAGES_PATH, converter::writeDataToFile);
+    }
+
+    public void changeImageUrlToString(String outputFilePath, FileWritingOperation operation) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 2000; i++) {
+            String imageUrl = getRandomImageUrl();
+            builder.append("\"");
+            builder.append(imageUrl);
+            builder.append("\", ");
+            System.out.println("attachment" + i);
+        }
+        operation.write(outputFilePath, builder.toString());
+    }
+
+    private String getRandomImageUrl() {
+        try {
+            HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://picsum.photos/1080.jpg"))
+                    .build();
+
+            return client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
+                    .thenApply(HttpResponse::uri)
+                    .thenApply(uri -> uri.toString())
+                    .get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

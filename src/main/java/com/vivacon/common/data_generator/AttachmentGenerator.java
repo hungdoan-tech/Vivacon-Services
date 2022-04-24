@@ -10,17 +10,19 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.vivacon.common.constant.MockImage.IMAGES;
+
 public class AttachmentGenerator extends DataGenerator {
 
     @Override
     public List<String> generateSQLStatements(int startPostIndex, int endPostIndex) {
         List<String> values = new LinkedList<>();
 
-        String insertStatement = "INSERT INTO \"attachment\" (\"id\", \"actual_name\", \"unique_name\", \"url\", \"timestamp\", \"post_id\", \"profile_id\") \nVALUES ";
+        String insertStatement = "INSERT INTO \"attachment\" (\"id\", \"actual_name\", \"unique_name\", \"url\", \"timestamp\", \"post_id\", NULL) \nVALUES ";
         values.add(insertStatement);
 
         String value;
-        long counting = 0L;
+        long counting = 1L;
         for (int postIndex = startPostIndex; postIndex <= endPostIndex; postIndex++) {
 
             int attachmentCount = ThreadLocalRandom.current().nextInt(1, 3);
@@ -31,7 +33,7 @@ public class AttachmentGenerator extends DataGenerator {
                 String timestamp = getRandomTimestamp();
                 String actualName = UUID.randomUUID().toString();
                 String uniqueName = actualName + timestamp;
-                String url = getRandomImageUrl();
+                String url = IMAGES[RANDOM.nextInt(IMAGES.length)];
 
                 value = value.replace("[[id]]", String.valueOf(counting));
                 value = value.replace("[[actual_name]]", actualName);
@@ -39,30 +41,12 @@ public class AttachmentGenerator extends DataGenerator {
                 value = value.replace("[[url]]", url);
                 value = value.replace("[[timestamp]]", timestamp);
                 value = value.replace("[[post_id]]", String.valueOf(postIndex));
-                value = value.replace("[[profile_id]]", null);
+//                value = value.replace("[[profile_id]]", null);
                 values.add(value);
 
                 counting++;
             }
         }
         return values;
-    }
-
-    public String getRandomImageUrl() {
-        try {
-
-            HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://picsum.photos/1080.jpg"))
-                    .build();
-
-            return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::uri)
-                    .thenApply(uri -> uri.toString())
-                    .get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
