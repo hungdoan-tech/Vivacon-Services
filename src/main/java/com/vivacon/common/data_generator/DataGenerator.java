@@ -40,13 +40,17 @@ public abstract class DataGenerator {
         return rand.toString();
     }
 
-    protected int exportMockDataToSQLFile(int startIndex, int endIndex, String fileName) {
+    protected int exportMockDataToSQLFile(int startIndex, int endIndex, String domain) {
 
-        File file = new File(BASE_DIR + fileName);
+        File file = new File(BASE_DIR + domain + ".sql");
+
         List<String> sqlStatements = generateSQLStatements(startIndex, endIndex);
 
         int lastCommaIndex = sqlStatements.get(sqlStatements.size() - 1).lastIndexOf(",");
         sqlStatements.set(sqlStatements.size() - 1, sqlStatements.get(sqlStatements.size() - 1).substring(0, lastCommaIndex) + ";");
+
+        String setSequenceIdStatement = "\nSELECT setval('"+ domain +"_id_seq', (SELECT MAX(id) FROM " + domain + ") + 1);";
+        sqlStatements.add(setSequenceIdStatement);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
             for (String sqlStatement : sqlStatements) {
@@ -75,9 +79,13 @@ public abstract class DataGenerator {
 //        System.out.println("Start the comment domain");
 //        generator = new CommentGenerator();
 //        int amountOfComment = generator.exportMockDataToSQLFile(1, amountOfAccount, "comment.sql");
+//
+//        System.out.println("Start the attachment domain");
+//        DataGenerator generator = new AttachmentGenerator();
+//        int amountOfAttachment = generator.exportMockDataToSQLFile(1, 120130, "attachment.sql");
 
-        System.out.println("Start the attachment domain");
-        DataGenerator generator = new AttachmentGenerator();
-        int amountOfAttachment = generator.exportMockDataToSQLFile(1, 120130, "attachment.sql");
+        int amountOfAccount = 1000;
+        DataGenerator generator = new FollowingGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfAccount, "following");
     }
 }
