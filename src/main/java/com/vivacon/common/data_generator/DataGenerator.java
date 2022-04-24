@@ -40,7 +40,7 @@ public abstract class DataGenerator {
         return rand.toString();
     }
 
-    protected void exportMockDataToSQLFile(int startIndex, int endIndex, String fileName) {
+    protected int exportMockDataToSQLFile(int startIndex, int endIndex, String fileName) {
 
         File file = new File(BASE_DIR + fileName);
         List<String> sqlStatements = generateSQLStatements(startIndex, endIndex);
@@ -55,15 +55,22 @@ public abstract class DataGenerator {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return 0;
+        } finally {
+            return sqlStatements.size();
         }
     }
 
     public static void main(String[] args) {
 
+        int amountOfAccount = 10000;
         DataGenerator generator = new AccountGenerator();
-        generator.exportMockDataToSQLFile(1, 10000, "accounts.sql");
+        amountOfAccount = generator.exportMockDataToSQLFile(1, amountOfAccount, "accounts.sql");
 
         generator = new PostGenerator();
-        generator.exportMockDataToSQLFile(1, 10000, "post.sql");
+        int amountOfPost = generator.exportMockDataToSQLFile(1, amountOfAccount, "post.sql");
+
+        generator = new AttachmentGenerator();
+        int amountOfAttachment = generator.exportMockDataToSQLFile(1, amountOfPost, "attachment.sql");
     }
 }

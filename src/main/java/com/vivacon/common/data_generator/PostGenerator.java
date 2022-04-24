@@ -1,7 +1,5 @@
 package com.vivacon.common.data_generator;
 
-import com.vivacon.common.constant.MockData;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,8 +9,6 @@ public class PostGenerator extends DataGenerator {
     @Override
     public List<String> generateSQLStatements(int startAccountIndex, int endAccountIndex) {
         List<String> values = new LinkedList<>();
-        int firstNameLength = MockData.FIRST_NAME.length - 1;
-        int lastNameLength = MockData.LAST_NAME.length - 1;
 
         String insertStatement = "INSERT INTO \"post\" (\"id\", \"created_at\", \"last_modified_at\", \"caption\", \"privacy\", \"created_by_account_id\", \"last_modified_by_account_id\", \"active\") \nVALUES ";
         values.add(insertStatement);
