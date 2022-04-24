@@ -18,7 +18,7 @@ public class AttachmentGenerator extends DataGenerator {
 
         String statement;
         long counting = 1L;
-        for (int postId = startPostIndex; postId <= endPostIndex; postId++) {
+        for (int postId = startPostIndex; postId < endPostIndex; postId++) {
 
             int attachmentCount = ThreadLocalRandom.current().nextInt(1, 3);
             for (int attachmentIndex = 0; attachmentIndex < attachmentCount; attachmentIndex++) {

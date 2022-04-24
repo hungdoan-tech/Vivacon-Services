@@ -27,15 +27,13 @@ public class PostGenerator extends DataGenerator {
                 String caption = generateSentence(10);
                 int privacy = RANDOM.nextInt(2);
 
-                value = value.replace("[[id]]", String.valueOf(counting));
+                value = value.replace("[[id]]", String.valueOf(counting++));
                 value = value.replace("[[created_at]]", createdAt);
                 value = value.replace("[[last_modified_at]]", last_modified_at);
                 value = value.replace("[[caption]]", caption);
                 value = value.replace("[[privacy]]", String.valueOf(privacy));
                 value = value.replace("[[created_by_account_id]]", String.valueOf(accountId));
                 values.add(value);
-
-                counting++;
             }
         }
         return values;

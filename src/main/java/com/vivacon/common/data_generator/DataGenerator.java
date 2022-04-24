@@ -79,7 +79,7 @@ public abstract class DataGenerator {
 
         System.out.println("Start generating the post domain data");
         generator = new PostGenerator();
-        int amountOfPost = generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "post");
+        int amountOfPost = generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "post") - 2;
 
         System.out.println("Start generating the attachment domain data");
         generator = new AttachmentGenerator();
@@ -90,7 +90,7 @@ public abstract class DataGenerator {
         generator.exportMockDataToSQLFile(1, amountOfPost, "comment");
 
         System.out.println("Start generating the like data");
-        generator = new LikeGenerator();
-        generator.exportMockDataToSQLFile(1, amountOfPost, "like");
+        generator = new LikingGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfPost, "liking");
     }
 }
