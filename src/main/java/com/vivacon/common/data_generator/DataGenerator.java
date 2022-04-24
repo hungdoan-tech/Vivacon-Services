@@ -12,6 +12,8 @@ import java.util.Random;
 
 public abstract class DataGenerator {
 
+    public static final int AMOUNT_OF_USER = 1000;
+
     protected final String BASE_DIR = "./mock_data/sql/";
 
     protected final Random RANDOM = new Random();
@@ -67,25 +69,28 @@ public abstract class DataGenerator {
 
     public static void main(String[] args) {
 
-//        System.out.println("Start the account domain");
-//        int amountOfAccount = 10000;
-//        DataGenerator generator = new AccountGenerator();
-//        generator.exportMockDataToSQLFile(1, amountOfAccount, "accounts.sql");
-//
-//        System.out.println("Start the post domain");
-//        generator = new PostGenerator();
-//        int amountOfPost = generator.exportMockDataToSQLFile(1, amountOfAccount, "post.sql");
-//
-//        System.out.println("Start the comment domain");
-//        generator = new CommentGenerator();
-//        int amountOfComment = generator.exportMockDataToSQLFile(1, amountOfAccount, "comment.sql");
-//
-//        System.out.println("Start the attachment domain");
-//        DataGenerator generator = new AttachmentGenerator();
-//        int amountOfAttachment = generator.exportMockDataToSQLFile(1, 120130, "attachment.sql");
+        System.out.println("Start generating the account domain data");
+        DataGenerator generator = new AccountGenerator();
+        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "account");
 
-        int amountOfAccount = 1000;
-        DataGenerator generator = new FollowingGenerator();
-        generator.exportMockDataToSQLFile(1, amountOfAccount, "following");
+        System.out.println("Start generating the following domain data");
+        generator = new FollowingGenerator();
+        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "following");
+
+        System.out.println("Start generating the post domain data");
+        generator = new PostGenerator();
+        int amountOfPost = generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "post");
+
+        System.out.println("Start generating the attachment domain data");
+        generator = new AttachmentGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfPost, "attachment");
+
+        System.out.println("Start generating the comment domain data");
+        generator = new CommentGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfPost, "comment");
+
+        System.out.println("Start generating the like data");
+        generator = new LikeGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfPost, "like");
     }
 }

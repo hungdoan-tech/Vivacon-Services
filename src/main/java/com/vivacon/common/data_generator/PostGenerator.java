@@ -15,7 +15,7 @@ public class PostGenerator extends DataGenerator {
 
         String value;
         long counting = 1L;
-        for (int accountIndex = startAccountIndex; accountIndex <= endAccountIndex; accountIndex++) {
+        for (int accountId = startAccountIndex; accountId <= endAccountIndex; accountId++) {
 
             int postCount = ThreadLocalRandom.current().nextInt(5, 20);
             for (int postIndex = 0; postIndex < postCount; postIndex++) {
@@ -32,7 +32,7 @@ public class PostGenerator extends DataGenerator {
                 value = value.replace("[[last_modified_at]]", last_modified_at);
                 value = value.replace("[[caption]]", caption);
                 value = value.replace("[[privacy]]", String.valueOf(privacy));
-                value = value.replace("[[created_by_account_id]]", String.valueOf(accountIndex));
+                value = value.replace("[[created_by_account_id]]", String.valueOf(accountId));
                 values.add(value);
 
                 counting++;
