@@ -14,15 +14,15 @@ public abstract class DataGenerator {
 
     public static final int AMOUNT_OF_USER = 1000;
 
-    protected final String BASE_DIR = "./mock_data/sql/";
+    protected static final String BASE_DIRECTORY_PATH = "./mock_data/sql/";
 
-    protected final Random RANDOM = new Random();
+    protected static final Random RANDOM = new Random();
 
-    protected final long START_OFFSET = Timestamp.valueOf("2020-01-01 00:00:00").getTime();
+    protected static final long START_OFFSET = Timestamp.valueOf("2020-01-01 00:00:00").getTime();
 
-    protected final long END_OFFSET = Timestamp.valueOf("2022-02-01 00:00:00").getTime();
+    protected static final long END_OFFSET = Timestamp.valueOf("2022-02-01 00:00:00").getTime();
 
-    protected final long DIFF_OFFSET = END_OFFSET - START_OFFSET;
+    protected static final long DIFF_OFFSET = END_OFFSET - START_OFFSET;
 
     public abstract List<String> generateSQLStatements(int startIndex, int endIndex);
 
@@ -43,11 +43,11 @@ public abstract class DataGenerator {
     }
 
     protected int exportMockDataToSQLFile(int startIndex, int endIndex, String domain) {
-        File baseDir = new File(BASE_DIR);
-        if (!baseDir.exists()) {
-            baseDir.mkdirs();
+        File baseDirectory = new File(BASE_DIRECTORY_PATH);
+        if (!baseDirectory.exists()) {
+            baseDirectory.mkdirs();
         }
-        File file = new File(BASE_DIR + domain + ".sql");
+        File file = new File(BASE_DIRECTORY_PATH + domain + ".sql");
 
         List<String> sqlStatements = generateSQLStatements(startIndex, endIndex);
 
@@ -62,37 +62,30 @@ public abstract class DataGenerator {
                 writer.append(sqlStatement);
                 writer.flush();
             }
+            return sqlStatements.size();
         } catch (IOException e) {
             e.printStackTrace();
             return 0;
-        } finally {
-            return sqlStatements.size();
         }
     }
 
     public static void main(String[] args) {
 
-        System.out.println("Start generating the account domain data");
         DataGenerator generator = new AccountGenerator();
         generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "account");
 
-        System.out.println("Start generating the following domain data");
         generator = new FollowingGenerator();
         generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "following");
 
-        System.out.println("Start generating the post domain data");
         generator = new PostGenerator();
         int amountOfPost = generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "post") - 2;
 
-        System.out.println("Start generating the attachment domain data");
         generator = new AttachmentGenerator();
         generator.exportMockDataToSQLFile(1, amountOfPost, "attachment");
 
-        System.out.println("Start generating the comment domain data");
         generator = new CommentGenerator();
         generator.exportMockDataToSQLFile(1, amountOfPost, "comment");
 
-        System.out.println("Start generating the like data");
         generator = new LikingGenerator();
         generator.exportMockDataToSQLFile(1, amountOfPost, "liking");
     }

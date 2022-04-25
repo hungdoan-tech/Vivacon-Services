@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MockDataConverter {
 
-    private final String BASE_DIR = "./mock_data/txt/";
+    private static final String BASE_DIR = "./mock_data/txt/";
 
     @FunctionalInterface
     public interface FileWritingOperation {
@@ -64,8 +64,7 @@ public class MockDataConverter {
         }
     }
 
-    public static void writeMockImagesToFile(String[] args) {
-        final String BASE_DIR = "./mock_data/txt/";
+    public static void writeMockImagesToFile() {
         final String FINAL_IMAGES_PATH = BASE_DIR + "final_image.txt";
         MockDataConverter converter = new MockDataConverter();
         converter.changeImageUrlToString(FINAL_IMAGES_PATH, converter::writeDataToFile);
@@ -78,7 +77,6 @@ public class MockDataConverter {
             builder.append("\"");
             builder.append(imageUrl);
             builder.append("\", ");
-            System.out.println("attachment" + i);
         }
         operation.write(outputFilePath, builder.toString());
     }
@@ -92,10 +90,11 @@ public class MockDataConverter {
 
             return client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
                     .thenApply(HttpResponse::uri)
-                    .thenApply(uri -> uri.toString())
+                    .thenApply(URI::toString)
                     .get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
             return null;
         }
     }

@@ -23,13 +23,13 @@ public class PostGenerator extends DataGenerator {
                 value = "([[id]], '[[created_at]]', '[[last_modified_at]]', '[[caption]]', [[privacy]], [[created_by_account_id]], NULL, true),\n";
 
                 String createdAt = getRandomTimestamp();
-                String last_modified_at = getRandomTimestamp();
+                String lastModifiedAt = getRandomTimestamp();
                 String caption = generateSentence(10);
                 int privacy = RANDOM.nextInt(2);
 
                 value = value.replace("[[id]]", String.valueOf(counting++));
                 value = value.replace("[[created_at]]", createdAt);
-                value = value.replace("[[last_modified_at]]", last_modified_at);
+                value = value.replace("[[last_modified_at]]", lastModifiedAt);
                 value = value.replace("[[caption]]", caption);
                 value = value.replace("[[privacy]]", String.valueOf(privacy));
                 value = value.replace("[[created_by_account_id]]", String.valueOf(accountId));
