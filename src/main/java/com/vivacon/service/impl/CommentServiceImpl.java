@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
         Comment parentComment = null;
         if (commentRequest.getParentCommentId() != null) {
             parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
-            if (parentComment.getPost().getId() != commentRequest.getPostId()) {
+            if (parentComment != null && !parentComment.getPost().getId().equals(commentRequest.getPostId())) {
                 throw new RecordNotFoundException("The parent comment is not match with current post of the request!");
             }
         }
