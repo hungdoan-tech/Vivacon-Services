@@ -43,7 +43,10 @@ public abstract class DataGenerator {
     }
 
     protected int exportMockDataToSQLFile(int startIndex, int endIndex, String domain) {
-
+        File baseDir = new File(BASE_DIR);
+        if (!baseDir.exists()) {
+            baseDir.mkdirs();
+        }
         File file = new File(BASE_DIR + domain + ".sql");
 
         List<String> sqlStatements = generateSQLStatements(startIndex, endIndex);
@@ -51,7 +54,7 @@ public abstract class DataGenerator {
         int lastCommaIndex = sqlStatements.get(sqlStatements.size() - 1).lastIndexOf(",");
         sqlStatements.set(sqlStatements.size() - 1, sqlStatements.get(sqlStatements.size() - 1).substring(0, lastCommaIndex) + ";");
 
-        String setSequenceIdStatement = "\nSELECT setval('"+ domain +"_id_seq', (SELECT MAX(id) FROM " + domain + ") + 1);";
+        String setSequenceIdStatement = "\nSELECT setval('" + domain + "_id_seq', (SELECT MAX(id) FROM " + domain + ") + 1);";
         sqlStatements.add(setSequenceIdStatement);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
