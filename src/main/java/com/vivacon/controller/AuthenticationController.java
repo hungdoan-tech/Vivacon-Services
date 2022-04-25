@@ -113,7 +113,7 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "Check new unique username")
-    @GetMapping("/check")
+    @GetMapping("/account/check")
     public AccountResponse checkUniqueUsername(@RequestParam(value = "username", required = false) Optional<String> username,
                                                @RequestParam(value = "email", required = false) Optional<String> email) {
         if (username.isPresent()) {
