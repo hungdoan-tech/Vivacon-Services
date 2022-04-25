@@ -17,8 +17,8 @@ import javax.persistence.UniqueConstraint;
 public class Like {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_id_generator")
-    @SequenceGenerator(name = "like_id_generator", sequenceName = "like_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "liking_id_generator")
+    @SequenceGenerator(name = "liking_id_generator", sequenceName = "liking_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(targetEntity = Account.class)

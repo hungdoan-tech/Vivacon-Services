@@ -38,9 +38,11 @@ public class PostMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostMapper.class);
 
+    private AuditableHelper auditableHelper;
+
     private ModelMapper mapper;
 
-    private AuditableHelper auditableHelper;
+    private CommentMapper commentMapper;
 
     private AttachmentRepository attachmentRepository;
 
@@ -49,8 +51,6 @@ public class PostMapper {
     private LikeRepository likeRepository;
 
     private AccountRepository accountRepository;
-
-    private CommentMapper commentMapper;
 
     public PostMapper(ModelMapper mapper,
                       AuditableHelper auditableHelper,
@@ -86,6 +86,13 @@ public class PostMapper {
             newsfeedPost.setAttachments(attachmentDTOS);
             newsfeedPost.setLikeCount(0L);
             newsfeedPost.setCommentCount(0L);
+
+            UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
+                    .orElseThrow(RecordNotFoundException::new);
+            Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
+            newsfeedPost.setLiked(like.isPresent());
+
             auditableHelper.setupDisplayAuditableFields(post, newsfeedPost);
             return newsfeedPost;
         } catch (ClassCastException ex) {
@@ -132,8 +139,9 @@ public class PostMapper {
             Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
                     .orElseThrow(RecordNotFoundException::new);
             Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
-            detailPost.setLikeCount(likeCount);
             detailPost.setLiked(like.isPresent());
+            detailPost.setLikeCount(likeCount);
+
 
             return detailPost;
         } catch (ClassCastException ex) {

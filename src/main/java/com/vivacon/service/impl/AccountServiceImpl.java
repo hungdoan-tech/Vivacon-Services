@@ -4,12 +4,14 @@ import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.dto.request.ChangePasswordRequest;
 import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.RegistrationRequest;
+import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.entity.Account;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.exception.InvalidPasswordException;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.VerificationTokenException;
+import com.vivacon.mapper.AccountMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.RoleRepository;
 import com.vivacon.security.UserDetailImpl;
@@ -29,6 +31,7 @@ import java.util.Optional;
 @Service
 public class AccountServiceImpl implements AccountService {
 
+    private AccountMapper accountMapper;
     private AccountRepository accountRepository;
 
     private RoleRepository roleRepository;
@@ -40,11 +43,13 @@ public class AccountServiceImpl implements AccountService {
     public AccountServiceImpl(AccountRepository accountRepository,
                               RoleRepository roleRepository,
                               PasswordEncoder passwordEncoder,
+                              AccountMapper accountMapper,
                               ApplicationEventPublisher applicationEventPublisher) {
         this.accountRepository = accountRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.accountMapper = accountMapper;
     }
 
     @Override
@@ -67,13 +72,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean checkUniqueUsername(String username) {
-        return accountRepository.findByUsernameIgnoreCase(username).isEmpty();
+    public AccountResponse checkUniqueUsername(String username) {
+        Optional<Account> account = accountRepository.findByUsernameIgnoreCase(username);
+        if (account.isPresent()) {
+            return accountMapper.toResponse(null, account.get());
+        } else {
+            throw new RecordNotFoundException("Not match any account in our system");
+        }
     }
 
     @Override
-    public boolean checkUniqueEmail(String email) {
-        return accountRepository.findByEmail(email).isEmpty();
+    public AccountResponse checkUniqueEmail(String email) {
+        Optional<Account> account = accountRepository.findByEmail(email);
+        if (account.isPresent()) {
+            return accountMapper.toResponse(null, account.get());
+        } else {
+            throw new RecordNotFoundException("Not match any account in our system");
+        }
     }
 
     @Override

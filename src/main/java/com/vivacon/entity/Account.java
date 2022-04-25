@@ -39,7 +39,7 @@ public class Account extends AuditableEntity {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column(name = "bio", length = 50)
+    @Column(name = "bio", length = 200)
     private String bio;
 
     @Column(name = "refresh_token", unique = true)

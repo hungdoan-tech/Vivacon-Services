@@ -48,8 +48,10 @@ public class AccountMapper {
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
         responseAccount.setAvatar(avatarUrl);
 
-        Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
-        responseAccount.setFollowing(following.isPresent());
+        if (currentAccount != null) {
+            Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
+            responseAccount.setFollowing(following.isPresent());
+        }
 
         return responseAccount;
     }

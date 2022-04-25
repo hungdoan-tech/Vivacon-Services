@@ -8,15 +8,16 @@ import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.LoginRequest;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.request.TokenRefreshRequest;
+import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.entity.Account;
+import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.TokenRefreshException;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.RefreshTokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -113,18 +114,15 @@ public class AuthenticationController {
 
     @ApiOperation(value = "Check new unique username")
     @GetMapping("/check")
-    public ResponseEntity<Object> checkUniqueUsername(@RequestParam(value = "username", required = false) Optional<String> username,
-                                                      @RequestParam(value = "email", required = false) Optional<String> email) {
-        boolean checkingResult = true;
-        if (username.isPresent() && !this.accountService.checkUniqueUsername(username.get())) {
-            checkingResult = false;
+    public AccountResponse checkUniqueUsername(@RequestParam(value = "username", required = false) Optional<String> username,
+                                               @RequestParam(value = "email", required = false) Optional<String> email) {
+        if (username.isPresent()) {
+            return accountService.checkUniqueUsername(username.get());
         }
-        if (email.isPresent() && !this.accountService.checkUniqueEmail(email.get())) {
-            checkingResult = false;
+        if (email.isPresent()) {
+            return accountService.checkUniqueEmail(email.get());
         }
-        return checkingResult
-                ? ResponseEntity.ok().body(null)
-                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        throw new RecordNotFoundException("Bad checking data request - no account match your request");
     }
 
     @ApiOperation(value = "Register new account")
