@@ -3,13 +3,14 @@ package com.vivacon.service;
 import com.vivacon.dto.request.ChangePasswordRequest;
 import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.RegistrationRequest;
+import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.entity.Account;
 
 public interface AccountService {
 
-    boolean checkUniqueUsername(String username);
+    AccountResponse checkUniqueUsername(String username);
 
-    boolean checkUniqueEmail(String email);
+    AccountResponse checkUniqueEmail(String email);
 
     Account getCurrentAccount();
 
