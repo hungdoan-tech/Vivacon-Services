@@ -60,7 +60,7 @@ public class LikeServiceImpl implements LikeService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean unlike(Long postId) {
         Account currentAccount = accountService.getCurrentAccount();
-        this.likeRepository.unlikeById(currentAccount.getId(), postId);
+        this.likeRepository.unlikeByAccountIdAndPostId(currentAccount.getId(), postId);
         return true;
     }
 
