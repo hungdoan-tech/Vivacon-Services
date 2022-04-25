@@ -39,6 +39,24 @@ public class AttachmentGenerator extends DataGenerator {
                 statements.add(statement);
             }
         }
+
+        for (int accountId = 1; accountId <= AMOUNT_OF_USER; accountId++) {
+            statement = "([[id]], '[[actual_name]]', '[[unique_name]]', '[[url]]', '[[timestamp]]', NULL, [[profile_id]]),\n";
+
+            String timestamp = getRandomTimestamp();
+            String actualName = UUID.randomUUID().toString();
+            String uniqueName = actualName + timestamp;
+            String url = IMAGES[RANDOM.nextInt(IMAGES.length)];
+
+            statement = statement.replace("[[id]]", String.valueOf(counting++));
+            statement = statement.replace("[[actual_name]]", actualName);
+            statement = statement.replace("[[unique_name]]", uniqueName);
+            statement = statement.replace("[[url]]", url);
+            statement = statement.replace("[[timestamp]]", timestamp);
+            statement = statement.replace("[[profile_id]]", String.valueOf(accountId));
+            statements.add(statement);
+        }
+        
         return statements;
     }
 }
