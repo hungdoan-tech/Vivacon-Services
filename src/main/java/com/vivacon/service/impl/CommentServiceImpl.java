@@ -6,6 +6,7 @@ import com.vivacon.dto.response.CommentResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
+import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.CommentMapper;
 import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.repository.CommentRepository;
@@ -35,12 +36,20 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
         Post post = postRepository.findByPostId(commentRequest.getPostId());
-        Comment parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
+        Comment parentComment = null;
+        if (commentRequest.getParentCommentId() != null) {
+            parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
+            if (parentComment.getPost().getId() != commentRequest.getPostId()) {
+                throw new RecordNotFoundException("The parent comment is not match with current post of the request!");
+            }
+        }
+
         Comment comment = commentMapper.toComment(commentRequest);
         comment.setActive(true);
 
         comment.setPost(post);
         comment.setParentComment(parentComment);
+
         Comment savedComment = commentRepository.save(comment);
 
         return commentMapper.toResponse(savedComment);
