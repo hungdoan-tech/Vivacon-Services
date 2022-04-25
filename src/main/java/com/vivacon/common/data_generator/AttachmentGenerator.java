@@ -11,8 +11,8 @@ public class AttachmentGenerator extends DataGenerator {
 
     @Override
     public List<String> generateSQLStatements(int startPostIndex, int endPostIndex) {
-        List<String> statements = new LinkedList<>();
 
+        List<String> statements = new LinkedList<>();
         String insertStatement = "INSERT INTO \"attachment\" (\"id\", \"actual_name\", \"unique_name\", \"url\", \"timestamp\", \"post_id\", \"profile_id\") \nVALUES ";
         statements.add(insertStatement);
 
@@ -28,7 +28,7 @@ public class AttachmentGenerator extends DataGenerator {
                 String timestamp = getRandomTimestamp();
                 String actualName = UUID.randomUUID().toString();
                 String uniqueName = actualName + timestamp;
-                String url = IMAGES[RANDOM.nextInt(IMAGES.length)];
+                String url = IMAGES.get(RANDOM.nextInt(IMAGES.size()));
 
                 statement = statement.replace("[[id]]", String.valueOf(counting++));
                 statement = statement.replace("[[actual_name]]", actualName);
@@ -46,7 +46,7 @@ public class AttachmentGenerator extends DataGenerator {
             String timestamp = getRandomTimestamp();
             String actualName = UUID.randomUUID().toString();
             String uniqueName = actualName + timestamp;
-            String url = IMAGES[RANDOM.nextInt(IMAGES.length)];
+            String url = IMAGES.get(RANDOM.nextInt(IMAGES.size()));
 
             statement = statement.replace("[[id]]", String.valueOf(counting++));
             statement = statement.replace("[[actual_name]]", actualName);

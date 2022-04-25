@@ -28,10 +28,10 @@ public abstract class DataGenerator {
 
     protected String generateSentence(int wordCount) {
 
-        int numberOfWords = MockData.WORDS.length - 1;
+        int numberOfWords = MockData.WORDS.size() - 1;
         StringBuilder sentence = new StringBuilder();
         for (int i = 0; i < wordCount; i++) {
-            sentence.append(MockData.WORDS[RANDOM.nextInt(numberOfWords)]);
+            sentence.append(MockData.WORDS.get(RANDOM.nextInt(numberOfWords)));
             sentence.append(" ");
         }
         return sentence.toString();
