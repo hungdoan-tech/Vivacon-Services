@@ -12,10 +12,16 @@ import com.vivacon.mapper.PageDTOMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.CommentService;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -55,9 +61,26 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.toResponse(savedComment);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public boolean deleteComment(Long commentId) {
-        this.commentRepository.deleteById(commentId);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(RecordNotFoundException::new);
+        if (comment.getParentComment() == null) {
+            deleteChildComments(comment.getId());
+        }
+        this.commentRepository.deleteById(comment.getId());
+        return true;
+    }
+
+    private boolean deleteChildComments(Long parentCommentId) {
+        int numberOfAffectedRows = this.commentRepository.deleteChildCommentsByParentCommentId(parentCommentId);
+        if (numberOfAffectedRows == 0) {
+            return true;
+        }
+        Collection<Comment> listChildComments = this.commentRepository.findAllChildCommentsByParentCommentId(parentCommentId);
+        for (Comment comment : listChildComments) {
+            return deleteChildComments(comment.getId());
+        }
         return true;
     }
 

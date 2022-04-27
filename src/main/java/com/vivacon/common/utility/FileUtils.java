@@ -1,8 +1,8 @@
 package com.vivacon.common.utility;
 
+import com.vivacon.common.constant.Constants;
 import com.vivacon.exception.NotValidImageExtensionException;
 import com.vivacon.exception.UploadAttachmentException;
-import com.vivacon.common.constant.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class FileUtils {
 
@@ -42,7 +43,7 @@ public class FileUtils {
     }
 
     public static boolean checkImageExtension(String extension) {
-        return Constants.IMAGE_EXTENSIONS.contains(extension);
+        return Constants.IMAGE_EXTENSIONS.contains(extension.toLowerCase(Locale.ROOT));
     }
 
     public static File convertAndValidateMultipartFileToFile(MultipartFile multipartFile) {
