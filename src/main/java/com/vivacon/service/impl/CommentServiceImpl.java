@@ -68,18 +68,18 @@ public class CommentServiceImpl implements CommentService {
         if (comment.getParentComment() == null) {
             deleteChildComments(comment.getId());
         }
-        this.commentRepository.deleteById(comment.getId());
+        this.commentRepository.deactivateById(comment.getId());
         return true;
     }
 
     private boolean deleteChildComments(Long parentCommentId) {
-        int numberOfAffectedRows = this.commentRepository.deleteChildCommentsByParentCommentId(parentCommentId);
+        int numberOfAffectedRows = this.commentRepository.deactivateChildCommentsByParentCommentId(parentCommentId);
         if (numberOfAffectedRows == 0) {
             return true;
         }
         Collection<Comment> listChildComments = this.commentRepository.findAllChildCommentsByParentCommentId(parentCommentId);
         for (Comment comment : listChildComments) {
-            return deleteChildComments(comment.getId());
+            deleteChildComments(comment.getId());
         }
         return true;
     }
@@ -94,7 +94,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public PageDTO<CommentResponse> getAllChildComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long parentCommentId, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
-        Page<Comment> entityPage = commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, postId, pageable);
+        Page<Comment> entityPage = commentRepository.findActiveChildCommentsByParentCommentId(parentCommentId, postId, pageable);
         return PageDTOMapper.toPageDTO(entityPage, CommentResponse.class, entity -> this.commentMapper.toResponse(entity));
     }
 }

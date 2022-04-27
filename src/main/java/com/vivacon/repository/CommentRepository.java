@@ -15,9 +15,9 @@ import java.util.Collection;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
     @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId and comment.post.id= :postId AND comment.active = true")
-    Page<Comment> findAllChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId, Pageable pageable);
+    Page<Comment> findActiveChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId, Pageable pageable);
 
-    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId AND comment.active = true")
+    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId")
     Collection<Comment> findAllChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId);
 
     @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = true")
@@ -30,10 +30,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
     Long getCountingCommentsByPost(@Param(value = "post_id") Long postId);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Comment comment SET comment.active = false WHERE comment.id = :parentCommentId")
-    int deleteByCommentId(@Param("parentCommentId") Long parentCommentId);
+    @Query("UPDATE Comment comment SET comment.active = false WHERE comment.id = :id")
+    int deactivateById(@Param("id") Long id);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Comment comment SET comment.active = false WHERE comment.parentComment.id = :parentCommentId")
-    int deleteChildCommentsByParentCommentId(@Param("parentCommentId") Long parentCommentId);
+    int deactivateChildCommentsByParentCommentId(@Param("parentCommentId") Long parentCommentId);
 }
