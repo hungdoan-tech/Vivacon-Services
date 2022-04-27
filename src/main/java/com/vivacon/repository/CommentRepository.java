@@ -11,9 +11,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
+    @Query("SELECT comment FROM Comment comment WHERE comment.id = :id and comment.active = :isActive")
+    Optional<Comment> findByIdAndActive(@Param(value = "id") long id, @Param(value = "parentCommentId") boolean isActive);
+
     @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId and comment.post.id= :postId AND comment.active = true")
     Page<Comment> findActiveChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId, Pageable pageable);
 

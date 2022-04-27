@@ -120,7 +120,7 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(urlWhitelistArray).permitAll()
                 .antMatchers(HttpMethod.POST, API_V1 + "/account/password").permitAll()
-//                .antMatchers(HttpMethod.PUT, API_V1 + "/innovation/{id}").access("@securityService.isAccessibleToInnovationResource(#id)")
+                .antMatchers(HttpMethod.DELETE, API_V1 + "/comment/{id}").access("@securityService.isAccessibleToCommentResource(#id)")
 //                .antMatchers(HttpMethod.DELETE, API_V1 + "/innovation/{id}").access("@securityService.isAccessibleToInnovationResource(#id)")
 //                .antMatchers(HttpMethod.PATCH, API_V1 + "/innovation/approve/{id}").hasAnyAuthority(ADMIN_AUTHORITY_VALUE)
 //                .antMatchers(HttpMethod.PATCH, API_V1 + "/innovation/reject/{id}").hasAnyAuthority(ADMIN_AUTHORITY_VALUE)
