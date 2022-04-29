@@ -49,7 +49,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public boolean like(Long postId) {
         Account currentAccount = accountService.getCurrentAccount();
-        Post currentPost = postRepository.findByPostId(postId, true).orElseThrow(RecordNotFoundException::new);
+        Post currentPost = postRepository.findByIdAndActive(postId, true).orElseThrow(RecordNotFoundException::new);
         Like liking = new Like(currentAccount, currentPost);
         try {
             this.likeRepository.save(liking);

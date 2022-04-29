@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
-        Post post = postRepository.findByPostId(commentRequest.getPostId(), true).orElseThrow(RecordNotFoundException::new);
+        Post post = postRepository.findByIdAndActive(commentRequest.getPostId(), true).orElseThrow(RecordNotFoundException::new);
         Comment parentComment = null;
         if (commentRequest.getParentCommentId() != null) {
             parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);

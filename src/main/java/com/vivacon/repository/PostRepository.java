@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     Long getPostCountingByAccountId(@Param("accountId") Long accountId);
 
     @Query("select p from Post p where p.id = :postId and p.active = :active")
-    Optional<Post> findByPostId(@Param("postId") Long postId, @Param("active") boolean active);
+    Optional<Post> findByIdAndActive(@Param("postId") Long postId, @Param("active") boolean active);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Post p SET p.active = false WHERE p.id = :id")
