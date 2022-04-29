@@ -6,7 +6,7 @@ import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Following;
 import com.vivacon.mapper.AccountMapper;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
@@ -68,7 +68,7 @@ public class FollowingServiceImpl implements FollowingService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Account.class);
         Page<Account> listFollower = this.followingRepository.findFollower(fromAccountId, pageable);
         Account currentAccount = accountService.getCurrentAccount();
-        return PageDTOMapper.toPageDTO(listFollower, AccountResponse.class, account -> accountMapper.toResponse(currentAccount, account));
+        return PageMapper.toPageDTO(listFollower, AccountResponse.class, account -> accountMapper.toResponse(currentAccount, account));
     }
 
     @Override
@@ -76,6 +76,6 @@ public class FollowingServiceImpl implements FollowingService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Account.class);
         Page<Account> listFollower = this.followingRepository.findFollowing(fromAccountId, pageable);
         Account currentAccount = accountService.getCurrentAccount();
-        return PageDTOMapper.toPageDTO(listFollower, AccountResponse.class, account -> accountMapper.toResponse(currentAccount, account));
+        return PageMapper.toPageDTO(listFollower, AccountResponse.class, account -> accountMapper.toResponse(currentAccount, account));
     }
 }

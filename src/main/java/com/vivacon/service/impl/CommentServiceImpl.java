@@ -8,7 +8,7 @@ import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.CommentMapper;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.CommentService;
@@ -88,13 +88,13 @@ public class CommentServiceImpl implements CommentService {
     public PageDTO<CommentResponse> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
         Page<Comment> entityPage = commentRepository.findAllFirstLevelComments(postId, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, CommentResponse.class, entity -> this.commentMapper.toResponse(entity));
+        return PageMapper.toPageDTO(entityPage, CommentResponse.class, entity -> this.commentMapper.toResponse(entity));
     }
 
     @Override
     public PageDTO<CommentResponse> getAllChildComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long parentCommentId, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
         Page<Comment> entityPage = commentRepository.findActiveChildCommentsByParentCommentId(parentCommentId, postId, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, CommentResponse.class, entity -> this.commentMapper.toResponse(entity));
+        return PageMapper.toPageDTO(entityPage, CommentResponse.class, entity -> this.commentMapper.toResponse(entity));
     }
 }

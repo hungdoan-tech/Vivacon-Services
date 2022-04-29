@@ -10,7 +10,7 @@ import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
@@ -72,7 +72,7 @@ public class ProfileServiceImpl implements ProfileService {
     public PageDTO<AttachmentDTO> getProfileAvatarsByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Attachment.class);
         Page<Attachment> pageAvatar = attachmentRepository.findByProfileId(accountId, pageable);
-        return PageDTOMapper.toPageDTO(pageAvatar, AttachmentDTO.class, attachment -> new AttachmentDTO((Attachment) attachment));
+        return PageMapper.toPageDTO(pageAvatar, AttachmentDTO.class, attachment -> new AttachmentDTO((Attachment) attachment));
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
-        PageDTO<OutlinePost> listOutlinePost = PageDTOMapper.toPageDTO(pagePost, OutlinePost.class, entity -> this.postMapper.toOutlinePost(entity));
+        PageDTO<OutlinePost> listOutlinePost = PageMapper.toPageDTO(pagePost, OutlinePost.class, entity -> this.postMapper.toOutlinePost(entity));
 
         Long postCounting = postRepository.getPostCountingByAccountId(profile.getId());
         Long followerCounting = followingRepository.getFollowerCountingByAccountId(profile.getId());
@@ -104,6 +104,6 @@ public class ProfileServiceImpl implements ProfileService {
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
-        return PageDTOMapper.toPageDTO(pagePost, OutlinePost.class, post -> this.postMapper.toOutlinePost(post));
+        return PageMapper.toPageDTO(pagePost, OutlinePost.class, post -> this.postMapper.toOutlinePost(post));
     }
 }

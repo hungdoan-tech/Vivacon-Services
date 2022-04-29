@@ -14,7 +14,7 @@ import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
@@ -86,7 +86,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(postFilter, keyword);
         Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, NewsfeedPost.class, entity -> this.postMapper.toNewsfeedPost(entity));
+        return PageMapper.toPageDTO(entityPage, NewsfeedPost.class, entity -> this.postMapper.toNewsfeedPost(entity));
     }
 
     @Override

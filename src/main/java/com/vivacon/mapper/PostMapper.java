@@ -128,7 +128,7 @@ public class PostMapper {
             detailPost.setAttachments(attachmentDTOS);
 
             Page<Comment> allFirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), pageable);
-            PageDTO<CommentResponse> commentResponsePageDTO = PageDTOMapper.toPageDTO(allFirstLevelComments, CommentResponse.class, commentMapper::toResponse);
+            PageDTO<CommentResponse> commentResponsePageDTO = PageMapper.toPageDTO(allFirstLevelComments, CommentResponse.class, commentMapper::toResponse);
 
             Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
             detailPost.setCommentCount(commentCount);

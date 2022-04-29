@@ -12,15 +12,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
 public class MockDataConverter {
 
     private static final String BASE_DIR = "./mock_data/txt/";
-
-    @FunctionalInterface
-    public interface FileWritingOperation {
-        void write(String filePath, String inputData);
-    }
 
     public void writeMockNamesToFile() {
         final String FINAL_FIRST_NAMES_PATH = BASE_DIR + "final_first_name.txt";
@@ -36,7 +32,7 @@ public class MockDataConverter {
         changeLineBreakIntoComma(BASE_DIR + "raw_words.txt", BASE_DIR + "final_words.txt", this::writeDataToFile);
     }
 
-    public void changeLineBreakIntoComma(String inputFilePath, String outputFilePath, FileWritingOperation operation) {
+    public void changeLineBreakIntoComma(String inputFilePath, String outputFilePath, BiConsumer<String, String> outputOperation) {
         StringBuilder lines = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFilePath)))) {
             String line;
@@ -47,7 +43,7 @@ public class MockDataConverter {
                 lines.append(", ");
             }
             lines.delete(lines.length() - 2, lines.length() + 1);
-            operation.write(outputFilePath, lines.toString());
+            outputOperation.accept(outputFilePath, lines.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +66,7 @@ public class MockDataConverter {
         converter.changeImageUrlToString(FINAL_IMAGES_PATH, converter::writeDataToFile);
     }
 
-    public void changeImageUrlToString(String outputFilePath, FileWritingOperation operation) {
+    public void changeImageUrlToString(String outputFilePath, BiConsumer<String, String> outputOperation) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 2000; i++) {
             String imageUrl = getRandomImageUrl();
@@ -78,7 +74,7 @@ public class MockDataConverter {
             builder.append(imageUrl);
             builder.append("\", ");
         }
-        operation.write(outputFilePath, builder.toString());
+        outputOperation.accept(outputFilePath, builder.toString());
     }
 
     private String getRandomImageUrl() {

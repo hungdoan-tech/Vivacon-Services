@@ -8,7 +8,7 @@ import com.vivacon.entity.Like;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.LikeRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.AccountService;
@@ -71,6 +71,6 @@ public class LikeServiceImpl implements LikeService {
     public PageDTO<OutlineAccount> getAll(Long postId, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Like.class);
         Page<Account> entityPage = likeRepository.findAllLikeByPostId(postId, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, OutlineAccount.class, entity -> this.accountMapper.toOutlineAccount(entity));
+        return PageMapper.toPageDTO(entityPage, OutlineAccount.class, entity -> this.accountMapper.toOutlineAccount(entity));
     }
 }
