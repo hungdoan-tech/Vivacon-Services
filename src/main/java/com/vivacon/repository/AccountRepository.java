@@ -11,13 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-
-    /**
-     * Load an entire optional account object
-     *
-     * @param username
-     * @return optional account object
-     */
+    
     Optional<Account> findByUsernameIgnoreCase(String username);
 
     Optional<Account> findByRefreshToken(String token);

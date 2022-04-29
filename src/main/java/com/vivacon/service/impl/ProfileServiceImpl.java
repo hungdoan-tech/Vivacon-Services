@@ -87,7 +87,7 @@ public class ProfileServiceImpl implements ProfileService {
         Account profile = accountRepository.findById(requestAccount.getId()).orElseThrow(RecordNotFoundException::new);
 
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Page<Post> pagePost = postRepository.findByAuthorId(requestAccount.getId(), pageable);
+        Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
         PageDTO<OutlinePost> listOutlinePost = PageDTOMapper.toPageDTO(pagePost, OutlinePost.class, entity -> this.postMapper.toOutlinePost(entity));
 
         Long postCounting = postRepository.getPostCountingByAccountId(profile.getId());
@@ -103,7 +103,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Page<Post> pagePost = postRepository.findByAuthorId(requestAccount.getId(), pageable);
+        Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
         return PageDTOMapper.toPageDTO(pagePost, OutlinePost.class, post -> this.postMapper.toOutlinePost(post));
     }
 }

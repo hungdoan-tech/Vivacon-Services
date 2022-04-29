@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
     @Query("SELECT comment FROM Comment comment WHERE comment.id = :id and comment.active = :isActive")
-    Optional<Comment> findByIdAndActive(@Param(value = "id") long id, @Param(value = "parentCommentId") boolean isActive);
+    Optional<Comment> findByIdAndActive(@Param(value = "id") long id, @Param(value = "isActive") boolean isActive);
 
     @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId and comment.post.id= :postId AND comment.active = true")
     Page<Comment> findActiveChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId, Pageable pageable);
@@ -27,11 +27,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
     @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = true")
     Page<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId, Pageable pageable);
 
-    @Query("SELECT COUNT(comment.id) FROM Comment comment WHERE comment.parentComment.id = :parent_comment_id and comment.post.id= :post_id AND comment.active = true")
-    Long getCountingChildComments(@Param(value = "parent_comment_id") Long parentCommentId, @Param(value = "post_id") Long postId);
+    @Query("SELECT COUNT(comment.id) FROM Comment comment WHERE comment.parentComment.id = :parentCommentId and comment.post.id= :postId AND comment.active = true")
+    Long getCountingChildComments(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId);
 
-    @Query("SELECT COUNT(comment.id) FROM Comment comment WHERE comment.post.id= :post_id AND comment.active = true")
-    Long getCountingCommentsByPost(@Param(value = "post_id") Long postId);
+    @Query("SELECT COUNT(comment.id) FROM Comment comment WHERE comment.post.id= :postId AND comment.active = true")
+    Long getCountingCommentsByPost(@Param(value = "postId") Long postId);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Comment comment SET comment.active = false WHERE comment.id = :id")
@@ -40,4 +40,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Comment comment SET comment.active = false WHERE comment.parentComment.id = :parentCommentId")
     int deactivateChildCommentsByParentCommentId(@Param("parentCommentId") Long parentCommentId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Comment comment SET comment.active = false WHERE comment.post.id = :postId")
+    int deactivateByPostId(@Param("postId") Long postId);
 }

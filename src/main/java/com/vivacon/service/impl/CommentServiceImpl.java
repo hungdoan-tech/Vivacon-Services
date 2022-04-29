@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
-        Post post = postRepository.findByPostId(commentRequest.getPostId());
+        Post post = postRepository.findByPostId(commentRequest.getPostId(), true).orElseThrow(RecordNotFoundException::new);
         Comment parentComment = null;
         if (commentRequest.getParentCommentId() != null) {
             parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public boolean deleteComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(RecordNotFoundException::new);
+        Comment comment = commentRepository.findByIdAndActive(commentId, true).orElseThrow(RecordNotFoundException::new);
         if (comment.getParentComment() == null) {
             deleteChildComments(comment.getId());
         }
