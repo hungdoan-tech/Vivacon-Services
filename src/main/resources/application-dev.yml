@@ -15,10 +15,12 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
+        jdbc:
+          time_zone: UTC
         format_sql: true
         schema_update:
           unique_constraint_strategy: RECREATE_QUIETLY
-        metadata_builder_contributor: com.vivacon.common.SQLFunctionsMetadataBuilderContributor
+        metadata_builder_contributor: com.vivacon.common.relational_db.SQLFunctionsMetadataBuilderContributor
   servlet:
     multipart:
       enabled: true
@@ -26,17 +28,23 @@ spring:
       max-request-size: 10MB
       location: ${java.io.tmpdir}
 
-innovation:
+vivacon:
   jwt:
     secret_salt: Vivacon@123456
-    jwt_validity: 3600000 # 1000 * 60 * 60 - 1 Hour
+    jwt_validity: 36000000 # 1000 * 60 * 60 - 1 Hour
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
+  verification_token:
+    expiration: 600000 # 10 * 60 * 1000 - 10 minutes
+  email:
+    address: vivacon.service@gmail.com
+    password: Admin123*
 
 aws:
-  access_key_id: AKIAV3KWG2VTG47Q667Q
-  secret_access_key: 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
+  access_key_id: AKIAV3KWG2VTMC3CBPXJ
+  secret_access_key: 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
   s3:
-    bucket: vivacon-bucket
+    bucket: vivacon-objects
     region: ap-southeast-1
+
 

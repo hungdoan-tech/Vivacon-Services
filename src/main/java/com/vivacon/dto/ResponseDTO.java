@@ -15,10 +15,6 @@ public class ResponseDTO<T> {
 
     private T data;
 
-    public ResponseDTO() {
-
-    }
-
     public ResponseDTO(HttpStatus status, String message, T data) {
         this.status = status.toString();
         this.message = message;

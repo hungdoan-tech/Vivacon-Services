@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public abstract class AuditableEntity {
 
     @ManyToOne
-    @JoinColumn(name = "created_by_account_id", nullable = false)
+    @JoinColumn(name = "created_by_account_id")
     protected Account createdBy;
 
     @Column(name = "created_at", nullable = false)
@@ -22,6 +22,9 @@ public abstract class AuditableEntity {
 
     @Column(name = "last_modified_at")
     protected LocalDateTime lastModifiedAt;
+
+    @Column(nullable = false)
+    protected Boolean active;
 
     protected AuditableEntity() {
     }
@@ -56,5 +59,13 @@ public abstract class AuditableEntity {
 
     public void setLastModifiedAt(LocalDateTime lastModifiedAt) {
         this.lastModifiedAt = lastModifiedAt;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

@@ -20,12 +20,15 @@ public class UserDetailImpl implements UserDetails {
 
     private Long accountId;
 
+    private boolean active;
+
     public UserDetailImpl(Account account) {
         List<String> listRoleName = Arrays.asList(account.getRole().getName());
         this.authorities = listRoleName.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         this.username = account.getUsername();
         this.password = account.getPassword();
         this.accountId = account.getId();
+        this.active = account.getActive();
     }
 
     public Long getAccountId() {
@@ -64,6 +67,6 @@ public class UserDetailImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.active;
     }
 }

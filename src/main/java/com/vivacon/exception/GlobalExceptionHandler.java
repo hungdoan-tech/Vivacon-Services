@@ -1,7 +1,7 @@
 package com.vivacon.exception;
 
-import com.vivacon.dto.ResponseDTO;
 import com.vivacon.common.constant.Constants;
+import com.vivacon.dto.ResponseDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.NonUniqueResultException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -76,9 +77,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseDTO<>(HttpStatus.UNAUTHORIZED, ex.getMessage(), null);
     }
 
+    @ExceptionHandler(value = VerificationTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseDTO<Object> handleTokenRefreshException(VerificationTokenException ex) {
+        return new ResponseDTO<>(HttpStatus.UNAUTHORIZED, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(value = RecordNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<Object> handleRecordNotFoundException(RecordNotFoundException ex) {
+        return new ResponseDTO<>(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(value = InvalidPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<Object> handleInvalidPasswordException(InvalidPasswordException ex) {
+        return new ResponseDTO<>(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(value = NonUniqueResultException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<Object> handleNonUniqueResultException(NonUniqueResultException ex) {
         return new ResponseDTO<>(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
     }
 

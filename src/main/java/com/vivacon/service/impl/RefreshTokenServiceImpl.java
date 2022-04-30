@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    @Value("${innovation.jwt.refresh_expiration}")
+    @Value("${vivacon.jwt.refresh_expiration}")
     private Long refreshTokenDurationMs;
 
     private AccountRepository accountRepository;

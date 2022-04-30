@@ -20,7 +20,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import static com.vivacon.common.constant.Constants.ADMIN_AUTHORITY_VALUE;
 import static com.vivacon.common.constant.Constants.API_V1;
 import static com.vivacon.common.constant.Constants.URL_WHITELIST;
 
@@ -35,12 +34,12 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private JWTRequestFilter jwtRequestFilter;
 
-    private AuthenticationEntryPointHandler authenticationEntryPointHandler;
+    private AuthenticationEntryPointImpl authenticationEntryPointHandler;
 
     @Autowired
     public HTTPSecurityConfiguration(UserDetailServiceImpl userDetailsService,
                                      JWTRequestFilter jwtRequestFilter,
-                                     AuthenticationEntryPointHandler authenticationEntryPointHandler) {
+                                     AuthenticationEntryPointImpl authenticationEntryPointHandler) {
         this.userDetailsService = userDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
@@ -120,6 +119,7 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(urlWhitelistArray).permitAll()
+                .antMatchers(HttpMethod.POST, API_V1 + "/account/password").permitAll()
 //                .antMatchers(HttpMethod.PUT, API_V1 + "/innovation/{id}").access("@securityService.isAccessibleToInnovationResource(#id)")
 //                .antMatchers(HttpMethod.DELETE, API_V1 + "/innovation/{id}").access("@securityService.isAccessibleToInnovationResource(#id)")
 //                .antMatchers(HttpMethod.PATCH, API_V1 + "/innovation/approve/{id}").hasAnyAuthority(ADMIN_AUTHORITY_VALUE)

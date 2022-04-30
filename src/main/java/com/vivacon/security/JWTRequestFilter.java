@@ -1,8 +1,10 @@
 package com.vivacon.security;
 
-import com.vivacon.common.JwtUtils;
+import com.vivacon.common.utility.JwtUtils;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static com.vivacon.common.constant.Constants.ACCESS_TOKEN_MISSING;
+import static com.vivacon.common.constant.Constants.ACCOUNT_STATUS_EXCEPTION_MESSAGE_KEY;
 import static com.vivacon.common.constant.Constants.AUTHORIZATION_BEARER;
 import static com.vivacon.common.constant.Constants.AUTHORIZATION_HEADER;
 import static com.vivacon.common.constant.Constants.CAN_NOT_SET_AUTHENTICATION_VALUE;
@@ -51,8 +54,10 @@ public class JWTRequestFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        AccountStatusUserDetailsChecker statusUserDetailsChecker = new AccountStatusUserDetailsChecker();
         String requestURI = request.getRequestURI();
-        if (WHITELIST_URL_REGEX.stream().noneMatch(url -> requestURI.matches(url)) &&
+
+        if (WHITELIST_URL_REGEX.stream().noneMatch(requestURI::matches) &&
                 URL_WHITELIST.stream().noneMatch(url -> url.equals(requestURI))) {
             try {
                 String token = getTokenFromRequest(request);
@@ -60,6 +65,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                     if (jwtUtils.validate(token)) {
                         String username = jwtUtils.getUsername(token);
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        statusUserDetailsChecker.check(userDetails);
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -67,9 +73,12 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                 } else {
                     throw new JwtException(ACCESS_TOKEN_MISSING);
                 }
-            } catch (Exception ex) {
+            } catch (JwtException ex) {
                 logger.error(CAN_NOT_SET_AUTHENTICATION_VALUE, ex);
                 request.setAttribute(ERROR_MESSAGE_ATTRIBUTE_HTTP_REQUEST, ex.getMessage());
+            } catch (AccountStatusException ex) {
+                logger.error(CAN_NOT_SET_AUTHENTICATION_VALUE, ex);
+                request.setAttribute(ACCOUNT_STATUS_EXCEPTION_MESSAGE_KEY, ex.getMessage());
             }
         }
         filterChain.doFilter(request, response);
