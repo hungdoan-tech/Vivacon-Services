@@ -14,10 +14,11 @@ import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
+import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.PostService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -47,14 +48,18 @@ public class PostServiceImpl implements PostService {
 
     private AttachmentRepository attachmentRepository;
 
+    private CommentRepository commentRepository;
+
     public PostServiceImpl(PostMapper postMapper,
                            AccountRepository accountRepository,
                            PostRepository postRepository,
-                           AttachmentRepository attachmentRepository) {
+                           AttachmentRepository attachmentRepository,
+                           CommentRepository commentRepository) {
         this.postMapper = postMapper;
         this.accountRepository = accountRepository;
         this.postRepository = postRepository;
         this.attachmentRepository = attachmentRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
@@ -81,7 +86,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(postFilter, keyword);
         Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, NewsfeedPost.class, entity -> this.postMapper.toNewsfeedPost(entity));
+        return PageMapper.toPageDTO(entityPage, NewsfeedPost.class, entity -> this.postMapper.toNewsfeedPost(entity));
     }
 
     @Override
@@ -89,6 +94,14 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
         Post post = postRepository.findById(postId).orElse(null);
         return this.postMapper.toDetailPost(post, pageable);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean deleteById(long id) {
+        this.postRepository.deactivateById(id);
+        this.commentRepository.deactivateByPostId(id);
+        return true;
     }
 
     private Specification<Post> createTheCombiningPostSpecification(PostFilter filter, Optional<String> keyword) {
