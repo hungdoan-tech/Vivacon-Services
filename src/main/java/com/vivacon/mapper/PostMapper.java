@@ -106,8 +106,8 @@ public class PostMapper {
             Post post = (Post) object;
             Attachment firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
             boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
-            Long likeCount = 0L;
-            Long commentCount = 0L;
+            Long likeCount = likeRepository.getCountingLike(post.getId());
+            Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
             return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
         } catch (ClassCastException ex) {
             LOGGER.info(ex.getMessage());
