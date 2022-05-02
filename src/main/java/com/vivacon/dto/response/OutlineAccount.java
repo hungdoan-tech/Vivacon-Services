@@ -4,7 +4,7 @@ public class OutlineAccount {
 
     private Long id;
 
-    private String userName;
+    private String username;
 
     private String fullName;
 
@@ -18,7 +18,7 @@ public class OutlineAccount {
 
     public OutlineAccount(Long id, String userName, String fullName, String avatar, Boolean isFollowing) {
         this.id = id;
-        this.userName = userName;
+        this.username = userName;
         this.fullName = fullName;
         this.avatar = avatar;
         this.isFollowing = isFollowing;
@@ -32,12 +32,12 @@ public class OutlineAccount {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFullName() {
