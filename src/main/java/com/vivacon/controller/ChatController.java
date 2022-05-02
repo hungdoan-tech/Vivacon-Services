@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.vivacon.common.constant.Constants.API_V1;
 import static com.vivacon.common.constant.Constants.PREFIX_USER_QUEUE_DESTINATION;
 import static com.vivacon.common.constant.Constants.SUFFIX_CONVERSATION_QUEUE_DESTINATION;
 import static com.vivacon.common.constant.Constants.SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
@@ -75,8 +76,8 @@ public class ChatController {
      *
      * @return PageDTO<ConversationResponse>
      */
-    @GetMapping("/api/conversations")
     @ApiOperation(value = "Get all conversation of current user")
+    @GetMapping(API_V1 + "/conversations")
     public PageDTO<ConversationResponse> findConversationsOfCurrentUser(
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
@@ -92,7 +93,7 @@ public class ChatController {
      * @return PageDTO<MessageResponse>
      */
     @ApiOperation(value = "Get all messages in a specific conversation")
-    @GetMapping("/api/conversations/{id}/messages")
+    @GetMapping(API_V1 + "/conversations/{id}/messages")
     public PageDTO<MessageResponse> findMessagesInAConversation(
             @PathVariable(value = "id") Long conversationId,
             @RequestParam(value = "_order", required = false) Optional<String> order,
@@ -109,7 +110,7 @@ public class ChatController {
      * @return ConversationResponse
      */
     @ApiOperation(value = "Get the expected conversation between these two sender and recipient")
-    @GetMapping("/api/conversations/recipient")
+    @GetMapping(API_V1 + "/conversations/recipient")
     public ConversationResponse findConversationBasedOnRecipientUsername(@RequestParam("username") String username) {
         return conversationService.findByRecipientUsername(username);
     }
