@@ -15,9 +15,9 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Indexed
-@Table(name = "chat_message")
+@Table(name = "message")
 @Entity
-public class ChatMessage {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,18 +38,14 @@ public class ChatMessage {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDate timestamp;
 
-    @Column(nullable = false)
-    private Boolean active;
-
-    public ChatMessage() {
+    public Message() {
     }
 
-    public ChatMessage(Account sender, Conversation recipient, String message, LocalDate timestamp, Boolean active) {
+    public Message(Account sender, Conversation recipient, String message, LocalDate timestamp) {
         this.sender = sender;
         this.recipient = recipient;
         this.content = message;
         this.timestamp = timestamp;
-        this.active = active;
     }
 
     public Long getId() {
@@ -90,13 +86,5 @@ public class ChatMessage {
 
     public void setTimestamp(LocalDate timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

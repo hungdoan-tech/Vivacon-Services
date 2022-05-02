@@ -53,8 +53,8 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/conversations", "/user", "/topic");
-        registry.setApplicationDestinationPrefixes("/app");
         registry.setUserDestinationPrefix("/conversations");
+        registry.setApplicationDestinationPrefixes("/app");
     }
 
     /**
@@ -115,14 +115,13 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
             StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
             if (!ObjectUtils.isEmpty(accessor)) {
                 List<String> tokenList = accessor.getNativeHeader(STOMP_AUTHORIZATION_HEADER);
-                if (tokenList == null || tokenList.isEmpty()) {
-                    return message;
+                if (tokenList != null || !tokenList.isEmpty()) {
+                    String token = tokenList.get(0).split(" ")[1];
+                    UserDetails userDetails = userDetailService.loadUserByUsername(jwtUtils.getUsername(token));
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    accessor.setUser(usernamePasswordAuthenticationToken);
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
-                String token = tokenList.get(0).split(" ")[1];
-                UserDetails userDetails = userDetailService.loadUserByUsername(jwtUtils.getUsername(token));
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                accessor.setUser(usernamePasswordAuthenticationToken);
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
             return message;
         }
