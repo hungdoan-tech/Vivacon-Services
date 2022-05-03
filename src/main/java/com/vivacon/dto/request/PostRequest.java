@@ -15,7 +15,6 @@ public class PostRequest {
     @NotEmpty
     private List<Attachment> attachments;
 
-    //    @EnumValidator(enumClass = PrivacyType.class)
     private Privacy privacy;
 
     public PostRequest() {

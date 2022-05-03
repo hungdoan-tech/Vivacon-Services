@@ -70,7 +70,7 @@ public class AccountMapper {
 
             String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
 
-            outlineAccountResponse.setFollowing(following.isPresent());
+            outlineAccountResponse.setIsFollowing(following.isPresent());
             outlineAccountResponse.setAvatar(avatarUrl);
 
             return outlineAccountResponse;
