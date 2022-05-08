@@ -22,9 +22,6 @@ import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 
 @Component
 public class AccountMapper {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountMapper.class);
-
     private ModelMapper mapper;
 
     private FollowingRepository followingRepository;

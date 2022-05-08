@@ -2,21 +2,21 @@ package com.vivacon.controller;
 
 import com.vivacon.dto.request.MessageRequest;
 import com.vivacon.dto.request.Participants;
-import com.vivacon.dto.response.ConversationResponse;
 import com.vivacon.dto.response.MessageResponse;
+import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.service.ConversationService;
 import com.vivacon.service.MessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -28,8 +28,9 @@ import static com.vivacon.common.constant.Constants.PREFIX_USER_QUEUE_DESTINATIO
 import static com.vivacon.common.constant.Constants.SUFFIX_CONVERSATION_QUEUE_DESTINATION;
 import static com.vivacon.common.constant.Constants.SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
 
-@Controller
+@RestController
 @Api(value = "Chatting endpoints")
+@RequestMapping(API_V1)
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
@@ -60,9 +61,9 @@ public class ChatController {
      *
      * @param participants Participants
      */
-    @MessageMapping("/conversations")
+    @MessageMapping("/conversation")
     public void processCreatingConversation(@Payload @Valid Participants participants) {
-        ConversationResponse conversation = conversationService.create(participants);
+        OutlineConversation conversation = conversationService.create(participants);
         Set<String> usernames = new HashSet<>(participants.getUsernames());
         usernames = conversationService.getAllParticipants(usernames);
         for (String username : usernames) {
@@ -77,8 +78,8 @@ public class ChatController {
      * @return PageDTO<ConversationResponse>
      */
     @ApiOperation(value = "Get all conversation of current user")
-    @GetMapping(API_V1 + "/conversations")
-    public PageDTO<ConversationResponse> findConversationsOfCurrentUser(
+    @GetMapping("/conversation")
+    public PageDTO<OutlineConversation> findConversationsOfCurrentUser(
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
@@ -93,7 +94,7 @@ public class ChatController {
      * @return PageDTO<MessageResponse>
      */
     @ApiOperation(value = "Get all messages in a specific conversation")
-    @GetMapping(API_V1 + "/conversations/{id}/messages")
+    @GetMapping("/conversation/{id}/messages")
     public PageDTO<MessageResponse> findMessagesInAConversation(
             @PathVariable(value = "id") Long conversationId,
             @RequestParam(value = "_order", required = false) Optional<String> order,
@@ -110,8 +111,13 @@ public class ChatController {
      * @return ConversationResponse
      */
     @ApiOperation(value = "Get the expected conversation between these two sender and recipient")
-    @GetMapping(API_V1 + "/conversations/recipient")
-    public ConversationResponse findConversationBasedOnRecipientUsername(@RequestParam("username") String username) {
-        return conversationService.findByRecipientUsername(username);
+    @GetMapping("/conversation/search")
+    public PageDTO<OutlineConversation> findConversationBasedOnRecipientUsername(
+            @RequestParam("keyword") String username,
+            @RequestParam(value = "_order", required = false) Optional<String> order,
+            @RequestParam(value = "_sort", required = false) Optional<String> sort,
+            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
+            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
+        return conversationService.findByRecipientUsername(username, order, sort, pageSize, pageIndex);
     }
 }

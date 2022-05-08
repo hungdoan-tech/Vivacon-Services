@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
 @Component
 public class PostMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PostMapper.class);
-
     private AuditableHelper auditableHelper;
 
     private ModelMapper mapper;

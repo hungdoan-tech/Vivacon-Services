@@ -1,6 +1,7 @@
 package com.vivacon.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.vivacon.common.enum_type.MessageStatus;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.Column;
@@ -42,7 +43,7 @@ public class Message {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
-    private Status status;
+    private MessageStatus status;
 
     public Message() {
     }
@@ -94,17 +95,11 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public Status getStatus() {
+    public MessageStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(MessageStatus status) {
         this.status = status;
-    }
-
-    private enum Status {
-        SENT,
-        RECEIVED,
-        SEEN
     }
 }
