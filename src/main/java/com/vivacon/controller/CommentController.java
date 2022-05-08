@@ -43,10 +43,10 @@ public class CommentController {
         return this.commentService.createComment(commentRequest);
     }
 
-    @ApiOperation(value = "Deleting comment")
+    @ApiOperation(value = "Deleting a comment")
     @DeleteMapping(value = "/comment/{id}")
-    public ResponseEntity<Object> deleteComment(@PathVariable(name = "id") Long commentId) {
-        this.commentService.deleteComment(commentId);
+    public ResponseEntity<Object> deleteComment(@PathVariable(name = "id") Long id) {
+        this.commentService.deleteComment(id);
         return ResponseEntity.ok(null);
     }
 

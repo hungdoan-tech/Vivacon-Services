@@ -98,8 +98,8 @@ public class PostMapper {
     public OutlinePost toOutlinePost(Post post) {
         Attachment firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
         boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
-        Long likeCount = 0L;
-        Long commentCount = 0L;
+        Long likeCount = likeRepository.getCountingLike(post.getId());
+        Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
         return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
     }
 
@@ -113,12 +113,12 @@ public class PostMapper {
                 .collect(Collectors.toList());
         detailPost.setAttachments(attachmentDTOS);
 
-        Page<Comment> allFirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), commentPageable);
-        PageDTO<CommentResponse> commentResponsePageDTO = PageDTOMapper.toPageDTO(allFirstLevelComments, commentMapper::toResponse);
+        Page<Comment> pagefirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), commentPageable);
+        PageDTO<CommentResponse> commentResponsePage = PageMapper.toPageDTO(pagefirstLevelComments, commentMapper::toResponse);
 
         Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
         detailPost.setCommentCount(commentCount);
-        detailPost.setComments(commentResponsePageDTO);
+        detailPost.setComments(commentResponsePage);
 
         Long likeCount = likeRepository.getCountingLike(post.getId());
         UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

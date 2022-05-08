@@ -10,6 +10,8 @@ import com.vivacon.dto.sorting_filtering.PostFilter;
 import com.vivacon.service.PostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,6 +72,13 @@ public class PostController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return postService.getDetailPost(postId, order, sort, pageSize, pageIndex);
+    }
+
+    @ApiOperation(value = "Deleting a comment")
+    @DeleteMapping(value = "/comment/{id}")
+    public ResponseEntity<Object> deleteComment(@PathVariable(name = "id") Long id) {
+        this.postService.deleteById(id);
+        return ResponseEntity.ok(null);
     }
 }
 

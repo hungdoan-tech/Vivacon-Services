@@ -6,31 +6,40 @@ import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.service.notification.NotificationProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.util.Random;
 
 @Component
 public class VerificationTokenEventHandler {
 
+    private Environment environment;
+
     @Qualifier("emailSender")
     private NotificationProvider emailSender;
 
     private AccountRepository accountRepository;
 
-    @Value("vivacon.verification_token.expiration")
-    private String verifiedExpirationInMiliseconds;
+    private int verifiedTokenExpirationInMiliseconds;
 
     private Random random = new Random();
 
     public VerificationTokenEventHandler(NotificationProvider emailSender,
-                                         AccountRepository accountRepository) {
+                                         AccountRepository accountRepository,
+                                         Environment environment) {
         this.emailSender = emailSender;
         this.accountRepository = accountRepository;
+        this.environment = environment;
+    }
+
+    @PostConstruct
+    private void operatePostConstruction(){
+        this.verifiedTokenExpirationInMiliseconds = Integer.valueOf(environment.getProperty("vivacon.verification_token.expiration"));
     }
 
     @Async
@@ -38,7 +47,7 @@ public class VerificationTokenEventHandler {
     public void handleUserRegistration(RegistrationCompleteEvent userRegistrationEvent) {
         Account account = userRegistrationEvent.getAccount();
         String code = generateVerificationCodePerUsername(account);
-        Integer expirationInMinutes = Integer.valueOf(verifiedExpirationInMiliseconds) / 60000;
+        Integer expirationInMinutes = verifiedTokenExpirationInMiliseconds / 60000;
 
         String subject = "Please verify your registration";
         String content = "Dear [[name]],<br/>"
@@ -59,7 +68,7 @@ public class VerificationTokenEventHandler {
     public void handleGeneratingVerificationToken(GeneratingVerificationTokenEvent generatingVerificationTokenEvent) {
         Account account = generatingVerificationTokenEvent.getAccount();
         String code = generateVerificationCodePerUsername(account);
-        Integer expirationInMinutes = Integer.valueOf(verifiedExpirationInMiliseconds) / 60000;
+        Integer expirationInMinutes = verifiedTokenExpirationInMiliseconds / 60000;
 
         String subject = "Renew your verification token";
         String content = "Dear [[name]],<br/>"
@@ -79,10 +88,9 @@ public class VerificationTokenEventHandler {
     private String generateVerificationCodePerUsername(Account account) {
         int number = random.nextInt(999999);
         String code = String.format("%06d", number);
-        Integer expirationInstant = Integer.valueOf(verifiedExpirationInMiliseconds);
 
         account.setVerificationToken(code);
-        account.setVerificationExpiredDate(Instant.now().plusMillis(expirationInstant));
+        account.setVerificationExpiredDate(Instant.now().plusMillis(verifiedTokenExpirationInMiliseconds));
         accountRepository.saveAndFlush(account);
         return code;
     }

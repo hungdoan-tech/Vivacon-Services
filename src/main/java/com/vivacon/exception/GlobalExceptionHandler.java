@@ -53,11 +53,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseDTO<>(HttpStatus.BAD_REQUEST, listConstraintViolation.toString(), null);
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseDTO<Object> handleUnwantedException(Exception ex) {
-        return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, Constants.SERVER_ERROR_MESSAGE, null);
-    }
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ResponseDTO<Object> handleUnwantedException(Exception ex) {
+//        return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, Constants.SERVER_ERROR_MESSAGE, null);
+//    }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)

@@ -8,14 +8,20 @@ import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.CommentMapper;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.CommentService;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -35,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
-        Post post = postRepository.findByPostId(commentRequest.getPostId());
+        Post post = postRepository.findByIdAndActive(commentRequest.getPostId(), true).orElseThrow(RecordNotFoundException::new);
         Comment parentComment = null;
         if (commentRequest.getParentCommentId() != null) {
             parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
@@ -55,9 +61,26 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.toResponse(savedComment);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public boolean deleteComment(Long commentId) {
-        this.commentRepository.deleteById(commentId);
+        Comment comment = commentRepository.findByIdAndActive(commentId, true).orElseThrow(RecordNotFoundException::new);
+        if (comment.getParentComment() == null) {
+            deleteChildComments(comment.getId());
+        }
+        this.commentRepository.deactivateById(comment.getId());
+        return true;
+    }
+
+    private boolean deleteChildComments(Long parentCommentId) {
+        int numberOfAffectedRows = this.commentRepository.deactivateChildCommentsByParentCommentId(parentCommentId);
+        if (numberOfAffectedRows == 0) {
+            return true;
+        }
+        Collection<Comment> listChildComments = this.commentRepository.findAllChildCommentsByParentCommentId(parentCommentId);
+        for (Comment comment : listChildComments) {
+            deleteChildComments(comment.getId());
+        }
         return true;
     }
 
@@ -65,13 +88,13 @@ public class CommentServiceImpl implements CommentService {
     public PageDTO<CommentResponse> getAllFirstLevelComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
         Page<Comment> pageComment = commentRepository.findAllFirstLevelComments(postId, pageable);
-        return PageDTOMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
+        return PageMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
     }
 
     @Override
     public PageDTO<CommentResponse> getAllChildComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long parentCommentId, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
-        Page<Comment> pageComment = commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, postId, pageable);
-        return PageDTOMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
+        Page<Comment> pageComment = commentRepository.findActiveChildCommentsByParentCommentId(parentCommentId, postId, pageable);
+        return PageMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
     }
 }

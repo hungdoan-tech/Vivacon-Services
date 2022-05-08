@@ -56,11 +56,11 @@ public class OutlineAccount {
         this.avatar = avatar;
     }
 
-    public Boolean getFollowing() {
+    public Boolean getIsFollowing() {
         return isFollowing;
     }
 
-    public void setFollowing(Boolean following) {
+    public void setIsFollowing(Boolean following) {
         isFollowing = following;
     }
 }

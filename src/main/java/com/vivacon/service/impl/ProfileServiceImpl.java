@@ -10,7 +10,7 @@ import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
@@ -72,7 +72,7 @@ public class ProfileServiceImpl implements ProfileService {
     public PageDTO<AttachmentDTO> getProfileAvatarsByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Attachment.class);
         Page<Attachment> avatarPage = attachmentRepository.findByProfileId(accountId, pageable);
-        return PageDTOMapper.toPageDTO(avatarPage, attachment -> new AttachmentDTO(attachment));
+        return PageMapper.toPageDTO(avatarPage, attachment -> new AttachmentDTO(attachment));
     }
 
     @Override
@@ -87,8 +87,8 @@ public class ProfileServiceImpl implements ProfileService {
         Account profile = accountRepository.findById(requestAccount.getId()).orElseThrow(RecordNotFoundException::new);
 
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Page<Post> pagePost = postRepository.findByAuthorId(requestAccount.getId(), pageable);
-        PageDTO<OutlinePost> listOutlinePost = PageDTOMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
+        Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
+        PageDTO<OutlinePost> listOutlinePost = PageMapper.toPageDTO(pagePost, post -> this.postMapper.toOutlinePost(post));
 
         Long postCounting = postRepository.getPostCountingByAccountId(profile.getId());
         Long followerCounting = followingRepository.getFollowerCountingByAccountId(profile.getId());
@@ -103,7 +103,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Page<Post> pagePost = postRepository.findByAuthorId(requestAccount.getId(), pageable);
-        return PageDTOMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
+        Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
+        return PageMapper.toPageDTO(pagePost, post -> this.postMapper.toOutlinePost(post));
     }
 }

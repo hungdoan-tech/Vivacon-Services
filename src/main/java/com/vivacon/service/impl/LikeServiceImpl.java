@@ -6,8 +6,9 @@ import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Like;
 import com.vivacon.entity.Post;
+import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.LikeRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.AccountService;
@@ -27,15 +28,18 @@ import java.util.Optional;
 @Service
 public class LikeServiceImpl implements LikeService {
 
-    private AccountMapper accountMapper;
+    private AccountService accountService;
 
     private LikeRepository likeRepository;
 
-    private AccountService accountService;
-
     private PostRepository postRepository;
 
-    public LikeServiceImpl(AccountMapper accountMapper, LikeRepository likeRepository, AccountService accountService, PostRepository postRepository) {
+    private AccountMapper accountMapper;
+
+    public LikeServiceImpl(AccountMapper accountMapper,
+                           LikeRepository likeRepository,
+                           AccountService accountService,
+                           PostRepository postRepository) {
         this.accountMapper = accountMapper;
         this.likeRepository = likeRepository;
         this.accountService = accountService;
@@ -45,14 +49,13 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public boolean like(Long postId) {
         Account currentAccount = accountService.getCurrentAccount();
-        Post currentPost = postRepository.findByPostId(postId);
+        Post currentPost = postRepository.findByIdAndActive(postId, true).orElseThrow(RecordNotFoundException::new);
         Like liking = new Like(currentAccount, currentPost);
         try {
             this.likeRepository.save(liking);
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("The liking table already have one record which contain this account had liked this post before");
         }
-
         return true;
     }
 
@@ -68,6 +71,6 @@ public class LikeServiceImpl implements LikeService {
     public PageDTO<OutlineAccount> getAll(Long postId, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Like.class);
         Page<Account> pageLikeAccount = likeRepository.findAllLikeByPostId(postId, pageable);
-        return PageDTOMapper.toPageDTO(pageLikeAccount, likeAccount -> accountMapper.toOutlineAccount(likeAccount));
+        return PageMapper.toPageDTO(pageLikeAccount, likeAccount -> accountMapper.toOutlineAccount(likeAccount));
     }
 }

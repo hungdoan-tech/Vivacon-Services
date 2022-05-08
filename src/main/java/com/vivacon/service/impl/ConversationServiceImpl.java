@@ -4,7 +4,7 @@ import com.vivacon.dto.request.Participants;
 import com.vivacon.dto.response.ConversationResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Conversation;
-import com.vivacon.mapper.PageDTOMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.ConversationRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;

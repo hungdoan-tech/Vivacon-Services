@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class PageDTOMapper {
+public class PageMapper {
 
-    private PageDTOMapper() {
+    private PageMapper() {
     }
 
     public static <I, O> PageDTO<O> toPageDTO(Page<I> pageEntity, Function<I, O> responseConverter) {
@@ -30,8 +30,8 @@ public class PageDTOMapper {
         return pageResponse;
     }
 
-    public static <I, O> List<O> toDTOs(List<I> oldContent, Function<I, O> responseConverter) {
-        return oldContent.stream()
+    public static <I, O> List<O> toDTOs(List<I> entityContent, Function<I, O> responseConverter) {
+        return entityContent.stream()
                 .map(entity -> responseConverter.apply(entity))
                 .collect(Collectors.toList());
     }
