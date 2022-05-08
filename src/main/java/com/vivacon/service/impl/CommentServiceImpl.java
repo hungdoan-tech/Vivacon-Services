@@ -62,16 +62,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public PageDTO<CommentResponse> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
+    public PageDTO<CommentResponse> getAllFirstLevelComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
-        Page<Comment> entityPage = commentRepository.findAllFirstLevelComments(postId, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, CommentResponse.class, entity -> this.commentMapper.toResponse(entity));
+        Page<Comment> pageComment = commentRepository.findAllFirstLevelComments(postId, pageable);
+        return PageDTOMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
     }
 
     @Override
     public PageDTO<CommentResponse> getAllChildComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long parentCommentId, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
-        Page<Comment> entityPage = commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, postId, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, CommentResponse.class, entity -> this.commentMapper.toResponse(entity));
+        Page<Comment> pageComment = commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, postId, pageable);
+        return PageDTOMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
     }
 }

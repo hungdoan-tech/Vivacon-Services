@@ -4,6 +4,7 @@ import com.vivacon.dto.sorting_filtering.PageDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PageDTOMapper {
@@ -11,10 +12,10 @@ public class PageDTOMapper {
     private PageDTOMapper() {
     }
 
-    public static <I, O> PageDTO<O> toPageDTO(Page<I> pageEntity, Class<O> clazz, ResponseConverter responseConverter) {
+    public static <I, O> PageDTO<O> toPageDTO(Page<I> pageEntity, Function<I, O> responseConverter) {
 
         List<I> oldContent = pageEntity.getContent();
-        List<O> newContent = toDTOs(oldContent, clazz, responseConverter);
+        List<O> newContent = toDTOs(oldContent, responseConverter);
 
         PageDTO<O> pageResponse = new PageDTO<>();
         pageResponse.setContent(newContent);
@@ -29,9 +30,9 @@ public class PageDTOMapper {
         return pageResponse;
     }
 
-    public static <I, O> List<O> toDTOs(List<I> oldContent, Class<O> clazz, ResponseConverter responseConverter) {
+    public static <I, O> List<O> toDTOs(List<I> oldContent, Function<I, O> responseConverter) {
         return oldContent.stream()
-                .map(entity -> clazz.cast(responseConverter.toResponse(entity)))
+                .map(entity -> responseConverter.apply(entity))
                 .collect(Collectors.toList());
     }
 }

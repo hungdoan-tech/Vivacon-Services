@@ -40,17 +40,11 @@ public class CommentMapper {
         return (Comment) auditableEntity;
     }
 
-    public CommentResponse toResponse(Object object) {
-        try {
-            Comment comment = (Comment) object;
-            CommentResponse commentResponse = mapper.map(comment, CommentResponse.class);
-            Long postId = comment.getPost().getId();
-            long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), postId);
-            commentResponse.setTotalChildComments(totalCountComment);
-            return commentResponse;
-        } catch (ClassCastException ex) {
-            LOGGER.info(ex.getMessage());
-            return new CommentResponse();
-        }
+    public CommentResponse toResponse(Comment comment) {
+        CommentResponse commentResponse = mapper.map(comment, CommentResponse.class);
+        Long postId = comment.getPost().getId();
+        long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), postId);
+        commentResponse.setTotalChildComments(totalCountComment);
+        return commentResponse;
     }
 }

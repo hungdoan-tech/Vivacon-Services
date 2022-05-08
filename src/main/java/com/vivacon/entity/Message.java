@@ -5,6 +5,8 @@ import org.springframework.stereotype.Indexed;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,6 +39,10 @@ public class Message {
     @Column(name = "timestamp", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDate timestamp;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "status")
+    private Status status;
 
     public Message() {
     }
@@ -86,5 +92,19 @@ public class Message {
 
     public void setTimestamp(LocalDate timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    private enum Status {
+        SENT,
+        RECEIVED,
+        SEEN
     }
 }

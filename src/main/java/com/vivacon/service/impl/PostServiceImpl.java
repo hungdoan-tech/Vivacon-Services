@@ -80,15 +80,15 @@ public class PostServiceImpl implements PostService {
     public PageDTO<NewsfeedPost> getAll(PostFilter postFilter, Optional<String> keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Specification<Post> combinedSpecification = this.createTheCombiningPostSpecification(postFilter, keyword);
-        Page<Post> entityPage = postRepository.findAll(combinedSpecification, pageable);
-        return PageDTOMapper.toPageDTO(entityPage, NewsfeedPost.class, entity -> this.postMapper.toNewsfeedPost(entity));
+        Page<Post> pagePost = postRepository.findAll(combinedSpecification, pageable);
+        return PageDTOMapper.toPageDTO(pagePost, post -> postMapper.toNewsfeedPost(post));
     }
 
     @Override
     public DetailPost getDetailPost(Long postId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
+        Pageable commentPageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
         Post post = postRepository.findById(postId).orElse(null);
-        return this.postMapper.toDetailPost(post, pageable);
+        return this.postMapper.toDetailPost(post, commentPageable);
     }
 
     private Specification<Post> createTheCombiningPostSpecification(PostFilter filter, Optional<String> keyword) {
