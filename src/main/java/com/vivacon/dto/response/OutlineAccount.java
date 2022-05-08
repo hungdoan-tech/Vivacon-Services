@@ -16,9 +16,9 @@ public class OutlineAccount {
 
     }
 
-    public OutlineAccount(Long id, String userName, String fullName, String avatar, Boolean isFollowing) {
+    public OutlineAccount(Long id, String username, String fullName, String avatar, Boolean isFollowing) {
         this.id = id;
-        this.username = userName;
+        this.username = username;
         this.fullName = fullName;
         this.avatar = avatar;
         this.isFollowing = isFollowing;
@@ -63,5 +63,4 @@ public class OutlineAccount {
     public void setIsFollowing(Boolean following) {
         isFollowing = following;
     }
-
 }

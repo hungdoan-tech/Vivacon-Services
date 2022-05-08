@@ -12,10 +12,10 @@ public class PageMapper {
     private PageMapper() {
     }
 
-    public static <I, O> PageDTO<O> toPageDTO(Page<I> pageEntity, Class<O> classDto, Function<I, O> responseConverter) {
+    public static <I, O> PageDTO<O> toPageDTO(Page<I> pageEntity, Function<I, O> responseConverter) {
 
         List<I> oldContent = pageEntity.getContent();
-        List<O> newContent = toDTOs(oldContent, classDto, responseConverter);
+        List<O> newContent = toDTOs(oldContent, responseConverter);
 
         PageDTO<O> pageResponse = new PageDTO<>();
         pageResponse.setContent(newContent);
@@ -30,9 +30,9 @@ public class PageMapper {
         return pageResponse;
     }
 
-    public static <I, O> List<O> toDTOs(List<I> oldContent, Class<O> classDto, Function<I, O> responseConverter) {
-        return oldContent.stream()
-                .map(entity -> classDto.cast(responseConverter.apply(entity)))
+    public static <I, O> List<O> toDTOs(List<I> entityContent, Function<I, O> responseConverter) {
+        return entityContent.stream()
+                .map(entity -> responseConverter.apply(entity))
                 .collect(Collectors.toList());
     }
 }
