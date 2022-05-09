@@ -82,8 +82,12 @@ public class PostMapper {
                 .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
                 .collect(Collectors.toList());
         newsfeedPost.setAttachments(attachmentDTOS);
-        newsfeedPost.setLikeCount(0L);
-        newsfeedPost.setCommentCount(0L);
+        
+        Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
+        newsfeedPost.setCommentCount(commentCount);
+
+        Long likeCount = likeRepository.getCountingLike(post.getId());
+        newsfeedPost.setLikeCount(likeCount);
 
         UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
