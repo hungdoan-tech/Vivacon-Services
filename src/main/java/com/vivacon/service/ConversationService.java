@@ -10,7 +10,7 @@ import java.util.Set;
 public interface ConversationService {
     OutlineConversation create(Participants participants);
 
-    Set<String> getAllParticipants(Set<String> usernames);
+    Set<String> getAllParticipants(Set<String> participantUsernames);
 
     PageDTO<OutlineConversation> findAllByCurrentAccount(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 

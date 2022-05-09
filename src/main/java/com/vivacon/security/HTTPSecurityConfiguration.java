@@ -122,6 +122,7 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, API_V1 + "/account/password").permitAll()
                 .antMatchers(HttpMethod.DELETE, API_V1 + "/comment/{id}").access("@resourceRestrictionService.isAccessibleToCommentResource(#id)")
                 .antMatchers(HttpMethod.DELETE, API_V1 + "/post/{id}").access("@resourceRestrictionService.isAccessibleToPostResource(#id)")
+                .antMatchers(API_V1 + "/conversation/{id}/messages").access("@resourceRestrictionService.isAccessibleToConversationResource(#id)")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

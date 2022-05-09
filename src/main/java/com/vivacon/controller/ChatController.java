@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static com.vivacon.common.constant.Constants.API_V1;
 import static com.vivacon.common.constant.Constants.PREFIX_USER_QUEUE_DESTINATION;
@@ -64,9 +64,9 @@ public class ChatController {
     @MessageMapping("/conversation")
     public void processCreatingConversation(@Payload @Valid Participants participants) {
         OutlineConversation conversation = conversationService.create(participants);
-        Set<String> usernames = new HashSet<>(participants.getUsernames());
-        usernames = conversationService.getAllParticipants(usernames);
-        for (String username : usernames) {
+        Set<String> participantUsernames = new TreeSet<>(participants.getUsernames());
+        participantUsernames = conversationService.getAllParticipants(participantUsernames);
+        for (String username : participantUsernames) {
             String path = PREFIX_USER_QUEUE_DESTINATION + username + SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
             messagingTemplate.convertAndSend(path, conversation);
         }

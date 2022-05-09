@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "conversation")
@@ -19,6 +20,12 @@ public class Conversation extends AuditableEntity {
     private String name;
 
     public Conversation() {
+    }
+
+    public Conversation(String name) {
+        this.name = name;
+        this.lastModifiedAt = LocalDateTime.now();
+        this.active = true;
     }
 
     public Long getId() {
