@@ -4,6 +4,7 @@ import com.vivacon.dto.request.Participants;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ public interface ConversationService {
     Set<String> getAllParticipants(Set<String> participantUsernames);
 
     PageDTO<OutlineConversation> findAllByCurrentAccount(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+
+    List<Long> findAllIdByCurrentAccount();
 
     PageDTO<OutlineConversation> findByRecipientUsername(String keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 }

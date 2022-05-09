@@ -20,11 +20,18 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             "and c.name like CONCAT('%',:keyword,'%')")
     Page<Conversation> findByApproximatelyName(@Param("keyword") String keyword, @Param("principalUsername") String principalUsername, Pageable pageable);
 
-    @Query("Select c from Conversation c " +
+    @Query("Select c " +
+            "from Conversation c " +
             "where " +
             "exists (SELECT c FROM Conversation c join Participant p on c.id = p.conversation.id WHERE p.account.username = :principalUsername) ")
-    Page<Conversation> findByPrincipalUsername(@Param("principalUsername") String principalUsername, Pageable pageable);
+    Page<Conversation> findAllIdByPrincipalUsername(@Param("principalUsername") String principalUsername, Pageable pageable);
 
     @Query("SELECT p.account.username FROM Conversation c join Participant p on c.id = p.conversation.id WHERE c.id = :conversationId")
     Optional<List<String>> findByAllParticipantsByConversationId(@Param("conversationId") Long conversationId);
+
+    @Query("Select c.id " +
+            "from Conversation c " +
+            "where " +
+            "exists (SELECT c FROM Conversation c join Participant p on c.id = p.conversation.id WHERE p.account.username = :principalUsername) ")
+    List<Long> findAllIdByPrincipalUsername(String username);
 }
