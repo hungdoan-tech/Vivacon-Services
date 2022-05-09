@@ -1,7 +1,6 @@
 package com.vivacon.entity;
 
 import com.vivacon.common.enum_type.MessageStatus;
-import org.springframework.stereotype.Indexed;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
-@Indexed
 @Table(name = "message")
 @Entity
 public class Message {
