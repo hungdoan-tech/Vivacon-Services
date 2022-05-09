@@ -16,4 +16,9 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             "exists (SELECT c FROM Conversation c join Participant p on c.id = p.conversation.id WHERE p.account.username = :principalUsername) " +
             "and c.name like CONCAT('%',:keyword,'%')")
     Page<Conversation> findByApproximatelyName(@Param("keyword") String keyword, @Param("principalUsername") String principalUsername, Pageable pageable);
+
+    @Query("Select c from Conversation c " +
+            "where " +
+            "exists (SELECT c FROM Conversation c join Participant p on c.id = p.conversation.id WHERE p.account.username = :principalUsername) ")
+    Page<Conversation> findByPrincipalUsername(@Param("principalUsername") String principalUsername, Pageable pageable);
 }

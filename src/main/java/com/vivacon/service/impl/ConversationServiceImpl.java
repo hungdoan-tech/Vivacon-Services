@@ -43,7 +43,9 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public PageDTO<OutlineConversation> findAllByCurrentAccount(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        return null;
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Conversation.class);
+        Page<Conversation> conversations = conversationRepository.findByPrincipalUsername(accountService.getCurrentAccount().getUsername(), pageable);
+        return PageMapper.toPageDTO(conversations, conversation -> conversationMapper.toOutlineConversation(conversation));
     }
 
     @Override
