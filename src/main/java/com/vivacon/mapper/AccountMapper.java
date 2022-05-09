@@ -40,43 +40,36 @@ public class AccountMapper {
         this.accountRepository = accountRepository;
     }
 
-    public AccountResponse toResponse(Account currentAccount, Object object) {
-        Account account = (Account) object;
+    public AccountResponse toResponse(Account principal, Account account) {
         AccountResponse responseAccount = this.mapper.map(account, AccountResponse.class);
 
         Optional<Attachment> avatar = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
         responseAccount.setAvatar(avatarUrl);
 
-        if (currentAccount != null) {
-            Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
+        if (principal != null) {
+            Optional<Following> following = followingRepository.findByIdComposition(principal.getId(), account.getId());
             responseAccount.setFollowing(following.isPresent());
         }
 
         return responseAccount;
     }
 
-    public OutlineAccount toOutlineAccount(Object object) {
-        try {
-            Account account = (Account) object;
-            OutlineAccount outlineAccountResponse = mapper.map(account, OutlineAccount.class);
+    public OutlineAccount toOutlineAccount(Account account) {
+        OutlineAccount outlineAccountResponse = mapper.map(account, OutlineAccount.class);
 
-            UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
-                    .orElseThrow(RecordNotFoundException::new);
+        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
+                .orElseThrow(RecordNotFoundException::new);
 
-            Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
-            Optional<Attachment> attachment = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
+        Optional<Following> following = followingRepository.findByIdComposition(currentAccount.getId(), account.getId());
+        Optional<Attachment> attachment = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
 
-            String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
+        String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
 
-            outlineAccountResponse.setIsFollowing(following.isPresent());
-            outlineAccountResponse.setAvatar(avatarUrl);
+        outlineAccountResponse.setIsFollowing(following.isPresent());
+        outlineAccountResponse.setAvatar(avatarUrl);
 
-            return outlineAccountResponse;
-        } catch (ClassCastException ex) {
-            LOGGER.info(ex.getMessage());
-            return new OutlineAccount();
-        }
+        return outlineAccountResponse;
     }
 }

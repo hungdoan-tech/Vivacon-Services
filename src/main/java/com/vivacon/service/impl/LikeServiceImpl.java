@@ -70,7 +70,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public PageDTO<OutlineAccount> getAll(Long postId, Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Like.class);
-        Page<Account> entityPage = likeRepository.findAllLikeByPostId(postId, pageable);
-        return PageMapper.toPageDTO(entityPage, OutlineAccount.class, entity -> this.accountMapper.toOutlineAccount(entity));
+        Page<Account> pageLikeAccount = likeRepository.findAllLikeByPostId(postId, pageable);
+        return PageMapper.toPageDTO(pageLikeAccount, likeAccount -> accountMapper.toOutlineAccount(likeAccount));
     }
 }

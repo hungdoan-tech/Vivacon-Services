@@ -71,8 +71,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public PageDTO<AttachmentDTO> getProfileAvatarsByAccountId(Long accountId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Attachment.class);
-        Page<Attachment> pageAvatar = attachmentRepository.findByProfileId(accountId, pageable);
-        return PageMapper.toPageDTO(pageAvatar, AttachmentDTO.class, attachment -> new AttachmentDTO((Attachment) attachment));
+        Page<Attachment> avatarPage = attachmentRepository.findByProfileId(accountId, pageable);
+        return PageMapper.toPageDTO(avatarPage, attachment -> new AttachmentDTO(attachment));
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
-        PageDTO<OutlinePost> listOutlinePost = PageMapper.toPageDTO(pagePost, OutlinePost.class, entity -> this.postMapper.toOutlinePost(entity));
+        PageDTO<OutlinePost> listOutlinePost = PageMapper.toPageDTO(pagePost, post -> this.postMapper.toOutlinePost(post));
 
         Long postCounting = postRepository.getPostCountingByAccountId(profile.getId());
         Long followerCounting = followingRepository.getFollowerCountingByAccountId(profile.getId());
@@ -104,6 +104,6 @@ public class ProfileServiceImpl implements ProfileService {
     private PageDTO<OutlinePost> getOutlinePost(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
-        return PageMapper.toPageDTO(pagePost, OutlinePost.class, post -> this.postMapper.toOutlinePost(post));
+        return PageMapper.toPageDTO(pagePost, post -> this.postMapper.toOutlinePost(post));
     }
 }

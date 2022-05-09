@@ -58,7 +58,7 @@ public class CommentController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex,
             @PathVariable(name = "postId", value = "postId", required = true) Long postId) {
-        return commentService.getAll(sort, order, pageSize, pageIndex, postId);
+        return commentService.getAllFirstLevelComment(sort, order, pageSize, pageIndex, postId);
     }
 
     @ApiOperation(value = "Get list comment based on criteria")

@@ -75,93 +75,65 @@ public class PostMapper {
         return (Post) auditableEntity;
     }
 
-    public NewsfeedPost toNewsfeedPost(Object object) {
-        try {
-            Post post = (Post) object;
-            NewsfeedPost newsfeedPost = mapper.map(post, NewsfeedPost.class);
-            List<AttachmentDTO> attachmentDTOS = attachmentRepository
-                    .findByPostId(post.getId())
-                    .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
-                    .collect(Collectors.toList());
-            newsfeedPost.setAttachments(attachmentDTOS);
-            newsfeedPost.setLikeCount(0L);
-            newsfeedPost.setCommentCount(0L);
+    public NewsfeedPost toNewsfeedPost(Post post) {
+        NewsfeedPost newsfeedPost = mapper.map(post, NewsfeedPost.class);
+        List<AttachmentDTO> attachmentDTOS = attachmentRepository
+                .findByPostId(post.getId())
+                .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
+                .collect(Collectors.toList());
+        newsfeedPost.setAttachments(attachmentDTOS);
+        
+        Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
+        newsfeedPost.setCommentCount(commentCount);
 
-            UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
-                    .orElseThrow(RecordNotFoundException::new);
-            Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
-            newsfeedPost.setLiked(like.isPresent());
+        Long likeCount = likeRepository.getCountingLike(post.getId());
+        newsfeedPost.setLikeCount(likeCount);
 
-            auditableHelper.setupDisplayAuditableFields(post, newsfeedPost);
-            return newsfeedPost;
-        } catch (ClassCastException ex) {
-            LOGGER.info(ex.getMessage());
-            return null;
-        }
+        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
+                .orElseThrow(RecordNotFoundException::new);
+        Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
+        newsfeedPost.setLiked(like.isPresent());
+
+        auditableHelper.setupDisplayAuditableFields(post, newsfeedPost);
+        return newsfeedPost;
     }
 
-    public OutlinePost toOutlinePost(Object object) {
-        try {
-            Post post = (Post) object;
-            Attachment firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
-            boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
-            Long likeCount = likeRepository.getCountingLike(post.getId());
-            Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
-            return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
-        } catch (ClassCastException ex) {
-            LOGGER.info(ex.getMessage());
-            return null;
-        }
+    public OutlinePost toOutlinePost(Post post) {
+        Attachment firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
+        boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
+        Long likeCount = likeRepository.getCountingLike(post.getId());
+        Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
+        return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
     }
 
-    public DetailPost toDetailPost(Object object, Pageable pageable) {
-        try {
-            Post post = (Post) object;
-            DetailPost detailPost = mapper.map(post, DetailPost.class);
-            auditableHelper.setupDisplayAuditableFields(post, detailPost);
+    public DetailPost toDetailPost(Post post, Pageable commentPageable) {
+        DetailPost detailPost = mapper.map(post, DetailPost.class);
+        auditableHelper.setupDisplayAuditableFields(post, detailPost);
 
-            List<AttachmentDTO> attachmentDTOS = attachmentRepository
-                    .findByPostId(post.getId())
-                    .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
-                    .collect(Collectors.toList());
-            detailPost.setAttachments(attachmentDTOS);
+        List<AttachmentDTO> attachmentDTOS = attachmentRepository
+                .findByPostId(post.getId())
+                .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
+                .collect(Collectors.toList());
+        detailPost.setAttachments(attachmentDTOS);
 
-            Page<Comment> allFirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), pageable);
-            PageDTO<CommentResponse> commentResponsePageDTO = PageMapper.toPageDTO(allFirstLevelComments, CommentResponse.class, commentMapper::toResponse);
+        Page<Comment> pagefirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), commentPageable);
+        PageDTO<CommentResponse> commentResponsePage = PageMapper.toPageDTO(pagefirstLevelComments, commentMapper::toResponse);
 
-            Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
-            detailPost.setCommentCount(commentCount);
-            detailPost.setComments(commentResponsePageDTO);
+        Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
+        detailPost.setCommentCount(commentCount);
+        detailPost.setComments(commentResponsePage);
 
-            Long likeCount = likeRepository.getCountingLike(post.getId());
-            UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
-                    .orElseThrow(RecordNotFoundException::new);
-            Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
-            detailPost.setLiked(like.isPresent());
-            detailPost.setLikeCount(likeCount);
+        Long likeCount = likeRepository.getCountingLike(post.getId());
+        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account currentAccount = accountRepository.findByUsernameIgnoreCase(principal.getUsername())
+                .orElseThrow(RecordNotFoundException::new);
+        Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
+        detailPost.setLiked(like.isPresent());
+        detailPost.setLikeCount(likeCount);
 
-
-            return detailPost;
-        } catch (ClassCastException ex) {
-            LOGGER.info(ex.getMessage());
-            return new DetailPost();
-        }
+        return detailPost;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
