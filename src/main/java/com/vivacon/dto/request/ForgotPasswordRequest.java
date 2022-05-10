@@ -14,9 +14,6 @@ public class ForgotPasswordRequest {
     private String verificationToken;
 
     @Password
-    private String oldPassword;
-
-    @Password
     private String newPassword;
 
     @NotEmpty
@@ -28,14 +25,6 @@ public class ForgotPasswordRequest {
 
     public void setVerificationToken(String verificationToken) {
         this.verificationToken = verificationToken;
-    }
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
     }
 
     public String getNewPassword() {

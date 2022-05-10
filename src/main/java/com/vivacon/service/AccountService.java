@@ -20,11 +20,13 @@ public interface AccountService {
 
     Account registerNewAccount(RegistrationRequest registrationRequest);
 
-    Account verifyAccount(String verificationCode);
+    Account activeAccount(String verificationCode);
 
     Account resendVerificationToken(String email);
 
     Account forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
 
     Account changePassword(ChangePasswordRequest changePasswordRequest);
+
+    Account verifyAccount(String code);
 }
