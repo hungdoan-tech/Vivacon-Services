@@ -132,11 +132,18 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(null);
     }
 
-    @ApiOperation(value = "Verify new account by verification token")
-    @PostMapping("/account/verify")
-    public AuthenticationResponse verifyAccount(@NotEmpty @RequestBody String token) {
-        Account account = accountService.verifyAccount(token);
+    @ApiOperation(value = "Active new account by verification token")
+    @PostMapping("/account/active")
+    public AuthenticationResponse activeAccount(@NotEmpty @RequestBody String code) {
+        Account account = accountService.activeAccount(code);
         return generateAuthenticationResponse(account.getUsername(), Arrays.asList(account.getRole().toString()));
+    }
+
+    @ApiOperation(value = "Active new account by verification token")
+    @PostMapping("/account/verify")
+    public ResponseEntity<Object> verifyAccount(@NotEmpty @RequestBody String code) {
+        accountService.verifyAccount(code);
+        return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "Resend verification token")
