@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import java.time.Instant;
@@ -110,6 +111,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Account activeAccount(String verificationCode) {
         Optional<Account> account = accountRepository.findByVerificationToken(verificationCode);
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
