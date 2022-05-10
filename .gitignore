@@ -34,5 +34,6 @@ build/
 
 ## Project ##
 logs/
-mock_data/sql
-container/data
+!container/prepare/sql/role.sql
+container/prepare/sql/
+container/data/
