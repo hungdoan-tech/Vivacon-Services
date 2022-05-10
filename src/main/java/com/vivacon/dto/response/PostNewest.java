@@ -17,19 +17,22 @@ public class PostNewest {
 
     private Integer privacy;
 
-    private BigInteger createdByAccountId;
+    private String userName;
 
-    private BigInteger lastModifiedByAccountId;
+    private String fullName;
 
-    public PostNewest(BigInteger postId, Boolean isActived, LocalDateTime createdAt, LocalDateTime lastModifiedAt, String caption, Integer privacy, BigInteger createdByAccountId, BigInteger lastModifiedByAccountId) {
-        id = postId;
-        active = isActived;
+    private String url;
+
+    public PostNewest(BigInteger id, Boolean active, LocalDateTime createdAt, LocalDateTime lastModifiedAt, String caption, Integer privacy, String userName, String fullName, String url) {
+        this.id = id;
+        this.active = active;
         this.createdAt = createdAt;
         this.lastModifiedAt = lastModifiedAt;
         this.caption = caption;
         this.privacy = privacy;
-        this.createdByAccountId = createdByAccountId;
-        this.lastModifiedByAccountId = lastModifiedByAccountId;
+        this.userName = userName;
+        this.fullName = fullName;
+        this.url = url;
     }
 
     public BigInteger getId() {
@@ -80,19 +83,27 @@ public class PostNewest {
         this.privacy = privacy;
     }
 
-    public BigInteger getCreatedByAccountId() {
-        return createdByAccountId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setCreatedByAccountId(BigInteger createdByAccountId) {
-        this.createdByAccountId = createdByAccountId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public BigInteger getLastModifiedByAccountId() {
-        return lastModifiedByAccountId;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setLastModifiedByAccountId(BigInteger lastModifiedByAccountId) {
-        this.lastModifiedByAccountId = lastModifiedByAccountId;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

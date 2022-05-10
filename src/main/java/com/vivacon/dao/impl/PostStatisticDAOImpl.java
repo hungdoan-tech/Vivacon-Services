@@ -105,11 +105,16 @@ public class PostStatisticDAOImpl implements PostStatisticDAO {
             for (int currentIndex = 0; currentIndex < resultList.size(); currentIndex++) {
                 BigInteger postId = (BigInteger) resultList.get(currentIndex)[0];
                 String caption = (String) resultList.get(currentIndex)[1];
-                BigInteger totalComment = (BigInteger) resultList.get(currentIndex)[2];
-                BigInteger totalLike = (BigInteger) resultList.get(currentIndex)[3];
-                BigInteger totalInteraction = (BigInteger) resultList.get(currentIndex)[4];
+                Timestamp createdAt = (Timestamp) resultList.get(currentIndex)[2];
+                String userName = (String) resultList.get(currentIndex)[3];
+                String fullName = (String) resultList.get(currentIndex)[4];
+                String url = (String) resultList.get(currentIndex)[5];
+                BigInteger totalComment = (BigInteger) resultList.get(currentIndex)[6];
+                BigInteger totalLike = (BigInteger) resultList.get(currentIndex)[7];
+                BigInteger totalInteraction = (BigInteger) resultList.get(currentIndex)[8];
 
-                postsTopInteractionList.add(new PostInteraction(postId, caption, totalComment, totalLike, totalInteraction));
+                postsTopInteractionList.add(new PostInteraction(postId, caption, createdAt.toLocalDateTime(), userName, fullName, url,
+                        totalComment, totalLike, totalInteraction));
             }
 
             return postsTopInteractionList;
@@ -134,11 +139,12 @@ public class PostStatisticDAOImpl implements PostStatisticDAO {
                 Timestamp lastModifiedAt = (Timestamp) resultList.get(currentIndex)[3];
                 String caption = (String) resultList.get(currentIndex)[4];
                 Integer privacy = (Integer) resultList.get(currentIndex)[5];
-                BigInteger createdByAccountId = (BigInteger) resultList.get(currentIndex)[6];
-                BigInteger lastModifiedByAccountId = (BigInteger) resultList.get(currentIndex)[7];
+                String userName = (String) resultList.get(currentIndex)[6];
+                String fullName = (String) resultList.get(currentIndex)[7];
+                String url = (String) resultList.get(currentIndex)[8];
 
                 postsNewestList.add(new PostNewest(postId, isActived, createdAt.toLocalDateTime(), lastModifiedAt.toLocalDateTime(), caption, privacy,
-                        createdByAccountId, lastModifiedByAccountId));
+                        userName, fullName, url));
             }
 
             return postsNewestList;

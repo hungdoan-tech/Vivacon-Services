@@ -8,11 +8,14 @@ public class UserAccountMostFollower {
 
     private String userName;
 
+    private String url;
+
     private BigInteger accountQuantity;
 
-    public UserAccountMostFollower(BigInteger id, String userName, BigInteger accountQuantity) {
+    public UserAccountMostFollower(BigInteger id, String userName, String url, BigInteger accountQuantity) {
         this.id = id;
         this.userName = userName;
+        this.url = url;
         this.accountQuantity = accountQuantity;
     }
 
@@ -30,6 +33,14 @@ public class UserAccountMostFollower {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public BigInteger getAccountQuantity() {
