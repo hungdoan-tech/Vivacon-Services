@@ -1,0 +1,47 @@
+version: '3.3'
+
+services:
+  vivacon_db:
+    container_name: vivacon_db
+    image: hungdoan7/vivacon_db:0.0.1
+    build:
+      context: ./prepare
+      dockerfile: ./db.Dockerfile
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      vivacon_network:
+        aliases:
+          - db.vivacon.com
+
+  pg_admin:
+    container_name: pg_admin
+    image: dpage/pgadmin4:4.18
+    restart: always
+    ports:
+      - 8900:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: administrator@vivacon.com
+      PGADMIN_DEFAULT_PASSWORD: Admin123*
+      PGADMIN_LISTEN_PORT: 80
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: data/db
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: data/app
+
+networks:
+  vivacon_network:
+    driver: bridge
+
