@@ -14,7 +14,7 @@ public abstract class DataGenerator {
 
     public static final int AMOUNT_OF_USER = 1000;
 
-    protected static final String BASE_DIRECTORY_PATH = "./mock_data/sql/";
+    protected static final String BASE_DIRECTORY_PATH = "./container/prepare/sql/";
 
     protected static final Random RANDOM = new Random();
 

@@ -6,7 +6,7 @@ spring:
   name: Vivacon
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/vivacon?useSSL=false&useUnicode=true
+    url: jdbc:postgresql://db.vivacon.com:5432/vivacon?useSSL=false&useUnicode=true
     username: postgres
     password: Admin123*
   jpa:
