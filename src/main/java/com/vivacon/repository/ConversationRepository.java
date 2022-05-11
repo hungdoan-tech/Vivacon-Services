@@ -33,5 +33,5 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             "from Conversation c " +
             "where " +
             "exists (SELECT c FROM Conversation c join Participant p on c.id = p.conversation.id WHERE p.account.username = :principalUsername) ")
-    List<Long> findAllIdByPrincipalUsername(String username);
+    List<Long> findAllIdByPrincipalUsername(@Param("principalUsername") String principalUsername);
 }

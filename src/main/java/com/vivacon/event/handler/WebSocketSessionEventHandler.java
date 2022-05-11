@@ -5,7 +5,6 @@ import com.vivacon.service.ActiveSessionManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -54,7 +53,6 @@ public class WebSocketSessionEventHandler implements ActiveSessionChangingListen
      *
      * @param event SessionConnectEvent
      */
-    @Async
     @EventListener
     public void handleSessionConnected(SessionConnectEvent event) {
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
@@ -70,7 +68,6 @@ public class WebSocketSessionEventHandler implements ActiveSessionChangingListen
      *
      * @param event SessionDisconnectEvent
      */
-    @Async
     @EventListener
     public void handleSessionDisconnect(SessionDisconnectEvent event) {
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
