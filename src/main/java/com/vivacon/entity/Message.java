@@ -22,7 +22,7 @@ import java.time.LocalDate;
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.LAZY)
@@ -43,6 +43,8 @@ public class Message {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
     private Status status;
+
+    private String test;
 
     public Message() {
     }
@@ -100,6 +102,14 @@ public class Message {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
     }
 
     private enum Status {
