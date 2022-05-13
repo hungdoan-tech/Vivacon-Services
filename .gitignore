@@ -35,3 +35,4 @@ build/
 ## Project ##
 logs/
 mock_data/sql
+container/data/

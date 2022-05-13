@@ -1,6 +1,7 @@
 package com.vivacon.mapper;
 
 import com.vivacon.dto.response.AccountResponse;
+import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.OutlineAccount;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
@@ -11,8 +12,6 @@ import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.security.UserDetailImpl;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -68,5 +67,14 @@ public class AccountMapper {
         outlineAccountResponse.setAvatar(avatarUrl);
 
         return outlineAccountResponse;
+    }
+
+    public EssentialAccount toEssentialAccount(Account account) {
+        EssentialAccount essentialAccount = mapper.map(account, EssentialAccount.class);
+
+        Optional<Attachment> attachment = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
+        String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
+        essentialAccount.setAvatar(avatarUrl);
+        return essentialAccount;
     }
 }

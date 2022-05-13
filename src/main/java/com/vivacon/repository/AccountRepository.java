@@ -1,6 +1,8 @@
 package com.vivacon.repository;
 
 import com.vivacon.entity.Account;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    
+
     Optional<Account> findByUsernameIgnoreCase(String username);
 
     Optional<Account> findByRefreshToken(String token);
@@ -27,4 +29,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     int activateByVerificationToken(@Param("token") String token);
 
     Optional<Account> findByVerificationToken(String token);
+
+    @Query("Select a from Account a " +
+            "where " +
+            "a.username like CONCAT('%',:keyword,'%') or a.fullName like CONCAT('%',:keyword,'%')")
+    Page<Account> findByApproximatelyName(@Param("keyword") String keyword, Pageable pageable);
 }

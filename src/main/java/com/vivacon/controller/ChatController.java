@@ -2,9 +2,11 @@ package com.vivacon.controller;
 
 import com.vivacon.dto.request.MessageRequest;
 import com.vivacon.dto.request.Participants;
+import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
 import com.vivacon.service.MessageService;
 import io.swagger.annotations.Api;
@@ -32,16 +34,19 @@ import static com.vivacon.common.constant.Constants.SUFFIX_USER_QUEUE_NEW_CONVER
 @Api(value = "Chatting endpoints")
 @RequestMapping(API_V1)
 public class ChatController {
-    private final SimpMessagingTemplate messagingTemplate;
-    private final MessageService messageService;
-    private final ConversationService conversationService;
+    private SimpMessagingTemplate messagingTemplate;
+    private MessageService messageService;
+    private ConversationService conversationService;
+    private AccountService accountService;
 
     public ChatController(SimpMessagingTemplate messagingTemplate,
                           MessageService messageService,
-                          ConversationService conversationService) {
+                          ConversationService conversationService,
+                          AccountService accountService) {
         this.messagingTemplate = messagingTemplate;
         this.messageService = messageService;
         this.conversationService = conversationService;
+        this.accountService = accountService;
     }
 
     /**
@@ -119,5 +124,26 @@ public class ChatController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return conversationService.findByRecipientUsername(username, order, sort, pageSize, pageIndex);
+    }
+
+    /**
+     * This function is used for checking if a conversation is existed between the current user and the request recipient
+     *
+     * @param name
+     * @param order
+     * @param sort
+     * @param pageSize
+     * @param pageIndex
+     * @return
+     */
+    @ApiOperation(value = "Get the expected conversation between these two sender and recipient")
+    @GetMapping("/account/search")
+    public PageDTO<EssentialAccount> findAccountBasedOnUsernameOrFullName(
+            @RequestParam("keyword") String name,
+            @RequestParam(value = "_order", required = false) Optional<String> order,
+            @RequestParam(value = "_sort", required = false) Optional<String> sort,
+            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
+            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
+        return accountService.findByName(name, order, sort, pageSize, pageIndex);
     }
 }
