@@ -127,7 +127,7 @@ public class ChatController {
     }
 
     /**
-     * This function is used for checking if a conversation is existed between the current user and the request recipient
+     * This function is used for searching account by username or full name
      *
      * @param name
      * @param order
@@ -136,7 +136,7 @@ public class ChatController {
      * @param pageIndex
      * @return
      */
-    @ApiOperation(value = "Get the expected conversation between these two sender and recipient")
+    @ApiOperation(value = "Searching account by username or fullName")
     @GetMapping("/account/search")
     public PageDTO<EssentialAccount> findAccountBasedOnUsernameOrFullName(
             @RequestParam("keyword") String name,
