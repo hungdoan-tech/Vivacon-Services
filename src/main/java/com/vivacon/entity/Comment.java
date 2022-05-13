@@ -19,7 +19,7 @@ public class Comment extends AuditableEntity {
     @SequenceGenerator(name = "comment_id_generator", sequenceName = "comment_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "content")
+    @Column(name = "content", length = 1500)
     private String content;
 
     @ManyToOne(targetEntity = Post.class)

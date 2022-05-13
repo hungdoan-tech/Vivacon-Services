@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
 
@@ -22,7 +23,8 @@ import java.time.LocalDate;
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "message_id_generator")
+    @SequenceGenerator(name = "message_id_generator", sequenceName = "message_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.LAZY)
@@ -33,7 +35,7 @@ public class Message {
     @JoinColumn(name = "recipient_id")
     private Conversation recipient;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, length = 1000)
     private String content;
 
     @Column(name = "timestamp", nullable = false)
