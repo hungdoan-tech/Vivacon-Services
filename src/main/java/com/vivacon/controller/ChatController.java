@@ -79,7 +79,7 @@ public class ChatController {
      * @return PageDTO<ConversationResponse>
      */
     @ApiOperation(value = "Get all conversation of current user")
-    @GetMapping("/conversation/id")
+    @GetMapping("/conversation/all")
     public List<Long> findConversationsOfCurrentUser() {
         return conversationService.findAllIdByCurrentAccount();
     }
