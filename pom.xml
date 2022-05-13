@@ -14,15 +14,18 @@
     <name>Vivacon</name>
     <description>Vivacon</description>
     <properties>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <spring-boot.version>2.5.2</spring-boot.version>
         <java.version>11</java.version>
         <springfox.version>3.0.0</springfox.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <modelmapper.version>2.3.5</modelmapper.version>
         <aws.version>1.11.163</aws.version>
+        <liquibase-core.version>4.8.0</liquibase-core.version>
         <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-        <node.version>v16.13.1</node.version>
-        <yarn.version>v1.22.17</yarn.version>
+        <liquibase-hibernate5.version>3.7</liquibase-hibernate5.version>
+        <validation-api.version>2.0.1.Final</validation-api.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <liquibase-maven-plugin.version>4.8.0</liquibase-maven-plugin.version>
     </properties>
     <dependencies>
 
@@ -89,13 +92,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.liquibase.ext</groupId>
-            <artifactId>liquibase-hibernate5</artifactId>
-            <version>3.6</version>
-            <scope>runtime</scope>
+            <version>${liquibase-core.version}</version>
         </dependency>
 
         <dependency>
@@ -139,11 +136,19 @@
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>4.7.1</version>
+                    <version>${liquibase-maven-plugin.version}</version>
                     <configuration>
                         <propertyFile>src/main/resources/liquibase.properties</propertyFile>
-                        <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                        <ChangeLogFile>schema.sql</ChangeLogFile>
+                        <logging>debug</logging>
+                        <changeLogFile>
+                            src/main/resources/db/changelog/db.changelog-master.yaml
+                        </changeLogFile>
+                        <diffChangeLogFile>
+                            src/main/resources/db/changelog/diff_changelog/${maven.build.timestamp}_changelog.sql
+                        </diffChangeLogFile>
+                        <outputChangeLogFile>
+                            src/main/resources/db/changelog/schema.sql
+                        </outputChangeLogFile>
                     </configuration>
                 </plugin>
             </plugins>

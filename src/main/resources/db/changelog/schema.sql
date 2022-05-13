@@ -138,3 +138,283 @@ ALTER TABLE "comment" ADD CONSTRAINT "fks1slvnkuemjsq2kj4h3vhx7i1" FOREIGN KEY (
 -- changeset hungdoan:1652286537044-46
 ALTER TABLE "participant" ADD CONSTRAINT "fksiftd56p4vnlfthffmf07xhng" FOREIGN KEY ("conversation_id") REFERENCES "conversation" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
 
+-- liquibase formatted sql
+
+-- changeset hungdoan:1652453003859-1
+CREATE TABLE "role" ("id" BIGINT NOT NULL, "name" VARCHAR(255) NOT NULL, CONSTRAINT "role_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-2
+CREATE TABLE "account" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "bio" VARCHAR(200), "email" VARCHAR(255) NOT NULL, "full_name" VARCHAR(255) NOT NULL, "password" VARCHAR(255) NOT NULL, "refresh_token" VARCHAR(255), "token_expired_date" TIMESTAMP WITHOUT TIME ZONE, "username" VARCHAR(255) NOT NULL, "verification_expired_date" TIMESTAMP WITHOUT TIME ZONE, "verification_token" VARCHAR(255), "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, "role_id" BIGINT, CONSTRAINT "account_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-3
+CREATE TABLE "participant" ("id" BIGINT NOT NULL, "account_id" BIGINT NOT NULL, "conversation_id" BIGINT NOT NULL, CONSTRAINT "participant_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-4
+CREATE TABLE "following" ("id" BIGINT NOT NULL, "from_account" BIGINT, "to_account" BIGINT, CONSTRAINT "following_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-5
+CREATE TABLE "liking" ("id" BIGINT NOT NULL, "account_id" BIGINT, "post_id" BIGINT, CONSTRAINT "liking_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-6
+ALTER TABLE "role" ADD CONSTRAINT "uk_8sewwnpamngi6b1dwaa88askk" UNIQUE ("name");
+
+-- changeset hungdoan:1652453003859-7
+ALTER TABLE "account" ADD CONSTRAINT "uk_bofba73mkw4ghli0ycc3bj9o0" UNIQUE ("verification_token");
+
+-- changeset hungdoan:1652453003859-8
+ALTER TABLE "account" ADD CONSTRAINT "uk_fq38m74jok70uh8462s27xkl2" UNIQUE ("refresh_token");
+
+-- changeset hungdoan:1652453003859-9
+ALTER TABLE "account" ADD CONSTRAINT "uk_gex1lmaqpg0ir5g1f5eftyaa1" UNIQUE ("username");
+
+-- changeset hungdoan:1652453003859-10
+ALTER TABLE "account" ADD CONSTRAINT "uk_q0uja26qgu1atulenwup9rxyr" UNIQUE ("email");
+
+-- changeset hungdoan:1652453003859-11
+ALTER TABLE "participant" ADD CONSTRAINT "ukfh7tjbx3f45m1s5wg2f9hog4i" UNIQUE ("conversation_id", "account_id");
+
+-- changeset hungdoan:1652453003859-12
+ALTER TABLE "following" ADD CONSTRAINT "uniquefollowingcomposition" UNIQUE ("from_account", "to_account");
+
+-- changeset hungdoan:1652453003859-13
+ALTER TABLE "liking" ADD CONSTRAINT "uniquelikecomposition" UNIQUE ("account_id", "post_id");
+
+-- changeset hungdoan:1652453003859-14
+CREATE SEQUENCE  IF NOT EXISTS "account_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453003859-15
+CREATE SEQUENCE  IF NOT EXISTS "attachment_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453003859-16
+CREATE SEQUENCE  IF NOT EXISTS "comment_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453003859-17
+CREATE SEQUENCE  IF NOT EXISTS "following_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453003859-18
+CREATE SEQUENCE  IF NOT EXISTS "hibernate_sequence" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453003859-19
+CREATE SEQUENCE  IF NOT EXISTS "liking_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453003859-20
+CREATE SEQUENCE  IF NOT EXISTS "post_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453003859-21
+CREATE TABLE "attachment" ("id" BIGINT NOT NULL, "actual_name" VARCHAR(255), "timestamp" TIMESTAMP WITHOUT TIME ZONE, "unique_name" VARCHAR(255), "url" VARCHAR(255), "post_id" BIGINT, "profile_id" BIGINT, CONSTRAINT "attachment_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-22
+CREATE TABLE "comment" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "content" VARCHAR(255), "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, "parent_comment_id" BIGINT, "post_id" BIGINT, CONSTRAINT "comment_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-23
+CREATE TABLE "conversation" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "name" VARCHAR(255) NOT NULL, "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, CONSTRAINT "conversation_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-24
+CREATE TABLE "message" ("id" BIGINT GENERATED BY DEFAULT AS IDENTITY NOT NULL, "content" VARCHAR(255) NOT NULL, "status" INTEGER, "timestamp" date NOT NULL, "recipient_id" BIGINT, "sender_id" BIGINT, "test" VARCHAR(255), CONSTRAINT "message_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-25
+CREATE TABLE "post" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "caption" VARCHAR(1500) NOT NULL, "privacy" INTEGER, "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, CONSTRAINT "post_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453003859-26
+ALTER TABLE "message" ADD CONSTRAINT "fk2a3ajdqt4au2cns4ko5m5qiil" FOREIGN KEY ("recipient_id") REFERENCES "conversation" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-27
+ALTER TABLE "comment" ADD CONSTRAINT "fk3t7fjgecq0kfs5r4ppcrj6ccd" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-28
+ALTER TABLE "attachment" ADD CONSTRAINT "fk57nlwn59e1o3uor5njjmukiar" FOREIGN KEY ("post_id") REFERENCES "post" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-29
+ALTER TABLE "message" ADD CONSTRAINT "fk5k0olkd82xhjehyhuy44pqi4c" FOREIGN KEY ("sender_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-30
+ALTER TABLE "post" ADD CONSTRAINT "fk9qpv9547pu2gxgulwhgw9vat1" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-31
+ALTER TABLE "liking" ADD CONSTRAINT "fkakklq2jnjsjfma8ufgh45xurl" FOREIGN KEY ("post_id") REFERENCES "post" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-32
+ALTER TABLE "account" ADD CONSTRAINT "fkbi1pm96c3w5wrvw6slhkyamk" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-33
+ALTER TABLE "account" ADD CONSTRAINT "fkd4vb66o896tay3yy52oqxr9w0" FOREIGN KEY ("role_id") REFERENCES "role" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-34
+ALTER TABLE "conversation" ADD CONSTRAINT "fkfpeljvfrq565cq1m37trcjvh" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-35
+ALTER TABLE "comment" ADD CONSTRAINT "fkgryfrfg2a7t7gyirh91i14wnt" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-36
+ALTER TABLE "conversation" ADD CONSTRAINT "fkh621kc15wrj10hxgrpn3gnc05" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-37
+ALTER TABLE "account" ADD CONSTRAINT "fkhj3uic340kxt2munplswc1kir" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-38
+ALTER TABLE "comment" ADD CONSTRAINT "fkhvh0e2ybgg16bpu229a5teje7" FOREIGN KEY ("parent_comment_id") REFERENCES "comment" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-39
+ALTER TABLE "attachment" ADD CONSTRAINT "fkivbysvdk76g59xkjthd8kl698" FOREIGN KEY ("profile_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-40
+ALTER TABLE "following" ADD CONSTRAINT "fkja85dl2kso64lyif593vh5twx" FOREIGN KEY ("to_account") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-41
+ALTER TABLE "following" ADD CONSTRAINT "fkkc4em2rvkeku33chmopnxpp3b" FOREIGN KEY ("from_account") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-42
+ALTER TABLE "liking" ADD CONSTRAINT "fkmyyh5u34brpn49tsam9eovuhj" FOREIGN KEY ("account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-43
+ALTER TABLE "participant" ADD CONSTRAINT "fkptbndmpwose49o6u9d8x9aj9u" FOREIGN KEY ("account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-44
+ALTER TABLE "post" ADD CONSTRAINT "fkr1eijd8s3w1nquadw31orl88o" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-45
+ALTER TABLE "comment" ADD CONSTRAINT "fks1slvnkuemjsq2kj4h3vhx7i1" FOREIGN KEY ("post_id") REFERENCES "post" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453003859-46
+ALTER TABLE "participant" ADD CONSTRAINT "fksiftd56p4vnlfthffmf07xhng" FOREIGN KEY ("conversation_id") REFERENCES "conversation" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- liquibase formatted sql
+
+-- changeset hungdoan:1652453102157-1
+CREATE TABLE "role" ("id" BIGINT NOT NULL, "name" VARCHAR(255) NOT NULL, CONSTRAINT "role_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-2
+CREATE TABLE "account" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "bio" VARCHAR(200), "email" VARCHAR(255) NOT NULL, "full_name" VARCHAR(255) NOT NULL, "password" VARCHAR(255) NOT NULL, "refresh_token" VARCHAR(255), "token_expired_date" TIMESTAMP WITHOUT TIME ZONE, "username" VARCHAR(255) NOT NULL, "verification_expired_date" TIMESTAMP WITHOUT TIME ZONE, "verification_token" VARCHAR(255), "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, "role_id" BIGINT, CONSTRAINT "account_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-3
+CREATE TABLE "participant" ("id" BIGINT NOT NULL, "account_id" BIGINT NOT NULL, "conversation_id" BIGINT NOT NULL, CONSTRAINT "participant_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-4
+CREATE TABLE "following" ("id" BIGINT NOT NULL, "from_account" BIGINT, "to_account" BIGINT, CONSTRAINT "following_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-5
+CREATE TABLE "liking" ("id" BIGINT NOT NULL, "account_id" BIGINT, "post_id" BIGINT, CONSTRAINT "liking_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-6
+ALTER TABLE "role" ADD CONSTRAINT "uk_8sewwnpamngi6b1dwaa88askk" UNIQUE ("name");
+
+-- changeset hungdoan:1652453102157-7
+ALTER TABLE "account" ADD CONSTRAINT "uk_bofba73mkw4ghli0ycc3bj9o0" UNIQUE ("verification_token");
+
+-- changeset hungdoan:1652453102157-8
+ALTER TABLE "account" ADD CONSTRAINT "uk_fq38m74jok70uh8462s27xkl2" UNIQUE ("refresh_token");
+
+-- changeset hungdoan:1652453102157-9
+ALTER TABLE "account" ADD CONSTRAINT "uk_gex1lmaqpg0ir5g1f5eftyaa1" UNIQUE ("username");
+
+-- changeset hungdoan:1652453102157-10
+ALTER TABLE "account" ADD CONSTRAINT "uk_q0uja26qgu1atulenwup9rxyr" UNIQUE ("email");
+
+-- changeset hungdoan:1652453102157-11
+ALTER TABLE "participant" ADD CONSTRAINT "ukfh7tjbx3f45m1s5wg2f9hog4i" UNIQUE ("conversation_id", "account_id");
+
+-- changeset hungdoan:1652453102157-12
+ALTER TABLE "following" ADD CONSTRAINT "uniquefollowingcomposition" UNIQUE ("from_account", "to_account");
+
+-- changeset hungdoan:1652453102157-13
+ALTER TABLE "liking" ADD CONSTRAINT "uniquelikecomposition" UNIQUE ("account_id", "post_id");
+
+-- changeset hungdoan:1652453102157-14
+CREATE SEQUENCE  IF NOT EXISTS "account_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453102157-15
+CREATE SEQUENCE  IF NOT EXISTS "attachment_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453102157-16
+CREATE SEQUENCE  IF NOT EXISTS "comment_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453102157-17
+CREATE SEQUENCE  IF NOT EXISTS "following_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453102157-18
+CREATE SEQUENCE  IF NOT EXISTS "hibernate_sequence" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453102157-19
+CREATE SEQUENCE  IF NOT EXISTS "liking_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453102157-20
+CREATE SEQUENCE  IF NOT EXISTS "post_id_seq" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+-- changeset hungdoan:1652453102157-21
+CREATE TABLE "attachment" ("id" BIGINT NOT NULL, "actual_name" VARCHAR(255), "timestamp" TIMESTAMP WITHOUT TIME ZONE, "unique_name" VARCHAR(255), "url" VARCHAR(255), "post_id" BIGINT, "profile_id" BIGINT, CONSTRAINT "attachment_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-22
+CREATE TABLE "comment" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "content" VARCHAR(255), "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, "parent_comment_id" BIGINT, "post_id" BIGINT, CONSTRAINT "comment_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-23
+CREATE TABLE "conversation" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "name" VARCHAR(255) NOT NULL, "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, CONSTRAINT "conversation_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-24
+CREATE TABLE "message" ("id" BIGINT GENERATED BY DEFAULT AS IDENTITY NOT NULL, "content" VARCHAR(255) NOT NULL, "status" INTEGER, "timestamp" date NOT NULL, "recipient_id" BIGINT, "sender_id" BIGINT, "test" VARCHAR(255), CONSTRAINT "message_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-25
+CREATE TABLE "post" ("id" BIGINT NOT NULL, "active" BOOLEAN NOT NULL, "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "last_modified_at" TIMESTAMP WITHOUT TIME ZONE, "caption" VARCHAR(1500) NOT NULL, "privacy" INTEGER, "created_by_account_id" BIGINT, "last_modified_by_account_id" BIGINT, CONSTRAINT "post_pkey" PRIMARY KEY ("id"));
+
+-- changeset hungdoan:1652453102157-26
+ALTER TABLE "message" ADD CONSTRAINT "fk2a3ajdqt4au2cns4ko5m5qiil" FOREIGN KEY ("recipient_id") REFERENCES "conversation" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-27
+ALTER TABLE "comment" ADD CONSTRAINT "fk3t7fjgecq0kfs5r4ppcrj6ccd" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-28
+ALTER TABLE "attachment" ADD CONSTRAINT "fk57nlwn59e1o3uor5njjmukiar" FOREIGN KEY ("post_id") REFERENCES "post" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-29
+ALTER TABLE "message" ADD CONSTRAINT "fk5k0olkd82xhjehyhuy44pqi4c" FOREIGN KEY ("sender_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-30
+ALTER TABLE "post" ADD CONSTRAINT "fk9qpv9547pu2gxgulwhgw9vat1" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-31
+ALTER TABLE "liking" ADD CONSTRAINT "fkakklq2jnjsjfma8ufgh45xurl" FOREIGN KEY ("post_id") REFERENCES "post" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-32
+ALTER TABLE "account" ADD CONSTRAINT "fkbi1pm96c3w5wrvw6slhkyamk" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-33
+ALTER TABLE "account" ADD CONSTRAINT "fkd4vb66o896tay3yy52oqxr9w0" FOREIGN KEY ("role_id") REFERENCES "role" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-34
+ALTER TABLE "conversation" ADD CONSTRAINT "fkfpeljvfrq565cq1m37trcjvh" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-35
+ALTER TABLE "comment" ADD CONSTRAINT "fkgryfrfg2a7t7gyirh91i14wnt" FOREIGN KEY ("created_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-36
+ALTER TABLE "conversation" ADD CONSTRAINT "fkh621kc15wrj10hxgrpn3gnc05" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-37
+ALTER TABLE "account" ADD CONSTRAINT "fkhj3uic340kxt2munplswc1kir" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-38
+ALTER TABLE "comment" ADD CONSTRAINT "fkhvh0e2ybgg16bpu229a5teje7" FOREIGN KEY ("parent_comment_id") REFERENCES "comment" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-39
+ALTER TABLE "attachment" ADD CONSTRAINT "fkivbysvdk76g59xkjthd8kl698" FOREIGN KEY ("profile_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-40
+ALTER TABLE "following" ADD CONSTRAINT "fkja85dl2kso64lyif593vh5twx" FOREIGN KEY ("to_account") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-41
+ALTER TABLE "following" ADD CONSTRAINT "fkkc4em2rvkeku33chmopnxpp3b" FOREIGN KEY ("from_account") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-42
+ALTER TABLE "liking" ADD CONSTRAINT "fkmyyh5u34brpn49tsam9eovuhj" FOREIGN KEY ("account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-43
+ALTER TABLE "participant" ADD CONSTRAINT "fkptbndmpwose49o6u9d8x9aj9u" FOREIGN KEY ("account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-44
+ALTER TABLE "post" ADD CONSTRAINT "fkr1eijd8s3w1nquadw31orl88o" FOREIGN KEY ("last_modified_by_account_id") REFERENCES "account" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-45
+ALTER TABLE "comment" ADD CONSTRAINT "fks1slvnkuemjsq2kj4h3vhx7i1" FOREIGN KEY ("post_id") REFERENCES "post" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- changeset hungdoan:1652453102157-46
+ALTER TABLE "participant" ADD CONSTRAINT "fksiftd56p4vnlfthffmf07xhng" FOREIGN KEY ("conversation_id") REFERENCES "conversation" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+

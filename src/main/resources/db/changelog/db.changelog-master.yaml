@@ -1,4 +1,4 @@
 databaseChangeLog:
-  - changeset:
-      id: 1
-      author: vlad
+  - includeAll:
+      path: classpath*:db/changelog/diff_changelog
+      errorIfMissingOrEmpty: false
