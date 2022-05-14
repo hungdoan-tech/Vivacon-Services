@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    
+
     Optional<Account> findByUsernameIgnoreCase(String username);
 
     Optional<Account> findByRefreshToken(String token);
@@ -27,4 +27,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     int activateByVerificationToken(@Param("token") String token);
 
     Optional<Account> findByVerificationToken(String token);
+
+    @Query("select count(a.id) from Account a where a.active = true")
+    Long getAllAccountCounting();
 }
