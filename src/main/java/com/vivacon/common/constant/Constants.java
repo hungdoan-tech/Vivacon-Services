@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Constants {
 
-    public static final String FE_URL = "http:localhost:3000";
+    public static final String FE_URL = "http://localhost:3000";
     public static final String API_V1 = "/api/v1";
     public static final List<String> URL_WHITELIST = List.of(
             "/v2/api-docs",
@@ -27,7 +27,6 @@ public class Constants {
             API_V1 + "/account/verify",
             API_V1 + "/account/verification_token",
             API_V1 + "/account/check",
-            "/ws",
             "/ws/**",
             "/login",
             "/checkHealth",
@@ -40,7 +39,7 @@ public class Constants {
 
     public static final String ADMIN_AUTHORITY_VALUE = "ADMIN";
     public static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8";
-    public static final String STOMP_AUTHORIZATION_HEADER = "X-Authorization";
+    public static final String STOMP_AUTHORIZATION_HEADER = "WS-Authorization";
     public static final List<String> IMAGE_EXTENSIONS = List.of(".png", ".jpeg", ".jpg", ".svg", ".gif");
     public static final String OBJECT_NULL_CANT_CONVERT_TO_JSON = "Object is null and can not be used to convert to JSON";
     public static final String UNAUTHORIZED_REASON = "Catch exceptions through filters in AuthenticationEntryPoint error: {}";

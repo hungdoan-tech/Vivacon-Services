@@ -28,6 +28,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import java.util.List;
 
+import static com.vivacon.common.constant.Constants.FE_URL;
 import static com.vivacon.common.constant.Constants.STOMP_AUTHORIZATION_HEADER;
 
 @Configuration
@@ -64,7 +65,7 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins(FE_URL)
                 .withSockJS();
     }
 
@@ -115,7 +116,7 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
             if (!ObjectUtils.isEmpty(accessor)) {
                 List<String> tokenList = accessor.getNativeHeader(STOMP_AUTHORIZATION_HEADER);
                 if (tokenList != null || !tokenList.isEmpty()) {
-                    String token = tokenList.get(0).split(" ")[1];
+                    String token = tokenList.get(0);
                     UserDetails userDetails = userDetailService.loadUserByUsername(jwtUtils.getUsername(token));
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     accessor.setUser(usernamePasswordAuthenticationToken);
