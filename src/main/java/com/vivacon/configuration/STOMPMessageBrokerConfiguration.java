@@ -28,7 +28,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import java.util.List;
 
-import static com.vivacon.common.constant.Constants.FE_URL;
 import static com.vivacon.common.constant.Constants.STOMP_AUTHORIZATION_HEADER;
 
 @Configuration
@@ -65,7 +64,7 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(FE_URL)
+                .setAllowedOrigins("http://localhost:3000")
                 .withSockJS();
     }
 
