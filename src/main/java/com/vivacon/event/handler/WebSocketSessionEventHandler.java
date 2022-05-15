@@ -82,6 +82,6 @@ public class WebSocketSessionEventHandler implements ActiveSessionChangingListen
     @Override
     public void notifyActiveSessionChanging() {
         Set<String> activeUsers = activeSessionManager.getAll();
-        messagingTemplate.convertAndSend("/topic/active/account", activeUsers);
+        messagingTemplate.convertAndSend("/topic/account/online", activeUsers);
     }
 }

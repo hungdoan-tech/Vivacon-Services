@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static com.vivacon.common.constant.Constants.API_V1;
+import static com.vivacon.common.constant.Constants.PREFIX_CONVERSATION_QUEUE_DESTINATION;
 import static com.vivacon.common.constant.Constants.PREFIX_USER_QUEUE_DESTINATION;
 import static com.vivacon.common.constant.Constants.SUFFIX_CONVERSATION_QUEUE_DESTINATION;
 import static com.vivacon.common.constant.Constants.SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
@@ -59,22 +60,26 @@ public class ChatController {
     @MessageMapping("/chat")
     public void processChatMessage(@Payload @Valid MessageRequest messageRequest) {
         MessageResponse messageResponse = messageService.save(messageRequest);
-        messagingTemplate.convertAndSendToUser(messageRequest.getConversationId().toString(), SUFFIX_CONVERSATION_QUEUE_DESTINATION, messageResponse);
+        String path = PREFIX_CONVERSATION_QUEUE_DESTINATION +
+                messageRequest.getConversationId().toString() +
+                SUFFIX_CONVERSATION_QUEUE_DESTINATION;
+        messagingTemplate.convertAndSend(path, messageResponse);
     }
 
     /**
-     * This function is used to create a new conversation based on the request from client which includes list of participant in this expected conversation
+     * This function is used to create a new conversation based on the request from client which includes list of participant
+     * in this expected conversation
      *
      * @param participants Participants
      */
     @MessageMapping("/conversation")
     public void processCreatingConversation(@Payload @Valid Participants participants) {
-        OutlineConversation conversation = conversationService.create(participants);
+        OutlineConversation outlineConversation = conversationService.create(participants);
         Set<String> participantUsernames = new TreeSet<>(participants.getUsernames());
         participantUsernames = conversationService.getAllParticipants(participantUsernames);
         for (String username : participantUsernames) {
             String path = PREFIX_USER_QUEUE_DESTINATION + username + SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
-            messagingTemplate.convertAndSend(path, conversation);
+            messagingTemplate.convertAndSend(path, outlineConversation);
         }
     }
 

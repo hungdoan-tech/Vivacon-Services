@@ -52,8 +52,8 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/conversations", "/user", "/topic");
-        registry.setUserDestinationPrefix("/conversations");
+        registry.enableSimpleBroker("/conversation", "/user", "/topic");
+        registry.setUserDestinationPrefix("/user");
         registry.setApplicationDestinationPrefixes("/app");
     }
 

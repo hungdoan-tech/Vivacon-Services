@@ -27,6 +27,7 @@ public class Constants {
             API_V1 + "/account/verify",
             API_V1 + "/account/verification_token",
             API_V1 + "/account/check",
+            "/ws",
             "/ws/**",
             "/login",
             "/checkHealth",
@@ -67,9 +68,10 @@ public class Constants {
     public static final String FETCHING_SUCCESSFULLY = "Fetching successfully";
     public static final String BLANK_AVATAR_URL = "https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-13T21%3A17%3A26.245336500_Blank-Avatar.jpg";
     public static final String ACCOUNT_STATUS_EXCEPTION_MESSAGE_KEY = "accountStatusMessageKey";
-    public static final String SUFFIX_CONVERSATION_QUEUE_DESTINATION = "/queue/messages";
-    public static final String PREFIX_USER_QUEUE_DESTINATION = "/users/";
-    public static final String SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION = "/new/conversations";
+    public static final String PREFIX_CONVERSATION_QUEUE_DESTINATION = "/conversation/";
+    public static final String SUFFIX_CONVERSATION_QUEUE_DESTINATION = "/message";
+    public static final String PREFIX_USER_QUEUE_DESTINATION = "/user/";
+    public static final String SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION = "/conversation/new";
     public static final String SUFFIX_USER_QUEUE_ERROR_DESTINATION = "/error";
     public static final String CONNECTED_CONVERSATION_NAME_TOKEN = ",";
 
