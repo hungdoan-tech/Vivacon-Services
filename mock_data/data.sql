@@ -216,4 +216,24 @@ INSERT INTO "liking" ("id", "account_id", "post_id")
 VALUES (1, 2, 2),
        (2, 1, 2),
        (3, 1, 3);
-SELECT setval('like_id_seq', (SELECT MAX(id) FROM liking) + 1);
+SELECT setval('liking_id_seq', (SELECT MAX(id) FROM liking) + 1);
+
+
+INSERT INTO "conversation" ("id", "name", "created_at", "last_modified_at", "created_by_account_id",
+                            "last_modified_by_account_id", "active")
+VALUES (1, 'Hung Doan, Thao Van', '2022-04-07 23:56:20.061855', '2022-04-07 23:56:20.061855', 1, 1, true);
+SELECT setval('conversation_id_seq', (SELECT MAX(id) FROM conversation) + 1);
+
+INSERT INTO "participant" ("id", "conversation_id", "account_id")
+VALUES (1, 1, 1),
+       (2, 1, 2);
+SELECT setval('participant_id_seq', (SELECT MAX(id) FROM participant) + 1);
+
+INSERT INTO "message" ("id", "sender_id", "recipient_id", "content", "timestamp", "status")
+VALUES (1, 1, 1, 'Hello first message', '2022-04-07 23:56:20.061855', 1),
+       (2, 2, 1, 'Hello second message', '2022-04-07 23:56:20.061855', 1),
+       (3, 2, 1, 'Hello third message', '2022-04-07 23:56:20.061855', 1),
+       (4, 1, 1, 'Hello fourth message', '2022-04-07 23:56:20.061855', 1),
+       (5, 1, 1, 'Hello fifth message', '2022-04-07 23:56:20.061855', 1);
+SELECT setval('message_id_seq', (SELECT MAX(id) FROM message) + 1);
+

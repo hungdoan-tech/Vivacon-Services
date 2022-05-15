@@ -37,7 +37,7 @@ public class ConversationMapper {
 
     public OutlineConversation toOutlineConversation(Conversation conversation) {
         OutlineConversation outlineConversation = mapper.map(conversation, OutlineConversation.class);
-        Optional<Message> latestMessage = messageRepository.findFirstByRecipientIdOrderByTimestampDesc(conversation.getId());
+        Optional<Message> latestMessage = messageRepository.findFirstByRecipientIdOrderByTimestampAsc(conversation.getId());
         if (latestMessage.isPresent()) {
             outlineConversation.setLatestMessage(messageMapper.toResponse(latestMessage.get()));
         }

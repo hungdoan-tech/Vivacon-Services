@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
-    @Query("select p from Participant p where p.conversation.id = :conversationId")
+    @Query("select p.account from Participant p where p.conversation.id = :conversationId")
     List<Account> getParticipantsByConversationId(@Param("conversationId") long conversationId);
 }

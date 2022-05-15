@@ -63,6 +63,7 @@ public class ChatController {
         String path = PREFIX_CONVERSATION_QUEUE_DESTINATION +
                 messageRequest.getConversationId().toString() +
                 SUFFIX_CONVERSATION_QUEUE_DESTINATION;
+        System.out.println("path : " + path);
         messagingTemplate.convertAndSend(path, messageResponse);
     }
 
