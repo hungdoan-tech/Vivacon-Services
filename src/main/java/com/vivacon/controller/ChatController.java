@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -90,6 +91,17 @@ public class ChatController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return conversationService.findAllByCurrentAccount(order, sort, pageSize, pageIndex);
+    }
+
+    /**
+     * This function is used to find all conversation id of the current user
+     *
+     * @return PageDTO<ConversationResponse>
+     */
+    @ApiOperation(value = "Get all conversation id of current user")
+    @GetMapping("/conversation/id")
+    public List<Long> findConversationsOfCurrentUser() {
+        return conversationService.findAllIdByCurrentAccount();
     }
 
     /**

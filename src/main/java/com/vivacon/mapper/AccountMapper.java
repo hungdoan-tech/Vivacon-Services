@@ -11,6 +11,7 @@ import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.security.UserDetailImpl;
+import com.vivacon.service.ActiveSessionManager;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -28,12 +29,18 @@ public class AccountMapper {
     private AttachmentRepository attachmentRepository;
 
     private AccountRepository accountRepository;
+    private ActiveSessionManager activeSessionManager;
 
-    public AccountMapper(ModelMapper mapper, FollowingRepository followingRepository, AttachmentRepository attachmentRepository, AccountRepository accountRepository) {
+    public AccountMapper(ModelMapper mapper,
+                         FollowingRepository followingRepository,
+                         AttachmentRepository attachmentRepository,
+                         AccountRepository accountRepository,
+                         ActiveSessionManager activeSessionManager) {
         this.mapper = mapper;
         this.followingRepository = followingRepository;
         this.attachmentRepository = attachmentRepository;
         this.accountRepository = accountRepository;
+        this.activeSessionManager = activeSessionManager;
     }
 
     public AccountResponse toResponse(Account principal, Account account) {
@@ -75,6 +82,8 @@ public class AccountMapper {
         Optional<Attachment> attachment = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(account.getId());
         String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
         essentialAccount.setAvatar(avatarUrl);
+        essentialAccount.setIsOnline(activeSessionManager.getAll().contains(account.getUsername()));
+        
         return essentialAccount;
     }
 }

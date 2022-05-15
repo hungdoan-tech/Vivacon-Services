@@ -1,5 +1,7 @@
 package com.vivacon.dto.response;
 
+import java.util.List;
+
 public class OutlineConversation {
 
     private Long id;
@@ -7,6 +9,7 @@ public class OutlineConversation {
     private String name;
 
     private MessageResponse latestMessage;
+    private List<EssentialAccount> participants;
 
     public Long getId() {
         return id;
@@ -30,5 +33,13 @@ public class OutlineConversation {
 
     public void setLatestMessage(MessageResponse latestMessage) {
         this.latestMessage = latestMessage;
+    }
+
+    public List<EssentialAccount> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<EssentialAccount> participants) {
+        this.participants = participants;
     }
 }

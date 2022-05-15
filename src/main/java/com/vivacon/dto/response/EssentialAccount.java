@@ -9,6 +9,7 @@ public class EssentialAccount {
     private String fullName;
 
     private String avatar;
+    private boolean isOnline;
 
     public Long getId() {
         return id;
@@ -41,4 +42,13 @@ public class EssentialAccount {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
+    public boolean getIsOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(boolean online) {
+        isOnline = online;
+    }
+
 }
