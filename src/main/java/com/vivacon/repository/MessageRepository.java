@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    Optional<Message> findFirstByRecipientIdOrderByTimestampAsc(Long conversationId);
+    Optional<Message> findFirstByRecipientIdOrderByTimestampDesc(Long conversationId);
 
     Page<Message> findByRecipientId(Long conversationId, Pageable pageable);
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vivacon.common.enum_type.MessageStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class MessageResponse {
 
@@ -15,8 +16,8 @@ public class MessageResponse {
 
     private String content;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private LocalDate timestamp;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    private LocalDateTime timestamp;
 
     private MessageStatus status;
 
@@ -52,11 +53,11 @@ public class MessageResponse {
         this.content = content;
     }
 
-    public LocalDate getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDate timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
