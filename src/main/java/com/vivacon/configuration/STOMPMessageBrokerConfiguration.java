@@ -1,6 +1,8 @@
 package com.vivacon.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vivacon.common.utility.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -80,7 +82,12 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
         DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
         resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setObjectMapper(new ObjectMapper());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        converter.setObjectMapper(mapper);
         converter.setContentTypeResolver(resolver);
         messageConverters.add(converter);
         return true;
@@ -115,8 +122,9 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
             StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
             if (!ObjectUtils.isEmpty(accessor)) {
                 List<String> tokenList = accessor.getNativeHeader(STOMP_AUTHORIZATION_HEADER);
-                if (tokenList != null || !tokenList.isEmpty()) {
+                if (tokenList != null && !tokenList.isEmpty()) {
                     String token = tokenList.get(0);
+                    System.out.println("WS-Authorization from " + accessor.getDestination() + " token : " + token);
                     UserDetails userDetails = userDetailService.loadUserByUsername(jwtUtils.getUsername(token));
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     accessor.setUser(usernamePasswordAuthenticationToken);
