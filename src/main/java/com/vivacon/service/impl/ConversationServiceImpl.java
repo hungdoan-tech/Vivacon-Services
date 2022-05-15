@@ -19,11 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static com.vivacon.common.constant.Constants.CONNECTED_CONVERSATION_NAME_TOKEN;
 
@@ -51,15 +51,18 @@ public class ConversationServiceImpl implements ConversationService {
     public OutlineConversation create(Participants participants) {
         Set<String> usernames = new TreeSet<>(participants.getUsernames());
         usernames = this.getAllParticipants(usernames);
-        String conversationName = this.getConversationName(usernames);
 
+        Set<Account> accounts = usernames.stream().map(
+                        username -> accountRepository
+                                .findByUsernameIgnoreCase(username)
+                                .orElseThrow(RecordNotFoundException::new))
+                .collect(Collectors.toSet());
+        Set<String> fullnames = accounts.stream().map(account -> account.getFullName()).collect(Collectors.toSet());
+
+        String conversationName = this.getConversationName(fullnames);
         Conversation savedConversation = conversationRepository.save(new Conversation(conversationName));
-        List<Account> accounts = new LinkedList<>();
-        for (String username : usernames) {
-            accounts.add(accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new));
-        }
-        accounts.forEach(account -> participantRepository.save(new Participant(savedConversation, account)));
 
+        accounts.forEach(account -> participantRepository.save(new Participant(savedConversation, account)));
         return conversationMapper.toOutlineConversation(savedConversation);
     }
 

@@ -4,7 +4,7 @@ import com.vivacon.common.constant.MockData;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Locale;
 
 import static com.vivacon.common.constant.MockData.FIRST_NAME;
 
@@ -23,14 +23,14 @@ public class AccountGenerator extends DataGenerator {
             statement = "([[id]], '[[full_name]]', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, '[[username]]', 2, '[[created_at]]', NULL, NULL, NULL, '[[bio]]', '[[email]]', NULL, NULL, true),\n";
 
             String fullName = FIRST_NAME.get(RANDOM.nextInt(firstNameLength)) + " " + MockData.LAST_NAME.get(RANDOM.nextInt(lastNameLength));
-            String username = fullName.replace(" ", "") + UUID.randomUUID();
+            String username = fullName.replace(" ", "") + accountId;
             String bio = generateSentence(10);
             String email = username + "@gmail.com";
             String createdAt = getRandomTimestamp();
 
             statement = statement.replace("[[id]]", String.valueOf(accountId));
             statement = statement.replace("[[full_name]]", fullName);
-            statement = statement.replace("[[username]]", username);
+            statement = statement.replace("[[username]]", username.toLowerCase(Locale.ROOT));
             statement = statement.replace("[[created_at]]", createdAt);
             statement = statement.replace("[[bio]]", bio);
             statement = statement.replace("[[email]]", email);
