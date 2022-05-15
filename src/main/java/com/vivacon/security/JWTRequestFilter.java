@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.vivacon.common.constant.Constants.ACCESS_TOKEN_MISSING;
 import static com.vivacon.common.constant.Constants.ACCOUNT_STATUS_EXCEPTION_MESSAGE_KEY;
@@ -56,35 +58,40 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         AccountStatusUserDetailsChecker statusUserDetailsChecker = new AccountStatusUserDetailsChecker();
         String requestURI = request.getRequestURI();
-
-        System.out.println("request uri: "  + requestURI);
-        if (URL_WHITELIST.stream().noneMatch(requestURI::equals)) {
-            if("\\/ws\\/.*".matches(requestURI)){
-                filterChain.doFilter(request, response);
-            }
-            try {
-                String token = getTokenFromRequest(request);
-                if (Objects.nonNull(token)) {
-                    if (jwtUtils.validate(token)) {
-                        String username = jwtUtils.getUsername(token);
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                        statusUserDetailsChecker.check(userDetails);
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(checkoutWSAccess(requestURI)){
+            filterChain.doFilter(request, response);
+        } else {
+            if (URL_WHITELIST.stream().noneMatch(requestURI::equals)) {
+                try {
+                    String token = getTokenFromRequest(request);
+                    if (Objects.nonNull(token)) {
+                        if (jwtUtils.validate(token)) {
+                            String username = jwtUtils.getUsername(token);
+                            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                            statusUserDetailsChecker.check(userDetails);
+                            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                        }
+                    } else {
+                        throw new JwtException(ACCESS_TOKEN_MISSING);
                     }
-                } else {
-                    throw new JwtException(ACCESS_TOKEN_MISSING);
+                } catch (JwtException ex) {
+                    logger.error(CAN_NOT_SET_AUTHENTICATION_VALUE, ex);
+                    request.setAttribute(ERROR_MESSAGE_ATTRIBUTE_HTTP_REQUEST, ex.getMessage());
+                } catch (AccountStatusException ex) {
+                    logger.error(CAN_NOT_SET_AUTHENTICATION_VALUE, ex);
+                    request.setAttribute(ACCOUNT_STATUS_EXCEPTION_MESSAGE_KEY, ex.getMessage());
                 }
-            } catch (JwtException ex) {
-                logger.error(CAN_NOT_SET_AUTHENTICATION_VALUE, ex);
-                request.setAttribute(ERROR_MESSAGE_ATTRIBUTE_HTTP_REQUEST, ex.getMessage());
-            } catch (AccountStatusException ex) {
-                logger.error(CAN_NOT_SET_AUTHENTICATION_VALUE, ex);
-                request.setAttribute(ACCOUNT_STATUS_EXCEPTION_MESSAGE_KEY, ex.getMessage());
             }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
+    }
+
+    private boolean checkoutWSAccess(String uri){
+        Pattern pattern = Pattern.compile("(/ws).*");
+        Matcher matcher = pattern.matcher(uri);
+        return matcher.find();
     }
 
     /**
