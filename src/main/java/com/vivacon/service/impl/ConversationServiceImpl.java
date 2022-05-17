@@ -1,6 +1,7 @@
 package com.vivacon.service.impl;
 
 import com.vivacon.common.utility.PageableBuilder;
+import com.vivacon.dao.ConversationDao;
 import com.vivacon.dto.request.Participants;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.sorting_filtering.PageDTO;
@@ -32,6 +33,7 @@ public class ConversationServiceImpl implements ConversationService {
     private ConversationRepository conversationRepository;
     private AccountRepository accountRepository;
     private ParticipantRepository participantRepository;
+    private ConversationDao conversationDao;
     private AccountService accountService;
     private ConversationMapper conversationMapper;
 
@@ -39,11 +41,13 @@ public class ConversationServiceImpl implements ConversationService {
                                    AccountRepository accountRepository,
                                    ParticipantRepository participantRepository,
                                    AccountService accountService,
+                                   ConversationDao conversationDao,
                                    ConversationMapper conversationMapper) {
         this.conversationRepository = conversationRepository;
         this.accountService = accountService;
         this.conversationMapper = conversationMapper;
         this.accountRepository = accountRepository;
+        this.conversationDao = conversationDao;
         this.participantRepository = participantRepository;
     }
 
@@ -101,9 +105,19 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public PageDTO<OutlineConversation> findByRecipientUsername(String keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Conversation.class);
-        Page<Conversation> conversations = conversationRepository.findByApproximatelyName(keyword, accountService.getCurrentAccount().getUsername(), pageable);
-        return PageMapper.toPageDTO(conversations, conversation -> conversationMapper.toOutlineConversation(conversation));
+    public List<OutlineConversation> searchByKeyword(String keyword) {
+        Long principalId = accountService.getCurrentAccount().getId();
+        List<Conversation> conversations = conversationDao.searchConversationByName(principalId, keyword);
+        return conversations.stream().map(conversation ->  conversationMapper.toOutlineConversation(conversation))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public OutlineConversation findByRecipientId(long id) {
+        List<Conversation> conversations = conversationDao.checkConversationBetweenTwoAccount(accountService.getCurrentAccount().getId(), id);
+        if (conversations != null && conversations.size() == 1){
+            return conversationMapper.toOutlineConversation(conversations.get(0));
+        }
+        throw new RecordNotFoundException("The request recipient id is not matched with any conversation between this recipient and the principal");
     }
 }

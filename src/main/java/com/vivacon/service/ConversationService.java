@@ -17,5 +17,7 @@ public interface ConversationService {
 
     List<Long> findAllIdByCurrentAccount();
 
-    PageDTO<OutlineConversation> findByRecipientUsername(String keyword, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+    List<OutlineConversation> searchByKeyword(String keyword);
+
+    OutlineConversation findByRecipientId(long id);
 }

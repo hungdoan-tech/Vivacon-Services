@@ -6,6 +6,7 @@ import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.entity.Conversation;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
 import com.vivacon.service.MessageService;
@@ -129,18 +130,21 @@ public class ChatController {
     /**
      * This function is used for checking if a conversation is existed between the current user and the request recipient
      *
-     * @param username String
+     * @param recipientId long
      * @return ConversationResponse
      */
-    @ApiOperation(value = "Get the expected conversation between these two sender and recipient")
+    @ApiOperation(value = "Check the expected conversation between these two sender and recipient is exist or not")
+    @GetMapping("/conversation/check/{recipientId}")
+    public OutlineConversation findConversationBasedOnRecipientId(
+            @PathVariable("recipientId") long recipientId) {
+        return conversationService.findByRecipientId(recipientId);
+    }
+
+    @ApiOperation(value = "Search all conversations based on the keyword which will be compare with the conversation name, participant's username or participant's fullName")
     @GetMapping("/conversation/search")
-    public PageDTO<OutlineConversation> findConversationBasedOnRecipientUsername(
-            @RequestParam("keyword") String username,
-            @RequestParam(value = "_order", required = false) Optional<String> order,
-            @RequestParam(value = "_sort", required = false) Optional<String> sort,
-            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
-            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return conversationService.findByRecipientUsername(username, order, sort, pageSize, pageIndex);
+    public List<OutlineConversation> searchConversationByKeyword(
+            @RequestParam(value = "keyword") String keyword) {
+        return conversationService.searchByKeyword(keyword);
     }
 
     /**

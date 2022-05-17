@@ -30,6 +30,12 @@ public class Conversation extends AuditableEntity {
         this.active = true;
     }
 
+    public Conversation(long id, String name, LocalDateTime createdAt) {
+        this.id = id;
+        this.name = name;
+        this.lastModifiedAt = createdAt;
+    }
+
     public Long getId() {
         return id;
     }
