@@ -50,7 +50,14 @@ public class PostReportServiceImpl implements PostReportService {
     @Override
     public PageDTO<PostReport> getAll(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, PostReport.class);
-        Page<PostReport> postReportPage = postReportRepository.findAll(pageable);
+        Page<PostReport> postReportPage = postReportRepository.findAllByActive(true, pageable);
         return PageMapper.toPageDTO(postReportPage);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean deleteById(long id) {
+        this.postReportRepository.deactivateById(id);
+        return true;
     }
 }

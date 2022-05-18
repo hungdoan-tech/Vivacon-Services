@@ -7,7 +7,10 @@ import com.vivacon.entity.CommentReport;
 import com.vivacon.service.CommentReportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,5 +51,12 @@ public class CommentReportController {
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return commentReportService.getAll(order, sort, pageSize, pageIndex);
+    }
+
+    @ApiOperation(value = "Deleting a comment report")
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Object> deleteCommentReport(@PathVariable(name = "id") Long id) {
+        this.commentReportService.deleteById(id);
+        return ResponseEntity.ok(null);
     }
 }

@@ -50,7 +50,14 @@ public class CommentReportServiceImpl implements CommentReportService {
     @Override
     public PageDTO<CommentReport> getAll(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, CommentReport.class);
-        Page<CommentReport> commentReportPage = commentReportRepository.findAll(pageable);
+        Page<CommentReport> commentReportPage = commentReportRepository.findAllByActive(true, pageable);
         return PageMapper.toPageDTO(commentReportPage);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean deleteById(long id) {
+        this.commentReportRepository.deactivateById(id);
+        return true;
     }
 }
