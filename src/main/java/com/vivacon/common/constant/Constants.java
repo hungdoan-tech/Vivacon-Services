@@ -71,6 +71,7 @@ public class Constants {
     public static final String SUFFIX_CONVERSATION_QUEUE_DESTINATION = "/message";
     public static final String PREFIX_USER_QUEUE_DESTINATION = "/user/";
     public static final String SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION = "/conversation/new";
+
     public static final String SUFFIX_USER_QUEUE_ERROR_DESTINATION = "/error";
     public static final String CONNECTED_CONVERSATION_NAME_TOKEN = ",";
 

@@ -1,10 +1,20 @@
 package com.vivacon.dto.request;
 
+import com.vivacon.entity.MessageType;
+
 public class MessageRequest {
 
     private Long conversationId;
 
-    private String content;
+    private MessageType messageType;
+
+    public MessageRequest() {
+    }
+
+    public MessageRequest(Long conversationId, MessageType messageType) {
+        this.conversationId = conversationId;
+        this.messageType = messageType;
+    }
 
     public Long getConversationId() {
         return conversationId;
@@ -14,11 +24,11 @@ public class MessageRequest {
         this.conversationId = conversationId;
     }
 
-    public String getContent() {
-        return content;
+    public MessageType getMessageType() {
+        return messageType;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
     }
 }

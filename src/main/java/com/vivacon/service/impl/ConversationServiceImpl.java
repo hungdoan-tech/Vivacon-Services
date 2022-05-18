@@ -52,6 +52,20 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
+    public OutlineConversation findById(long id) {
+        Conversation conversation = conversationRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+        return conversationMapper.toOutlineConversation(conversation);
+    }
+
+    @Override
+    public OutlineConversation addParticipant(long conversationId, String participantName) {
+        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(RecordNotFoundException::new);
+        Account account = accountRepository.findByUsernameIgnoreCase(participantName).orElseThrow(RecordNotFoundException::new);
+        Participant participant = participantRepository.save(new Participant(conversation, account));
+        return conversationMapper.toOutlineConversation(conversation);
+    }
+
+    @Override
     public OutlineConversation create(Participants participants) {
         Set<String> usernames = new TreeSet<>(participants.getUsernames());
         usernames = this.getAllParticipants(usernames);

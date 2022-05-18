@@ -2,6 +2,7 @@ package com.vivacon.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vivacon.common.enum_type.MessageStatus;
+import com.vivacon.entity.MessageType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +16,8 @@ public class MessageResponse {
     private Long conversationId;
 
     private String content;
+
+    private MessageType messageType;
 
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime timestamp;
@@ -67,5 +70,13 @@ public class MessageResponse {
 
     public void setStatus(MessageStatus status) {
         this.status = status;
+    }
+
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
     }
 }

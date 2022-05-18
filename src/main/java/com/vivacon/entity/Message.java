@@ -43,15 +43,20 @@ public class Message {
     @Column(name = "status")
     private MessageStatus status;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "message_type")
+    private MessageType messageType;
+
     public Message() {
     }
 
-    public Message(Account sender, Conversation recipient, String content, LocalDateTime timestamp, MessageStatus status) {
+    public Message(Account sender, Conversation recipient, String content, LocalDateTime timestamp, MessageStatus status, MessageType messageType) {
         this.sender = sender;
         this.recipient = recipient;
         this.content = content;
         this.timestamp = timestamp;
         this.status = status;
+        this.messageType = messageType;
     }
 
     public Long getId() {
@@ -100,5 +105,13 @@ public class Message {
 
     public void setStatus(MessageStatus status) {
         this.status = status;
+    }
+
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
     }
 }

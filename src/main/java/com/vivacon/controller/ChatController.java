@@ -1,17 +1,18 @@
 package com.vivacon.controller;
 
-import com.vivacon.dto.request.MessageRequest;
+import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.request.Participants;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
 import com.vivacon.dto.response.OutlineConversation;
+import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.entity.Conversation;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
 import com.vivacon.service.MessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -59,11 +60,11 @@ public class ChatController {
      * @param messageRequest ChatMessageRequestBody
      */
     @MessageMapping("/chat")
-    public void processChatMessage(@Payload @Valid MessageRequest messageRequest) {
+    public void processChatMessage(@Payload @Valid UsualTextMessage messageRequest) {
         MessageResponse messageResponse = messageService.save(messageRequest);
         String path = PREFIX_CONVERSATION_QUEUE_DESTINATION +
-                messageRequest.getConversationId().toString() +
-                SUFFIX_CONVERSATION_QUEUE_DESTINATION;
+                        messageRequest.getConversationId() +
+                        SUFFIX_CONVERSATION_QUEUE_DESTINATION;
         messagingTemplate.convertAndSend(path, messageResponse);
     }
 
@@ -82,6 +83,22 @@ public class ChatController {
             String path = PREFIX_USER_QUEUE_DESTINATION + username + SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
             messagingTemplate.convertAndSend(path, outlineConversation);
         }
+    }
+
+    @MessageMapping("/conversation/{conversationId}/add/account/{username}")
+    public void processCreatingConversation(@DestinationVariable long conversationId,
+                                            @DestinationVariable String username) {
+        OutlineConversation outlineConversation = conversationService.addParticipant(conversationId, username);
+
+        String newConversationPerUserPath = PREFIX_USER_QUEUE_DESTINATION + username +
+                SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
+        messagingTemplate.convertAndSend(newConversationPerUserPath, outlineConversation);
+
+        String newParticipantMessagePerConversationPath = PREFIX_CONVERSATION_QUEUE_DESTINATION + conversationId +
+                SUFFIX_CONVERSATION_QUEUE_DESTINATION;
+        NewParticipantMessage newParticipantMessage = new NewParticipantMessage();
+        MessageResponse messageResponse = messageService.save(newParticipantMessage);
+        messagingTemplate.convertAndSend(newParticipantMessagePerConversationPath, messageResponse);
     }
 
     /**

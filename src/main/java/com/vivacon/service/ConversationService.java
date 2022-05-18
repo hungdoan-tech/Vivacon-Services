@@ -9,6 +9,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface ConversationService {
+    OutlineConversation findById(long id);
+
+    OutlineConversation addParticipant(long conversationId, String participantName);
+
     OutlineConversation create(Participants participants);
 
     Set<String> getAllParticipants(Set<String> participantUsernames);

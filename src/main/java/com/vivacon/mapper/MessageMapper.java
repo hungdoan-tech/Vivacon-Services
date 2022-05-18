@@ -1,12 +1,15 @@
 package com.vivacon.mapper;
 
 import com.vivacon.common.enum_type.MessageStatus;
-import com.vivacon.dto.request.MessageRequest;
+import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.MessageResponse;
+import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Conversation;
 import com.vivacon.entity.Message;
+import com.vivacon.entity.MessageType;
+import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.repository.ConversationRepository;
 import com.vivacon.service.AccountService;
 import org.modelmapper.ModelMapper;
@@ -34,14 +37,6 @@ public class MessageMapper {
         this.conversationRepository = conversationRepository;
     }
 
-    public Message toEntity(MessageRequest messageRequest) {
-        Account sender = accountService.getCurrentAccount();
-        Conversation recipient = conversationRepository
-                .findById(messageRequest.getConversationId())
-                .orElseThrow();
-        return new Message(sender, recipient, messageRequest.getContent(), LocalDateTime.now(), MessageStatus.SENT);
-    }
-
     public MessageResponse toResponse(Message message) {
         MessageResponse messageResponse = mapper.map(message, MessageResponse.class);
 
@@ -49,5 +44,23 @@ public class MessageMapper {
         messageResponse.setSender(sender);
         messageResponse.setConversationId(message.getRecipient().getId());
         return messageResponse;
+    }
+
+    public Message toEntity(UsualTextMessage messageRequest) {
+        Account sender = accountService.getCurrentAccount();
+        Conversation recipient = conversationRepository
+                .findById(messageRequest.getConversationId())
+                .orElseThrow(RecordNotFoundException::new);
+        return new Message(sender, recipient, messageRequest.getContent(), LocalDateTime.now(), MessageStatus.SENT, MessageType.USUAL_TEXT);
+    }
+
+    public Message toEntity(NewParticipantMessage newParticipantMessage) {
+        Account sender = accountService.getCurrentAccount();
+        Conversation recipient = conversationRepository
+                .findById(newParticipantMessage.getConversationId())
+                .orElseThrow(RecordNotFoundException::new);
+        Account newParticipant = accountService.getAccountByUsernameIgnoreCase(newParticipantMessage.getUsername());
+        String messageContent = newParticipant.getFullName() + " (" + newParticipant.getUsername() + ") has joined to the conversation";
+        return new Message(sender, recipient, messageContent, LocalDateTime.now(), MessageStatus.SENT, MessageType.NEW_PARTICIPANT);
     }
 }

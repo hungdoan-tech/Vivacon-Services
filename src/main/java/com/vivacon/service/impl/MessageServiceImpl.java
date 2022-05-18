@@ -1,8 +1,9 @@
 package com.vivacon.service.impl;
 
 import com.vivacon.common.utility.PageableBuilder;
-import com.vivacon.dto.request.MessageRequest;
+import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.response.MessageResponse;
+import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Message;
 import com.vivacon.mapper.MessageMapper;
@@ -29,8 +30,14 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageResponse save(MessageRequest messageRequest) {
+    public MessageResponse save(UsualTextMessage messageRequest) {
         Message message = messageMapper.toEntity(messageRequest);
+        return messageMapper.toResponse(this.messageRepository.save(message));
+    }
+
+    @Override
+    public MessageResponse save(NewParticipantMessage newParticipantMessage) {
+        Message message = messageMapper.toEntity(newParticipantMessage);
         return messageMapper.toResponse(this.messageRepository.save(message));
     }
 
