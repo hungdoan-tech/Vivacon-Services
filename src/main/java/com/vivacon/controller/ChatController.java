@@ -2,11 +2,13 @@ package com.vivacon.controller;
 
 import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.request.Participants;
+import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.entity.MessageType;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
 import com.vivacon.service.MessageService;
@@ -86,7 +88,7 @@ public class ChatController {
     }
 
     @MessageMapping("/conversation/{conversationId}/add/account/{username}")
-    public void processCreatingConversation(@DestinationVariable long conversationId,
+    public void processAddNewParticipant(@DestinationVariable long conversationId,
                                             @DestinationVariable String username) {
         OutlineConversation outlineConversation = conversationService.addParticipant(conversationId, username);
 
@@ -99,6 +101,20 @@ public class ChatController {
         NewParticipantMessage newParticipantMessage = new NewParticipantMessage();
         MessageResponse messageResponse = messageService.save(newParticipantMessage);
         messagingTemplate.convertAndSend(newParticipantMessagePerConversationPath, messageResponse);
+    }
+
+    @MessageMapping("/conversation/{conversationId}/typing/{username}")
+    public void processIdentifyWhoTyping(@DestinationVariable long conversationId,
+                                         @DestinationVariable String username) {
+        AccountResponse accountResponse = new AccountResponse();
+        accountResponse.setUsername(username);
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setSender(accountResponse);
+        messageResponse.setMessageType(MessageType.TYPING);
+        String path = PREFIX_CONVERSATION_QUEUE_DESTINATION + conversationId +
+                SUFFIX_CONVERSATION_QUEUE_DESTINATION;
+
+        messagingTemplate.convertAndSend(path, messageResponse);
     }
 
     /**
