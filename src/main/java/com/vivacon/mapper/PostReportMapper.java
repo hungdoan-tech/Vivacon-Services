@@ -27,5 +27,4 @@ public class PostReportMapper {
         auditableEntity.setLastModifiedAt(LocalDateTime.now());
         return (PostReport) auditableEntity;
     }
-
 }

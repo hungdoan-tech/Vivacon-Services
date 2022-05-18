@@ -1,19 +1,25 @@
 package com.vivacon.service.impl;
 
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.AccountReportRequest;
+import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.AccountReport;
 import com.vivacon.mapper.AccountReportMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountReportRepository;
 import com.vivacon.service.AccountReportService;
 import com.vivacon.service.AccountService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 @Service
 public class AccountReportServiceImpl implements AccountReportService {
@@ -39,5 +45,12 @@ public class AccountReportServiceImpl implements AccountReportService {
         accountReport.setAccount(accountById);
 
         return accountReportRepository.save(accountReport);
+    }
+
+    @Override
+    public PageDTO<AccountReport> getAll(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, AccountReport.class);
+        Page<AccountReport> accountReportPage = accountReportRepository.findAll(pageable);
+        return PageMapper.toPageDTO(accountReportPage);
     }
 }
