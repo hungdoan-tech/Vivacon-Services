@@ -9,6 +9,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Conversation;
 import com.vivacon.entity.Participant;
 import com.vivacon.exception.RecordNotFoundException;
+import com.vivacon.exception.UnauthorizedWebSocketException;
 import com.vivacon.mapper.ConversationMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountRepository;
@@ -59,10 +60,17 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public OutlineConversation addParticipant(long conversationId, String participantName) {
+        checkAuthorizedConversation(conversationId);
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(RecordNotFoundException::new);
         Account account = accountRepository.findByUsernameIgnoreCase(participantName).orElseThrow(RecordNotFoundException::new);
         Participant participant = participantRepository.save(new Participant(conversation, account));
         return conversationMapper.toOutlineConversation(conversation);
+    }
+
+    private boolean checkAuthorizedConversation(long conversationId){
+        Account principal = accountService.getCurrentAccount();
+        participantRepository.findByConversationIdAndAccountId(conversationId, principal.getId()).orElseThrow(UnauthorizedWebSocketException::new);
+        return true;
     }
 
     @Override

@@ -31,7 +31,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     @Query("SELECT p.account.username FROM Conversation c join Participant p on c.id = p.conversation.id WHERE c.id = :conversationId")
     Optional<List<String>> findByAllParticipantsByConversationId(@Param("conversationId") Long conversationId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Conversation c SET c.lastModifiedAt = :lastModifiedAt WHERE c.id = :id and c.active = true")
     int updateLastModifiedAtById(@Param("id") Long id, @Param("lastModifiedAt") LocalDateTime lastModifiedAt);
 }

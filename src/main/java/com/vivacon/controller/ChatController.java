@@ -106,15 +106,9 @@ public class ChatController {
 
     @MessageMapping("/conversation/typing")
     public void processIdentifyWhoTyping(@Payload @Valid TypingMessage typingMessage) {
-        EssentialAccount accountResponse = new EssentialAccount();
-        accountResponse.setUsername(accountService.getCurrentAccount().getUsername());
-        MessageResponse messageResponse = new MessageResponse();
-        messageResponse.setSender(accountResponse);
-        messageResponse.setContent(String.valueOf(typingMessage.isTyping()));
-        messageResponse.setMessageType(MessageType.TYPING);
+        MessageResponse messageResponse = messageService.processTypingMessage(typingMessage);
         String path = PREFIX_CONVERSATION_QUEUE_DESTINATION + typingMessage.getConversationId() +
                 SUFFIX_CONVERSATION_QUEUE_DESTINATION;
-
         messagingTemplate.convertAndSend(path, messageResponse);
     }
 
