@@ -241,12 +241,12 @@ SELECT setval('participant_id_seq', (SELECT MAX(id) FROM participant) + 1);
 
 INSERT INTO "message" ("id", "sender_id", "recipient_id", "content", "timestamp", "status")
 VALUES (1, 1, 1, 'Hello first message in chat 1', '2022-04-07 23:56:20.061855', 1),
-       (2, 2, 1, 'Hello second message in chat 2', '2022-04-07 23:56:22.061855', 1),
-       (3, 2, 1, 'Hello third message in chat 3', '2022-04-07 23:56:23.061855', 1),
-       (4, 1, 1, 'Hello fourth message in chat 4', '2022-04-07 23:56:24.061855', 1),
-       (5, 1, 1, 'Hello fifth message in chat 5', '2022-04-07 23:56:26.061855', 1)
+       (2, 2, 1, 'Hello second message in chat 1', '2022-04-07 23:56:22.061855', 1),
+       (3, 2, 1, 'Hello third message in chat 1', '2022-04-07 23:56:23.061855', 1),
+       (4, 1, 1, 'Hello fourth message in chat 1', '2022-04-07 23:56:24.061855', 1),
+       (5, 1, 1, 'Hello fifth message in chat 1', '2022-04-07 23:56:26.061855', 1),
        (6, 3, 2, 'Hello in chat 2', '2022-04-07 23:57:23.061855', 1),
        (7, 3, 3, 'Hello in chat 3', '2022-04-07 23:58:24.061855', 1),
-       (8, 4, 4, 'Hello in chat 4', '2022-04-07 23:59:26.061855', 1)
+       (8, 4, 4, 'Hello in chat 4', '2022-04-07 23:59:26.061855', 1);
 SELECT setval('message_id_seq', (SELECT MAX(id) FROM message) + 1);
 
