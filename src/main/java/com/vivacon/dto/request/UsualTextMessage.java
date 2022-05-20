@@ -11,7 +11,7 @@ public class UsualTextMessage extends MessageRequest {
     }
 
     public UsualTextMessage(Long conversationId, String content) {
-        super(conversationId, MessageType.USUAL_TEXT);
+        super(conversationId);
         this.content = content;
     }
 

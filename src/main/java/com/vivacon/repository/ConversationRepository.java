@@ -26,7 +26,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             "from Conversation c " +
             "where " +
             "exists (SELECT c FROM Conversation c join Participant p on c.id = p.conversation.id WHERE p.account.username = :principalUsername) ")
-    Page<Conversation> findAllIdByPrincipalUsername(@Param("principalUsername") String principalUsername, Pageable pageable);
+    Page<Conversation> findAllByPrincipalUsername(@Param("principalUsername") String principalUsername, Pageable pageable);
 
     @Query("SELECT p.account.username FROM Conversation c join Participant p on c.id = p.conversation.id WHERE c.id = :conversationId")
     Optional<List<String>> findByAllParticipantsByConversationId(@Param("conversationId") Long conversationId);

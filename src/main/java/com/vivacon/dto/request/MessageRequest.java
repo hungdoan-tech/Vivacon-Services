@@ -6,14 +6,11 @@ public class MessageRequest {
 
     private Long conversationId;
 
-    private MessageType messageType;
-
     public MessageRequest() {
     }
 
-    public MessageRequest(Long conversationId, MessageType messageType) {
+    public MessageRequest(Long conversationId) {
         this.conversationId = conversationId;
-        this.messageType = messageType;
     }
 
     public Long getConversationId() {
@@ -22,13 +19,5 @@ public class MessageRequest {
 
     public void setConversationId(Long conversationId) {
         this.conversationId = conversationId;
-    }
-
-    public MessageType getMessageType() {
-        return messageType;
-    }
-
-    public void setMessageType(MessageType messageType) {
-        this.messageType = messageType;
     }
 }

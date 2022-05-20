@@ -1,7 +1,9 @@
 package com.vivacon.controller;
 
+import com.vivacon.dto.request.AddParticipantMessage;
 import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.request.Participants;
+import com.vivacon.dto.request.TypingMessage;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
@@ -87,31 +89,30 @@ public class ChatController {
         }
     }
 
-    @MessageMapping("/conversation/{conversationId}/add/account/{username}")
-    public void processAddNewParticipant(@DestinationVariable long conversationId,
-                                            @DestinationVariable String username) {
-        OutlineConversation outlineConversation = conversationService.addParticipant(conversationId, username);
+    @MessageMapping("/conversation/account/add")
+    public void processAddNewParticipant(@Payload @Valid AddParticipantMessage messageRequest) {
+        OutlineConversation outlineConversation = conversationService.addParticipant(messageRequest.getConversationId(), messageRequest.getUsername());
 
-        String newConversationPerUserPath = PREFIX_USER_QUEUE_DESTINATION + username +
+        String newConversationPerUserPath = PREFIX_USER_QUEUE_DESTINATION + messageRequest.getUsername() +
                 SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;
         messagingTemplate.convertAndSend(newConversationPerUserPath, outlineConversation);
 
-        String newParticipantMessagePerConversationPath = PREFIX_CONVERSATION_QUEUE_DESTINATION + conversationId +
+        String newParticipantMessagePerConversationPath = PREFIX_CONVERSATION_QUEUE_DESTINATION + messageRequest.getConversationId() +
                 SUFFIX_CONVERSATION_QUEUE_DESTINATION;
         NewParticipantMessage newParticipantMessage = new NewParticipantMessage();
         MessageResponse messageResponse = messageService.save(newParticipantMessage);
         messagingTemplate.convertAndSend(newParticipantMessagePerConversationPath, messageResponse);
     }
 
-    @MessageMapping("/conversation/{conversationId}/typing/{username}")
-    public void processIdentifyWhoTyping(@DestinationVariable long conversationId,
-                                         @DestinationVariable String username) {
+    @MessageMapping("/conversation/typing")
+    public void processIdentifyWhoTyping(@Payload @Valid TypingMessage typingMessage) {
         AccountResponse accountResponse = new AccountResponse();
-        accountResponse.setUsername(username);
+        accountResponse.setUsername(accountService.getCurrentAccount().getUsername());
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setSender(accountResponse);
+        messageResponse.setContent(String.valueOf(typingMessage.isTyping()));
         messageResponse.setMessageType(MessageType.TYPING);
-        String path = PREFIX_CONVERSATION_QUEUE_DESTINATION + conversationId +
+        String path = PREFIX_CONVERSATION_QUEUE_DESTINATION + typingMessage.getConversationId() +
                 SUFFIX_CONVERSATION_QUEUE_DESTINATION;
 
         messagingTemplate.convertAndSend(path, messageResponse);

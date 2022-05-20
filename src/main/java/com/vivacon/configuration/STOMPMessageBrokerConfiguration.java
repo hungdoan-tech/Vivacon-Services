@@ -124,7 +124,6 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
                 List<String> tokenList = accessor.getNativeHeader(STOMP_AUTHORIZATION_HEADER);
                 if (tokenList != null && !tokenList.isEmpty()) {
                     String token = tokenList.get(0);
-                    System.out.println("WS-Authorization from " + accessor.getDestination() + " token : " + token);
                     UserDetails userDetails = userDetailService.loadUserByUsername(jwtUtils.getUsername(token));
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     accessor.setUser(usernamePasswordAuthenticationToken);
