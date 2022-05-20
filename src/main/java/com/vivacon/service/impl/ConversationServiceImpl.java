@@ -108,14 +108,14 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public PageDTO<OutlineConversation> findAllByCurrentAccount(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize.isPresent() ? pageSize : Optional.of(Integer.MAX_VALUE), pageIndex, Conversation.class);
-        Page<Conversation> conversations = conversationRepository.findAllByPrincipalUsername(accountService.getCurrentAccount().getUsername(), pageable);
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Conversation.class);
+        Page<Conversation> conversations = participantRepository.findAllConversationByPrincipalUsername(accountService.getCurrentAccount().getUsername(), pageable);
         return PageMapper.toPageDTO(conversations, conversation -> conversationMapper.toOutlineConversation(conversation));
     }
 
     @Override
     public List<Long> findAllIdByCurrentAccount() {
-        return conversationRepository.findAllIdByPrincipalUsername(accountService.getCurrentAccount().getUsername());
+        return participantRepository.findAllConversationIdByPrincipalUsername(accountService.getCurrentAccount().getUsername());
     }
 
     @Override

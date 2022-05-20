@@ -11,7 +11,7 @@ public class MessageResponse {
 
     private Long id;
 
-    private AccountResponse sender;
+    private EssentialAccount sender;
 
     private Long conversationId;
 
@@ -19,7 +19,6 @@ public class MessageResponse {
 
     private MessageType messageType;
 
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime timestamp;
 
     private MessageStatus status;
@@ -32,11 +31,11 @@ public class MessageResponse {
         this.id = id;
     }
 
-    public AccountResponse getSender() {
+    public EssentialAccount getSender() {
         return sender;
     }
 
-    public void setSender(AccountResponse sender) {
+    public void setSender(EssentialAccount sender) {
         this.sender = sender;
     }
 

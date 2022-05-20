@@ -3,6 +3,7 @@ package com.vivacon.mapper;
 import com.vivacon.common.enum_type.MessageStatus;
 import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.response.AccountResponse;
+import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
 import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.entity.Account;
@@ -40,7 +41,7 @@ public class MessageMapper {
     public MessageResponse toResponse(Message message) {
         MessageResponse messageResponse = mapper.map(message, MessageResponse.class);
 
-        AccountResponse sender = accountMapper.toResponse(accountService.getCurrentAccount(), message.getSender());
+        EssentialAccount sender = accountMapper.toEssentialAccount(message.getSender());
         messageResponse.setSender(sender);
         messageResponse.setConversationId(message.getRecipient().getId());
         return messageResponse;

@@ -106,7 +106,7 @@ public class ChatController {
 
     @MessageMapping("/conversation/typing")
     public void processIdentifyWhoTyping(@Payload @Valid TypingMessage typingMessage) {
-        AccountResponse accountResponse = new AccountResponse();
+        EssentialAccount accountResponse = new EssentialAccount();
         accountResponse.setUsername(accountService.getCurrentAccount().getUsername());
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setSender(accountResponse);
@@ -151,7 +151,7 @@ public class ChatController {
      * @return PageDTO<MessageResponse>
      */
     @ApiOperation(value = "Get all messages in a specific conversation")
-    @GetMapping("/conversation/{id}/messages")
+    @GetMapping("/conversation/{id}/message")
     public PageDTO<MessageResponse> findMessagesInAConversation(
             @PathVariable(value = "id") Long conversationId,
             @RequestParam(value = "_order", required = false) Optional<String> order,
