@@ -2,21 +2,18 @@ package com.vivacon.controller;
 
 import com.vivacon.dto.request.AddParticipantMessage;
 import com.vivacon.dto.request.NewParticipantMessage;
-import com.vivacon.dto.request.Participants;
+import com.vivacon.dto.request.ConversationCreatingRequest;
 import com.vivacon.dto.request.TypingMessage;
-import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.entity.MessageType;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
 import com.vivacon.service.MessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -76,12 +73,12 @@ public class ChatController {
      * This function is used to create a new conversation based on the request from client which includes list of participant
      * in this expected conversation
      *
-     * @param participants Participants
+     * @param conversationCreatingRequest Participants
      */
     @MessageMapping("/conversation")
-    public void processCreatingConversation(@Payload @Valid Participants participants) {
-        OutlineConversation outlineConversation = conversationService.create(participants);
-        Set<String> participantUsernames = new TreeSet<>(participants.getUsernames());
+    public void processCreatingConversation(@Payload @Valid ConversationCreatingRequest conversationCreatingRequest) {
+        OutlineConversation outlineConversation = conversationService.create(conversationCreatingRequest);
+        Set<String> participantUsernames = new TreeSet<>(conversationCreatingRequest.getUsernames());
         participantUsernames = conversationService.getAllParticipants(participantUsernames);
         for (String username : participantUsernames) {
             String path = PREFIX_USER_QUEUE_DESTINATION + username + SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION;

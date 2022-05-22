@@ -2,7 +2,8 @@ package com.vivacon.service.impl;
 
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dao.ConversationDao;
-import com.vivacon.dto.request.Participants;
+import com.vivacon.dto.request.ConversationCreatingRequest;
+import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
@@ -14,13 +15,20 @@ import com.vivacon.mapper.ConversationMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.ConversationRepository;
+import com.vivacon.repository.MessageRepository;
 import com.vivacon.repository.ParticipantRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
+import com.vivacon.service.MessageService;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -34,6 +42,7 @@ public class ConversationServiceImpl implements ConversationService {
     private ConversationRepository conversationRepository;
     private AccountRepository accountRepository;
     private ParticipantRepository participantRepository;
+    private MessageService messageService;
     private ConversationDao conversationDao;
     private AccountService accountService;
     private ConversationMapper conversationMapper;
@@ -41,6 +50,7 @@ public class ConversationServiceImpl implements ConversationService {
     public ConversationServiceImpl(ConversationRepository conversationRepository,
                                    AccountRepository accountRepository,
                                    ParticipantRepository participantRepository,
+                                   MessageService messageService,
                                    AccountService accountService,
                                    ConversationDao conversationDao,
                                    ConversationMapper conversationMapper) {
@@ -50,6 +60,7 @@ public class ConversationServiceImpl implements ConversationService {
         this.accountRepository = accountRepository;
         this.conversationDao = conversationDao;
         this.participantRepository = participantRepository;
+        this.messageService = messageService;
     }
 
     @Override
@@ -73,9 +84,11 @@ public class ConversationServiceImpl implements ConversationService {
         return true;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class,
+            SQLException.class, RecordNotFoundException.class, Exception.class})
     @Override
-    public OutlineConversation create(Participants participants) {
-        Set<String> usernames = new TreeSet<>(participants.getUsernames());
+    public OutlineConversation create(ConversationCreatingRequest conversationCreatingRequest) {
+        Set<String> usernames = new TreeSet<>(conversationCreatingRequest.getUsernames());
         usernames = this.getAllParticipants(usernames);
 
         Set<Account> accounts = usernames.stream().map(
@@ -87,8 +100,10 @@ public class ConversationServiceImpl implements ConversationService {
 
         String conversationName = this.getConversationName(fullnames);
         Conversation savedConversation = conversationRepository.save(new Conversation(conversationName));
-
         accounts.forEach(account -> participantRepository.save(new Participant(savedConversation, account)));
+        UsualTextMessage firstMessage = new UsualTextMessage(savedConversation.getId(), conversationCreatingRequest.getFirstMessageContent());
+        messageService.save(firstMessage);
+
         return conversationMapper.toOutlineConversation(savedConversation);
     }
 

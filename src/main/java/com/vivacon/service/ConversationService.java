@@ -1,6 +1,6 @@
 package com.vivacon.service;
 
-import com.vivacon.dto.request.Participants;
+import com.vivacon.dto.request.ConversationCreatingRequest;
 import com.vivacon.dto.response.OutlineConversation;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 
@@ -13,7 +13,7 @@ public interface ConversationService {
 
     OutlineConversation addParticipant(long conversationId, String participantName);
 
-    OutlineConversation create(Participants participants);
+    OutlineConversation create(ConversationCreatingRequest participants);
 
     Set<String> getAllParticipants(Set<String> participantUsernames);
 
