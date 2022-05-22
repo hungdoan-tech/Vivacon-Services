@@ -56,8 +56,15 @@ public class CommentReportServiceImpl implements CommentReportService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
-    public boolean deleteById(long id) {
+    public boolean approvedCommentReport(long id) {
         this.commentReportRepository.deactivateById(id);
+        return true;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean rejectedCommentReport(long id) {
+        this.commentReportRepository.deleteById(id);
         return true;
     }
 }

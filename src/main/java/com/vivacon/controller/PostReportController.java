@@ -53,10 +53,17 @@ public class PostReportController {
         return postReportService.getAll(order, sort, pageSize, pageIndex);
     }
 
-    @ApiOperation(value = "Deleting a post report")
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deletePostReport(@PathVariable(name = "id") Long id) {
-        this.postReportService.deleteById(id);
+    @ApiOperation(value = "Approved a post report")
+    @DeleteMapping(value = "/approved/{id}")
+    public ResponseEntity<Object> approvedPostReport(@PathVariable(name = "id") Long id) {
+        this.postReportService.approvedPostReport(id);
+        return ResponseEntity.ok(null);
+    }
+
+    @ApiOperation(value = "Rejected a post report")
+    @DeleteMapping(value = "/rejected/{id}")
+    public ResponseEntity<Object> rejectedPostReport(@PathVariable(name = "id") Long id) {
+        this.postReportService.rejectedPostReport(id);
         return ResponseEntity.ok(null);
     }
 }

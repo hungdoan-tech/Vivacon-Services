@@ -53,10 +53,17 @@ public class CommentReportController {
         return commentReportService.getAll(order, sort, pageSize, pageIndex);
     }
 
-    @ApiOperation(value = "Deleting a comment report")
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deleteCommentReport(@PathVariable(name = "id") Long id) {
-        this.commentReportService.deleteById(id);
+    @ApiOperation(value = "Approved a comment report")
+    @DeleteMapping(value = "/approved/{id}")
+    public ResponseEntity<Object> approvedCommentReport(@PathVariable(name = "id") Long id) {
+        this.commentReportService.approvedCommentReport(id);
+        return ResponseEntity.ok(null);
+    }
+
+    @ApiOperation(value = "Rejected a comment report")
+    @DeleteMapping(value = "/rejected/{id}")
+    public ResponseEntity<Object> rejectedCommentReport(@PathVariable(name = "id") Long id) {
+        this.commentReportService.rejectedCommentReport(id);
         return ResponseEntity.ok(null);
     }
 }

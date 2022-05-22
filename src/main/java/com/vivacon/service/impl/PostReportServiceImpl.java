@@ -56,8 +56,15 @@ public class PostReportServiceImpl implements PostReportService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
-    public boolean deleteById(long id) {
+    public boolean approvedPostReport(long id) {
         this.postReportRepository.deactivateById(id);
+        return true;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean rejectedPostReport(long id) {
+        this.postReportRepository.deleteById(id);
         return true;
     }
 }
