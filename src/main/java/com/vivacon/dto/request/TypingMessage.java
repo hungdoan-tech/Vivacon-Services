@@ -6,11 +6,11 @@ public class TypingMessage extends MessageRequest {
 
     private boolean isTyping;
 
-    public boolean isTyping() {
+    public boolean getIsTyping() {
         return isTyping;
     }
 
-    public void setTyping(boolean typing) {
+    public void setIsTyping(boolean typing) {
         isTyping = typing;
     }
 }

@@ -1,5 +1,6 @@
 package com.vivacon.service.impl;
 
+import com.vivacon.common.enum_type.MessageStatus;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.MessageRequest;
 import com.vivacon.dto.request.NewParticipantMessage;
@@ -15,6 +16,7 @@ import com.vivacon.entity.Message;
 import com.vivacon.entity.MessageType;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.UnauthorizedWebSocketException;
+import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.MessageMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.ConversationRepository;
@@ -47,16 +49,20 @@ public class MessageServiceImpl implements MessageService {
 
     private MessageMapper messageMapper;
 
+    private AccountMapper accountMapper;
+
     public MessageServiceImpl(MessageRepository messageRepository,
                               ConversationRepository conversationRepository,
                               ParticipantRepository participantRepository,
                               AccountService accountService,
-                              MessageMapper messageMapper) {
+                              MessageMapper messageMapper,
+                              AccountMapper accountMapper) {
         this.messageRepository = messageRepository;
         this.conversationRepository = conversationRepository;
         this.messageMapper = messageMapper;
         this.accountService = accountService;
         this.participantRepository = participantRepository;
+        this.accountMapper =  accountMapper;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
@@ -82,12 +88,12 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public MessageResponse processTypingMessage(TypingMessage typingMessage) {
         checkAuthorizedConversation(typingMessage.getConversationId());
-        EssentialAccount accountResponse = new EssentialAccount();
-        accountResponse.setUsername(accountService.getCurrentAccount().getUsername());
-        MessageResponse messageResponse = new MessageResponse();
-        messageResponse.setSender(accountResponse);
-        messageResponse.setContent(String.valueOf(typingMessage.isTyping()));
-        messageResponse.setMessageType(MessageType.TYPING);
+
+        Account currentAccount = accountService.getCurrentAccount();
+        EssentialAccount sender = accountMapper.toEssentialAccount(currentAccount);
+
+        MessageResponse messageResponse = new MessageResponse(sender, typingMessage.getConversationId(), String.valueOf(typingMessage.getIsTyping()),
+                MessageType.TYPING, LocalDateTime.now(), MessageStatus.SENT);
         return messageResponse;
     }
 

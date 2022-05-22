@@ -23,6 +23,18 @@ public class MessageResponse {
 
     private MessageStatus status;
 
+    public MessageResponse() {
+    }
+
+    public MessageResponse(EssentialAccount sender, Long conversationId, String content, MessageType messageType, LocalDateTime timestamp, MessageStatus status) {
+        this.sender = sender;
+        this.conversationId = conversationId;
+        this.content = content;
+        this.messageType = messageType;
+        this.timestamp = timestamp;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }
