@@ -121,7 +121,7 @@ public class ChatController {
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return conversationService.findAllByCurrentAccount(order, sort, pageSize, pageIndex);
+        return conversationService.findAllByCurrentAccount(Optional.empty(), Optional.empty(), pageSize, pageIndex);
     }
 
     /**

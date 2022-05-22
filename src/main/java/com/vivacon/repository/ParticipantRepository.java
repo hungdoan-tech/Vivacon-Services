@@ -22,7 +22,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     @Query("select p.conversation from Participant p where p.conversation.id = :conversationId and p.account.id = :accountId")
     Optional<Conversation> findByConversationIdAndAccountId(@Param("conversationId") long conversationId, @Param("accountId") long accountId);
 
-    @Query("SELECT p.conversation from Participant p WHERE p.account.username = :principalUsername")
+    @Query("SELECT p.conversation from Participant p WHERE p.account.username = :principalUsername order by p.conversation.lastModifiedAt desc")
     Page<Conversation> findAllConversationByPrincipalUsername(@Param("principalUsername") String principalUsername, Pageable pageable);
 
     @Query("SELECT p.conversation.id from Participant p WHERE p.account.username = :principalUsername order by p.conversation.lastModifiedAt desc")

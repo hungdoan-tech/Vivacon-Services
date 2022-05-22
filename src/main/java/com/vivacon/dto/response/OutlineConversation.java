@@ -1,5 +1,6 @@
 package com.vivacon.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class OutlineConversation {
@@ -10,6 +11,10 @@ public class OutlineConversation {
 
     private MessageResponse latestMessage;
     private List<EssentialAccount> participants;
+
+    protected LocalDateTime createdAt;
+
+    protected LocalDateTime lastModifiedAt;
 
     public Long getId() {
         return id;
@@ -41,5 +46,21 @@ public class OutlineConversation {
 
     public void setParticipants(List<EssentialAccount> participants) {
         this.participants = participants;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getLastModifiedAt() {
+        return lastModifiedAt;
+    }
+
+    public void setLastModifiedAt(LocalDateTime lastModifiedAt) {
+        this.lastModifiedAt = lastModifiedAt;
     }
 }
