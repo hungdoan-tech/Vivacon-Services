@@ -24,7 +24,7 @@ public interface AccountService {
 
     Account registerNewAccount(RegistrationRequest registrationRequest);
 
-    Account verifyAccount(String verificationCode);
+    Account activeAccount(String verificationCode);
 
     Account resendVerificationToken(String email);
 
@@ -32,5 +32,8 @@ public interface AccountService {
 
     Account changePassword(ChangePasswordRequest changePasswordRequest);
 
-    PageDTO<EssentialAccount> findByName(String name, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+    PageDTO<EssentialAccount> findByName(String name, Optional<String> order, 
+            Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+    
+    Account verifyAccount(String code);
 }

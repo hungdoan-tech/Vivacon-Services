@@ -34,4 +34,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             "where " +
             "a.username like CONCAT('%',:keyword,'%') or a.fullName like CONCAT('%',:keyword,'%')")
     Page<Account> findByApproximatelyName(@Param("keyword") String keyword, Pageable pageable);
+    
+    @Query("select count(a.id) from Account a where a.active = true")
+    Long getAllAccountCounting();
 }

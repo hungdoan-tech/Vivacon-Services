@@ -118,13 +118,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public Account verifyAccount(String verificationCode) {
+    public Account activeAccount(String verificationCode) {
         Optional<Account> account = accountRepository.findByVerificationToken(verificationCode);
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
             accountRepository.activateByVerificationToken(verificationCode);
             return account.get();
         } else {
-            throw new VerificationTokenException("Verification token was expired. Please make a new sign in request");
+            throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
         }
     }
 
@@ -143,14 +143,10 @@ public class AccountServiceImpl implements AccountService {
     public Account forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
         Optional<Account> account = accountRepository.findByVerificationToken(forgotPasswordRequest.getVerificationToken());
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
-            if (passwordEncoder.matches(forgotPasswordRequest.getOldPassword(), account.get().getPassword())) {
-                account.get().setPassword(passwordEncoder.encode(forgotPasswordRequest.getNewPassword()));
-                return accountRepository.saveAndFlush(account.get());
-            } else {
-                throw new InvalidPasswordException();
-            }
+            account.get().setPassword(passwordEncoder.encode(forgotPasswordRequest.getNewPassword()));
+            return accountRepository.saveAndFlush(account.get());
         } else {
-            throw new VerificationTokenException();
+            throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
         }
     }
 
@@ -170,5 +166,14 @@ public class AccountServiceImpl implements AccountService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Account.class);
         Page<Account> pageAccount = accountRepository.findByApproximatelyName(name, pageable);
         return PageMapper.toPageDTO(pageAccount, account -> accountMapper.toEssentialAccount(account));
+    }
+    
+    public Account verifyAccount(String code) {
+        Optional<Account> account = accountRepository.findByVerificationToken(code);
+        if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
+            return account.get();
+        } else {
+            throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
+        }
     }
 }
