@@ -1,7 +1,6 @@
 package com.vivacon.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.stereotype.Indexed;
+import com.vivacon.common.enum_type.MessageStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,16 +12,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Indexed
 @Table(name = "message")
 @Entity
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "message_id_generator")
+    @SequenceGenerator(name = "message_id_generator", sequenceName = "message_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.LAZY)
@@ -37,21 +37,26 @@ public class Message {
     private String content;
 
     @Column(name = "timestamp", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
-    private Status status;
+    private MessageStatus status;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "message_type")
+    private MessageType messageType;
 
     public Message() {
     }
 
-    public Message(Account sender, Conversation recipient, String message, LocalDate timestamp) {
+    public Message(Account sender, Conversation recipient, String content, LocalDateTime timestamp, MessageStatus status, MessageType messageType) {
         this.sender = sender;
         this.recipient = recipient;
-        this.content = message;
+        this.content = content;
         this.timestamp = timestamp;
+        this.status = status;
+        this.messageType = messageType;
     }
 
     public Long getId() {
@@ -86,25 +91,27 @@ public class Message {
         this.content = message;
     }
 
-    public LocalDate getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDate timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
-    public Status getStatus() {
+    public MessageStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(MessageStatus status) {
         this.status = status;
     }
 
-    private enum Status {
-        SENT,
-        RECEIVED,
-        SEEN
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
     }
 }

@@ -4,7 +4,11 @@ import com.vivacon.dto.request.ChangePasswordRequest;
 import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.response.AccountResponse;
+import com.vivacon.dto.response.EssentialAccount;
+import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
+
+import java.util.Optional;
 
 public interface AccountService {
 
@@ -28,5 +32,8 @@ public interface AccountService {
 
     Account changePassword(ChangePasswordRequest changePasswordRequest);
 
+    PageDTO<EssentialAccount> findByName(String name, Optional<String> order, 
+            Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+    
     Account verifyAccount(String code);
 }

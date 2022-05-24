@@ -216,4 +216,37 @@ INSERT INTO "liking" ("id", "account_id", "post_id")
 VALUES (1, 2, 2),
        (2, 1, 2),
        (3, 1, 3);
-SELECT setval('like_id_seq', (SELECT MAX(id) FROM liking) + 1);
+SELECT setval('liking_id_seq', (SELECT MAX(id) FROM liking) + 1);
+
+
+INSERT INTO "conversation" ("id", "name", "created_at", "last_modified_at", "created_by_account_id",
+                            "last_modified_by_account_id", "active")
+VALUES (1, 'Chat 1', '2022-04-07 23:56:20.061855', '2022-04-07 23:56:20.061855', 1, 1, true),
+       (2, 'Chat 2', '2022-04-07 23:56:20.061855', '2022-04-07 23:57:20.061855', 1, 1, true),
+       (3, 'Chat 3', '2022-04-07 23:56:20.061855', '2022-04-07 23:58:20.061855', 1, 1, true),
+       (4, 'Chat 4', '2022-04-07 23:56:20.061855', '2022-04-07 23:59:20.061855', 1, 1, true);
+SELECT setval('conversation_id_seq', (SELECT MAX(id) FROM conversation) + 1);
+
+INSERT INTO "participant" ("id", "conversation_id", "account_id")
+VALUES (1, 1, 1),
+       (2, 1, 2),
+       (3, 2, 1),
+       (4, 2, 3),
+       (5, 3, 1),
+       (6, 3, 2),
+       (7, 3, 3),
+       (8, 4, 2),
+       (9, 4, 4);
+SELECT setval('participant_id_seq', (SELECT MAX(id) FROM participant) + 1);
+
+INSERT INTO "message" ("id", "sender_id", "recipient_id", "content", "timestamp", "status")
+VALUES (1, 1, 1, 'Hello first message in chat 1', '2022-04-07 23:56:20.061855', 1),
+       (2, 2, 1, 'Hello second message in chat 1', '2022-04-07 23:56:22.061855', 1),
+       (3, 2, 1, 'Hello third message in chat 1', '2022-04-07 23:56:23.061855', 1),
+       (4, 1, 1, 'Hello fourth message in chat 1', '2022-04-07 23:56:24.061855', 1),
+       (5, 1, 1, 'Hello fifth message in chat 1', '2022-04-07 23:56:26.061855', 1),
+       (6, 3, 2, 'Hello in chat 2', '2022-04-07 23:57:23.061855', 1),
+       (7, 3, 3, 'Hello in chat 3', '2022-04-07 23:58:24.061855', 1),
+       (8, 4, 4, 'Hello in chat 4', '2022-04-07 23:59:26.061855', 1);
+SELECT setval('message_id_seq', (SELECT MAX(id) FROM message) + 1);
+
