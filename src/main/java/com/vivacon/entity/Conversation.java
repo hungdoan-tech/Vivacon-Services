@@ -26,6 +26,7 @@ public class Conversation extends AuditableEntity {
 
     public Conversation(String name) {
         this.name = name;
+        this.createdAt = LocalDateTime.now();
         this.lastModifiedAt = LocalDateTime.now();
         this.active = true;
     }
@@ -33,6 +34,7 @@ public class Conversation extends AuditableEntity {
     public Conversation(long id, String name, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
+        this.createdAt = LocalDateTime.now();
         this.lastModifiedAt = createdAt;
     }
 
