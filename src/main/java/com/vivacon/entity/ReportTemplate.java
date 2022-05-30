@@ -23,7 +23,7 @@ public abstract class ReportTemplate extends AuditableEntity {
     @Column(name = "content", nullable = false, length = 3000)
     private String content;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "sentitive_type")
     private SentitiveType sentitiveType;
 
