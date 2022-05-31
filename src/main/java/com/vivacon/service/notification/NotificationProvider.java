@@ -1,8 +1,9 @@
 package com.vivacon.service.notification;
 
 import com.vivacon.entity.Account;
+import com.vivacon.entity.Notification;
 
 public interface NotificationProvider {
 
-    void sendNotification(Account recipient, String title, String content);
+    void sendNotification(Notification notification);
 }

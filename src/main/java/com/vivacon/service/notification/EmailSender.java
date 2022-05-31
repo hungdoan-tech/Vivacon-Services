@@ -1,6 +1,7 @@
 package com.vivacon.service.notification;
 
 import com.vivacon.entity.Account;
+import com.vivacon.entity.Notification;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -21,8 +22,8 @@ public class EmailSender implements NotificationProvider {
     }
 
     @Override
-    public void sendNotification(Account recipient, String title, String content) {
-        String toAddress = recipient.getEmail();
+    public void sendNotification(Notification notification) {
+        String toAddress = notification.getReceiver().getEmail();
         String fromAddress = "vivacon.service@gmail.com";
         String senderName = "Vivacon Social Media Company";
 
@@ -31,8 +32,8 @@ public class EmailSender implements NotificationProvider {
         try {
             helper.setFrom(fromAddress, senderName);
             helper.setTo(toAddress);
-            helper.setSubject(title);
-            helper.setText(content, true);
+            helper.setSubject(notification.getTitle());
+            helper.setText(notification.getContent(), true);
             mailSender.send(message);
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();

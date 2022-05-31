@@ -39,11 +39,8 @@ public class AccountServiceImpl implements AccountService {
 
     private AccountMapper accountMapper;
     private AccountRepository accountRepository;
-
     private RoleRepository roleRepository;
-
     private PasswordEncoder passwordEncoder;
-
     private ApplicationEventPublisher applicationEventPublisher;
 
     public AccountServiceImpl(AccountRepository accountRepository,

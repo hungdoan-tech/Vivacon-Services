@@ -1,6 +1,7 @@
 package com.vivacon.event.handler;
 
 import com.vivacon.entity.Account;
+import com.vivacon.entity.Notification;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.repository.AccountRepository;
@@ -60,7 +61,8 @@ public class VerificationTokenEventHandler {
         content = content.replace("[[code]]", code);
         content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
 
-        emailSender.sendNotification(account, subject, content);
+        Notification notification = new Notification(subject, content, account);
+        emailSender.sendNotification(notification);
     }
 
     @Async
@@ -81,7 +83,8 @@ public class VerificationTokenEventHandler {
         content = content.replace("[[code]]", code);
         content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
 
-        emailSender.sendNotification(account, subject, content);
+        Notification notification = new Notification(subject, content, account);
+        emailSender.sendNotification(notification);
     }
 
 

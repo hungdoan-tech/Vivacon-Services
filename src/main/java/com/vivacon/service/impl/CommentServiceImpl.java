@@ -4,14 +4,19 @@ import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.CommentRequest;
 import com.vivacon.dto.response.CommentResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.entity.Account;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
+import com.vivacon.event.CommentCreatingEvent;
+import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.CommentMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.CommentService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -28,15 +33,18 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
-
     private PostRepository postRepository;
-
     private CommentMapper commentMapper;
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, CommentMapper commentMapper) {
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              PostRepository postRepository,
+                              CommentMapper commentMapper,
+                              ApplicationEventPublisher applicationEventPublisher) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.commentMapper = commentMapper;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -56,8 +64,9 @@ public class CommentServiceImpl implements CommentService {
         comment.setPost(post);
         comment.setParentComment(parentComment);
 
-        Comment savedComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.saveAndFlush(comment);
 
+        applicationEventPublisher.publishEvent(new CommentCreatingEvent(this, savedComment));
         return commentMapper.toResponse(savedComment);
     }
 
