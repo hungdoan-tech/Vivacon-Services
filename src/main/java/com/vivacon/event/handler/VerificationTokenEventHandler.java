@@ -4,8 +4,8 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Notification;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
+import com.vivacon.event.notification.NotificationProvider;
 import com.vivacon.repository.AccountRepository;
-import com.vivacon.service.notification.NotificationProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
@@ -39,7 +39,7 @@ public class VerificationTokenEventHandler {
     }
 
     @PostConstruct
-    private void operatePostConstruction(){
+    private void operatePostConstruction() {
         this.verifiedTokenExpirationInMiliseconds = Integer.valueOf(environment.getProperty("vivacon.verification_token.expiration"));
     }
 

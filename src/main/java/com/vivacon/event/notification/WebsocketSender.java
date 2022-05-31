@@ -1,4 +1,4 @@
-package com.vivacon.service.notification;
+package com.vivacon.event.notification;
 
 import com.vivacon.dto.response.NotificationResponse;
 import com.vivacon.entity.Notification;
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 import static com.vivacon.common.constant.Constants.NOTIFICATION_QUEUE_DESTINATION;
 
 @Component
-public class WebsocketSender implements NotificationProvider{
+public class WebsocketSender implements NotificationProvider {
     private SimpMessagingTemplate messagingTemplate;
 
     private NotificationMapper notificationMapper;
 
     public WebsocketSender(SimpMessagingTemplate messagingTemplate,
-                           NotificationMapper notificationMapper){
+                           NotificationMapper notificationMapper) {
         this.messagingTemplate = messagingTemplate;
         this.notificationMapper = notificationMapper;
     }

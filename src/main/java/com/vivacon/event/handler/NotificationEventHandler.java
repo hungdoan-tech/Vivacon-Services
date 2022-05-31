@@ -1,18 +1,14 @@
 package com.vivacon.event.handler;
 
-import com.vivacon.dto.response.NotificationResponse;
-import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Notification;
 import com.vivacon.entity.NotificationType;
 import com.vivacon.event.CommentCreatingEvent;
+import com.vivacon.event.notification.NotificationProvider;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.NotificationMapper;
-import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.NotificationRepository;
-import com.vivacon.service.CommentService;
-import com.vivacon.service.notification.NotificationProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -60,14 +56,14 @@ public class NotificationEventHandler {
         Optional<Notification> existingNotification = notificationRepository.findByTypeAndDomainId(type, comment.getId());
 
         String authors = comment.getCreatedBy().getFullName();
-        if(existingNotification.isPresent()){
+        if (existingNotification.isPresent()) {
             authors = existingNotification.get().getContent() + CONNECTED_NAME_TOKEN + authors;
         }
         String firstImageInPost = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(comment.getPost().getId())
                 .orElseThrow(RecordNotFoundException::new).getUrl();
 
         Notification notification = null;
-        switch (type){
+        switch (type) {
             case COMMENT_ON_POST: {
                 String content = authors + " comment on your post";
                 notification = new Notification(type, comment.getId(),

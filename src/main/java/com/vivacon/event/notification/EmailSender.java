@@ -1,6 +1,5 @@
-package com.vivacon.service.notification;
+package com.vivacon.event.notification;
 
-import com.vivacon.entity.Account;
 import com.vivacon.entity.Notification;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;

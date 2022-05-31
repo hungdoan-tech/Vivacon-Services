@@ -10,6 +10,10 @@ public class NotificationMapper {
 
     private ModelMapper mapper;
 
+    public NotificationMapper(ModelMapper modelMapper) {
+        this.mapper = modelMapper;
+    }
+
     public NotificationResponse toResponse(Notification notification) {
         NotificationResponse notificationResponse = mapper.map(notification, NotificationResponse.class);
         return notificationResponse;
