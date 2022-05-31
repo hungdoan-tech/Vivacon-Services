@@ -52,35 +52,53 @@ public class NotificationEventHandler {
     @EventListener
     public void handleCommentCreatingEvent(CommentCreatingEvent commentCreatingEvent) {
         Comment comment = commentCreatingEvent.getComment();
-        NotificationType type = (comment.getParentComment() == null) ? COMMENT_ON_POST : REPLY_ON_COMMENT;
-        Optional<Notification> existingNotification = notificationRepository.findByTypeAndDomainId(type, comment.getId());
+        if (comment.getPost().getCreatedBy().getId() != comment.getCreatedBy().getId()) {
 
-        String authors = comment.getCreatedBy().getFullName();
-        if (existingNotification.isPresent()) {
-            authors = existingNotification.get().getContent() + CONNECTED_NAME_TOKEN + authors;
+            Notification notification = null;
+            NotificationType type = (comment.getParentComment() == null) ? COMMENT_ON_POST : REPLY_ON_COMMENT;
+            Optional<Notification> existingNotification = notificationRepository.findByTypeAndDomainId(type, comment.getId());
+            String authors = comment.getCreatedBy().getFullName();
+
+            if (existingNotification.isPresent()) {
+                notification = updateExistingCommentNotification(existingNotification, authors);
+            } else {
+                notification = createNewCommentNotification(comment, type, authors);
+            }
+            Notification savedNotification = notificationRepository.save(notification);
+            websocketSender.sendNotification(savedNotification);
         }
+    }
+
+
+    private Notification updateExistingCommentNotification(Optional<Notification> existingNotification, String authors) {
+        String existingAuthor = existingNotification.get().getContent();
+        if (existingAuthor.contains(authors) == false) {
+            authors = existingAuthor + CONNECTED_NAME_TOKEN + authors;
+        }
+        existingNotification.get().setContent(authors);
+        existingNotification.get().setTimestamp(LocalDateTime.now());
+        return existingNotification.get();
+    }
+
+    private Notification createNewCommentNotification(Comment comment, NotificationType type, String authors) {
+        Notification notification = null;
         String firstImageInPost = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(comment.getPost().getId())
                 .orElseThrow(RecordNotFoundException::new).getUrl();
-
-        Notification notification = null;
         switch (type) {
             case COMMENT_ON_POST: {
-                String content = authors + " comment on your post";
                 notification = new Notification(type, comment.getId(),
-                        comment.getCreatedBy(), "New comments on your post", content, firstImageInPost, LocalDateTime.now());
+                        comment.getCreatedBy(), "New comments on your post", authors, firstImageInPost, LocalDateTime.now());
                 break;
             }
             case REPLY_ON_COMMENT: {
-                String content = authors + " reply on your comment";
                 notification = new Notification(type, comment.getId(),
-                        comment.getCreatedBy(), "New reply on your comment", content, firstImageInPost, LocalDateTime.now());
+                        comment.getCreatedBy(), "New reply on your comment", authors, firstImageInPost, LocalDateTime.now());
                 break;
             }
             default: {
-                return;
+                return null;
             }
         }
-        Notification savedNotification = notificationRepository.save(notification);
-        websocketSender.sendNotification(savedNotification);
+        return notification;
     }
 }
