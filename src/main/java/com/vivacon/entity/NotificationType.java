@@ -2,9 +2,9 @@ package com.vivacon.entity;
 
 public enum NotificationType {
 
-    COMMENT_ON_POST,
-
     REPLY_ON_COMMENT,
+
+    COMMENT_ON_POST,
 
     AWARE_ON_COMMENT,
 

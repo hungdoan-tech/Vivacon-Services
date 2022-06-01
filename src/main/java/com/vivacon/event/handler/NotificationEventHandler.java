@@ -17,6 +17,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.vivacon.entity.NotificationType.AWARE_ON_COMMENT;
 import static com.vivacon.entity.NotificationType.COMMENT_ON_POST;
@@ -60,36 +64,47 @@ public class NotificationEventHandler implements ApplicationListener<CommentCrea
         boolean isAuthorCommentOnHisPost = comment.getPost().getCreatedBy().getId()
                 .equals(comment.getCreatedBy().getId());
 
+        List<Notification> notifications = new ArrayList<>();
+
         if (!isAuthorCommentOnHisPost) {
-            sendCommentOnPostNotification(comment);
+            notifications.add(createCommentNotification(comment, COMMENT_ON_POST, comment.getPost().getCreatedBy()));
 
             if (comment.getParentComment() != null) {
-                sendAwareOnCommentNotification(comment);
-                sendReplyOnCommentNotification(comment);
+                notifications.add(createCommentNotification(comment, REPLY_ON_COMMENT, comment.getParentComment().getCreatedBy()));
+                notifications.addAll(createAwareOnCommentNotifications(comment));
             }
         }
+        sendCommentNotificationsBasedOnPriority(notifications);
     }
 
     /**
-     * Send notification for the account who own the post
+     * <h1>
+     * Send the comment notifications based on the priority which can determine by Notification Type ordinal.
+     * </h1>
      *
-     * @param comment
+     * <p>
+     * The expected case is when one comment creating event causes one receiver to have two or three comment notifications
+     * which has been created based on the context of the current post, current first level comment, current child comment.
+     * We need to find out which is the most suitable, unique and which must having the highest priority notification to
+     * save to database and send via Notification Providers.
+     * </p>
+     *
+     * @param notifications
      */
-    private void sendCommentOnPostNotification(Comment comment) {
-        Notification notification = createCommentNotification(comment, COMMENT_ON_POST, null);
-        Notification savedNotification = notificationRepository.save(notification);
-        websocketSender.sendNotification(savedNotification);
-    }
+    private void sendCommentNotificationsBasedOnPriority(List<Notification> notifications) {
 
-    /**
-     * Send notification for the account who own the parent comment
-     *
-     * @param comment
-     */
-    private void sendReplyOnCommentNotification(Comment comment) {
-        Notification notification = createCommentNotification(comment, REPLY_ON_COMMENT, null);
-        Notification savedNotification = notificationRepository.save(notification);
-        websocketSender.sendNotification(savedNotification);
+        Map<String, List<Notification>> collect = notifications.stream()
+                .collect(Collectors.groupingBy(notification -> notification.getReceiver().getUsername()));
+
+        for (String username : collect.keySet()) {
+            List<Notification> notificationsByUsername = collect.get(username);
+            if (notificationsByUsername.size() > 1) {
+                notificationsByUsername.sort((t1, t2) -> (t1.getType().ordinal() < t2.getType().ordinal()) ? 1 : 0);
+            }
+            Notification highPriorityNotification = notifications.get(0);
+            Notification savedNotification = notificationRepository.saveAndFlush(highPriorityNotification);
+            websocketSender.sendNotification(savedNotification);
+        }
     }
 
     /**
@@ -97,20 +112,17 @@ public class NotificationEventHandler implements ApplicationListener<CommentCrea
      *
      * @param comment
      */
-    private void sendAwareOnCommentNotification(Comment comment) {
+    private List<Notification> createAwareOnCommentNotifications(Comment comment) {
         String commentAuthorUsername = comment.getCreatedBy().getUsername();
 
-        commentRepository.findAllChildCommentsByParentCommentId(comment.getParentComment().getId())
+        return commentRepository.findAllChildCommentsByParentCommentId(comment.getParentComment().getId())
                 .stream().map(childComment -> childComment.getCreatedBy().getUsername())
                 .distinct()
                 .filter(username -> !username.equals(commentAuthorUsername))
                 .map(username -> accountRepository.findByUsernameIgnoreCase(username)
                         .orElseThrow(RecordNotFoundException::new))
-                .forEach(awareAccount -> {
-                    Notification notification = createCommentNotification(comment, AWARE_ON_COMMENT, awareAccount);
-                    Notification awareNotification = notificationRepository.save(notification);
-                    websocketSender.sendNotification(awareNotification);
-                });
+                .map(awareAccount -> createCommentNotification(comment, AWARE_ON_COMMENT, awareAccount))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -131,13 +143,13 @@ public class NotificationEventHandler implements ApplicationListener<CommentCrea
         switch (type) {
             case COMMENT_ON_POST: {
                 notification = new Notification(type, comment.getId(),
-                        comment.getPost().getCreatedBy(), "New comments on your post", commentAuthorFullName, firstImageInPost, LocalDateTime.now());
+                        receiver, "New comments on your post", commentAuthorFullName, firstImageInPost, LocalDateTime.now());
                 break;
             }
             case REPLY_ON_COMMENT: {
                 if (comment.getParentComment() != null) {
                     notification = new Notification(type, comment.getId(),
-                            comment.getParentComment().getCreatedBy(), "New reply on your comment", commentAuthorFullName, firstImageInPost, LocalDateTime.now());
+                            receiver, "New reply on your comment", commentAuthorFullName, firstImageInPost, LocalDateTime.now());
                 }
                 break;
             }
