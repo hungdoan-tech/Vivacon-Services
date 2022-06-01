@@ -6,6 +6,8 @@ public enum NotificationType {
 
     REPLY_ON_COMMENT,
 
+    AWARE_ON_COMMENT,
+
     LIKE_ON_POST,
 
     FOLLOWER,
