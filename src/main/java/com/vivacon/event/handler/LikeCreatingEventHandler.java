@@ -61,10 +61,10 @@ public class LikeCreatingEventHandler implements ApplicationListener<LikeCreatin
         String firstImageInPost = attachmentRepository
                 .findFirstByPostIdOrderByTimestampAsc(post.getId())
                 .orElseThrow(RecordNotFoundException::new).getUrl();
-        Long countingLike = likeRepository.getCountingLike(post.getId()) - 1;
-        String displayOtherLikeAccount = (countingLike > 0) ? " and " + countingLike.toString() + " others " : "";
+        Long likeCount = likeRepository.getCountingLike(post.getId()) - 1;
+        String displayOtherLikeCount = (likeCount > 0) ? " and " + likeCount.toString() + " others " : "";
 
-        String content = likeAuthor.getFullName() + displayOtherLikeAccount + " like your post";
+        String content = likeAuthor.getFullName() + displayOtherLikeCount + " like your post";
         return new Notification(LIKE_ON_POST, post.getId(), post.getCreatedBy(),
                 "New like on your post", content, firstImageInPost, LocalDateTime.now());
     }

@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,11 +21,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
     @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId and comment.post.id= :postId AND comment.active = true")
     Page<Comment> findActiveChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId, Pageable pageable);
 
-    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId")
-    Collection<Comment> findAllChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId);
+    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId and comment.active = :isActive")
+    List<Comment> findAllChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "isActive") boolean isActive);
 
     @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = true")
     Page<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId, Pageable pageable);
+
+    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = :isActive")
+    List<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId, @Param(value = "isActive") boolean isActive);
 
     @Query("SELECT COUNT(comment.id) FROM Comment comment WHERE comment.parentComment.id = :parentCommentId and comment.post.id= :postId AND comment.active = true")
     Long getCountingChildComments(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId);

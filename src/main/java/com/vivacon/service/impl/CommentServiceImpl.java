@@ -83,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
         if (numberOfAffectedRows == 0) {
             return true;
         }
-        Collection<Comment> listChildComments = this.commentRepository.findAllChildCommentsByParentCommentId(parentCommentId);
+        Collection<Comment> listChildComments = this.commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, true);
         for (Comment comment : listChildComments) {
             deleteChildComments(comment.getId());
         }
