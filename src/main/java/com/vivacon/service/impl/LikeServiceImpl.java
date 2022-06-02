@@ -6,6 +6,7 @@ import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Like;
 import com.vivacon.entity.Post;
+import com.vivacon.event.LikeCreatingEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
@@ -13,6 +14,7 @@ import com.vivacon.repository.LikeRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.LikeService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -36,14 +38,18 @@ public class LikeServiceImpl implements LikeService {
 
     private AccountMapper accountMapper;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public LikeServiceImpl(AccountMapper accountMapper,
                            LikeRepository likeRepository,
                            AccountService accountService,
-                           PostRepository postRepository) {
+                           PostRepository postRepository,
+                           ApplicationEventPublisher applicationEventPublisher) {
         this.accountMapper = accountMapper;
         this.likeRepository = likeRepository;
         this.accountService = accountService;
         this.postRepository = postRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -53,6 +59,7 @@ public class LikeServiceImpl implements LikeService {
         Like liking = new Like(currentAccount, currentPost);
         try {
             this.likeRepository.save(liking);
+            applicationEventPublisher.publishEvent(new LikeCreatingEvent(this, liking));
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("The liking table already have one record which contain this account had liked this post before");
         }

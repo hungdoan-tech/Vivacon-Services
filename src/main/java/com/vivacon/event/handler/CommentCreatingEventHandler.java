@@ -4,6 +4,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Notification;
 import com.vivacon.entity.NotificationType;
+import com.vivacon.entity.Post;
 import com.vivacon.event.CommentCreatingEvent;
 import com.vivacon.event.notification.NotificationProvider;
 import com.vivacon.exception.RecordNotFoundException;
@@ -101,8 +102,18 @@ public class CommentCreatingEventHandler implements ApplicationListener<CommentC
         for (String username : collect.keySet()) {
             List<Notification> notificationsByUsername = collect.get(username);
             if (notificationsByUsername.size() > 1) {
-                Comparator<Notification> reverseComparator = (t1, t2) -> (t1.getType().ordinal() <= t2.getType().ordinal()) ? -1 : 1;
+
+                Comparator<Notification> reverseComparator = (t1, t2) -> {
+                    int firstItemPriority = t1.getType().ordinal();
+                    int secondItemPriority = t2.getType().ordinal();
+                    if (firstItemPriority == secondItemPriority) {
+                        return 0;
+                    } else {
+                        return firstItemPriority < secondItemPriority ? -1 : 1;
+                    }
+                };
                 Collections.sort(notificationsByUsername, reverseComparator);
+
             }
             Notification highPriorityNotification = notificationsByUsername.get(0);
             Notification savedNotification = notificationRepository.saveAndFlush(highPriorityNotification);
@@ -140,19 +151,23 @@ public class CommentCreatingEventHandler implements ApplicationListener<CommentC
 
         Notification notification = null;
         String commentAuthorFullName = comment.getCreatedBy().getFullName();
+        Post post = comment.getPost();
         String firstImageInPost = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(comment.getPost().getId())
                 .orElseThrow(RecordNotFoundException::new).getUrl();
 
         switch (type) {
             case COMMENT_ON_POST: {
+                long countingTotalComments = commentRepository.getCountingCommentsByPost(post.getId()) - 1;
+
                 notification = new Notification(type, comment.getId(),
-                        receiver, "New comments on your post", commentAuthorFullName, firstImageInPost, LocalDateTime.now());
+                        comment.getPost().getCreatedBy(), "New comments on your post", commentAuthorFullName + "has comment on your post",
+                        firstImageInPost, LocalDateTime.now());
                 break;
             }
             case REPLY_ON_COMMENT: {
                 if (comment.getParentComment() != null) {
-                    notification = new Notification(type, comment.getId(),
-                            receiver, "New reply on your comment", commentAuthorFullName, firstImageInPost, LocalDateTime.now());
+                    notification = new Notification(type, comment.getId(), comment.getParentComment().getCreatedBy(),
+                            "New reply on your comment", commentAuthorFullName, firstImageInPost, LocalDateTime.now());
                 }
                 break;
             }
