@@ -11,13 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notification", uniqueConstraints = {
-        @UniqueConstraint(name = "UniqueDomainRecordComposition", columnNames = {"type", "domain_Id"})
-})
+@Table(name = "notification")
 public class Notification {
 
     @Id
@@ -44,7 +41,7 @@ public class Notification {
 
     private LocalDateTime timestamp;
 
-    public Notification(){
+    public Notification() {
     }
 
     public Notification(NotificationType type, Long domainId, Account receiver, String title, String content, String image, LocalDateTime timestamp) {

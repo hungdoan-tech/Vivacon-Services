@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +29,7 @@ import static com.vivacon.entity.NotificationType.COMMENT_ON_POST;
 import static com.vivacon.entity.NotificationType.REPLY_ON_COMMENT;
 
 @Component
-public class NotificationEventHandler implements ApplicationListener<CommentCreatingEvent> {
+public class CommentCreatingEventHandler implements ApplicationListener<CommentCreatingEvent> {
 
     @Qualifier("emailSender")
     private NotificationProvider emailSender;
@@ -43,12 +45,12 @@ public class NotificationEventHandler implements ApplicationListener<CommentCrea
 
     private AccountRepository accountRepository;
 
-    public NotificationEventHandler(NotificationProvider emailSender,
-                                    NotificationProvider websocketSender,
-                                    AttachmentRepository attachmentRepository,
-                                    NotificationRepository notificationRepository,
-                                    CommentRepository commentRepository,
-                                    AccountRepository accountRepository) {
+    public CommentCreatingEventHandler(NotificationProvider emailSender,
+                                       NotificationProvider websocketSender,
+                                       AttachmentRepository attachmentRepository,
+                                       NotificationRepository notificationRepository,
+                                       CommentRepository commentRepository,
+                                       AccountRepository accountRepository) {
         this.emailSender = emailSender;
         this.websocketSender = websocketSender;
         this.attachmentRepository = attachmentRepository;
@@ -99,9 +101,10 @@ public class NotificationEventHandler implements ApplicationListener<CommentCrea
         for (String username : collect.keySet()) {
             List<Notification> notificationsByUsername = collect.get(username);
             if (notificationsByUsername.size() > 1) {
-                notificationsByUsername.sort((t1, t2) -> (t1.getType().ordinal() < t2.getType().ordinal()) ? 1 : 0);
+                Comparator<Notification> reverseComparator = (t1, t2) -> (t1.getType().ordinal() <= t2.getType().ordinal()) ? -1 : 1;
+                Collections.sort(notificationsByUsername, reverseComparator);
             }
-            Notification highPriorityNotification = notifications.get(0);
+            Notification highPriorityNotification = notificationsByUsername.get(0);
             Notification savedNotification = notificationRepository.saveAndFlush(highPriorityNotification);
             websocketSender.sendNotification(savedNotification);
         }
@@ -161,7 +164,7 @@ public class NotificationEventHandler implements ApplicationListener<CommentCrea
                 break;
             }
             default: {
-                return null;
+                throw new RuntimeException("Not suitable type for creating comment notification");
             }
         }
         return notification;
