@@ -5,11 +5,13 @@ import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Following;
+import com.vivacon.event.FollowingEvent;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -31,12 +33,16 @@ public class FollowingServiceImpl implements FollowingService {
 
     private AccountService accountService;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public FollowingServiceImpl(FollowingRepository followingRepository,
                                 AccountMapper accountMapper,
-                                AccountService accountService) {
+                                AccountService accountService,
+                                ApplicationEventPublisher applicationEventPublisher) {
         this.followingRepository = followingRepository;
         this.accountMapper = accountMapper;
         this.accountService = accountService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
 
@@ -47,7 +53,8 @@ public class FollowingServiceImpl implements FollowingService {
 
         Following following = new Following(fromAccount, toAccount);
         try {
-            this.followingRepository.save(following);
+            Following savedFollowing = followingRepository.save(following);
+            applicationEventPublisher.publishEvent(new FollowingEvent(this, savedFollowing));
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("The following table already have one record which contain this account follow that account");
         }

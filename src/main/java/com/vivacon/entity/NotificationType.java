@@ -10,5 +10,5 @@ public enum NotificationType {
 
     LIKE_ON_POST,
 
-    FOLLOWER,
+    FOLLOWING_ON_ME,
 }
