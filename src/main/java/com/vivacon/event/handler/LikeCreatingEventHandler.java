@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static com.vivacon.entity.NotificationType.LIKE_ON_POST;
+import static com.vivacon.entity.enum_type.NotificationType.LIKE_ON_POST;
 
 @Component
 public class LikeCreatingEventHandler implements ApplicationListener<LikeCreatingEvent> {

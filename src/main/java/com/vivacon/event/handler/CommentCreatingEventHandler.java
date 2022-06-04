@@ -3,8 +3,8 @@ package com.vivacon.event.handler;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Notification;
-import com.vivacon.entity.NotificationType;
 import com.vivacon.entity.Post;
+import com.vivacon.entity.enum_type.NotificationType;
 import com.vivacon.event.CommentCreatingEvent;
 import com.vivacon.event.notification.NotificationProvider;
 import com.vivacon.exception.RecordNotFoundException;
@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.vivacon.entity.NotificationType.AWARE_ON_COMMENT;
-import static com.vivacon.entity.NotificationType.COMMENT_ON_POST;
-import static com.vivacon.entity.NotificationType.REPLY_ON_COMMENT;
+import static com.vivacon.entity.enum_type.NotificationType.AWARE_ON_COMMENT;
+import static com.vivacon.entity.enum_type.NotificationType.COMMENT_ON_POST;
+import static com.vivacon.entity.enum_type.NotificationType.REPLY_ON_COMMENT;
 
 @Component
 public class CommentCreatingEventHandler implements ApplicationListener<CommentCreatingEvent> {

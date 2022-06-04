@@ -1,6 +1,6 @@
 package com.vivacon.dto.response;
 
-import com.vivacon.entity.NotificationType;
+import com.vivacon.entity.enum_type.NotificationType;
 
 import java.time.LocalDateTime;
 

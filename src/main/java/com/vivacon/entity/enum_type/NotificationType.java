@@ -1,4 +1,4 @@
-package com.vivacon.entity;
+package com.vivacon.entity.enum_type;
 
 public enum NotificationType {
 

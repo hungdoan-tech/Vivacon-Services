@@ -1,6 +1,6 @@
 package com.vivacon.dto.sorting_filtering;
 
-import com.vivacon.common.enum_type.Privacy;
+import com.vivacon.entity.enum_type.Privacy;
 
 import java.util.List;
 import java.util.Optional;

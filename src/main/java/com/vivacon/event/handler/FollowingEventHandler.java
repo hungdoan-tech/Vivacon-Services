@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
-import static com.vivacon.entity.NotificationType.FOLLOWING_ON_ME;
+import static com.vivacon.entity.enum_type.NotificationType.FOLLOWING_ON_ME;
 
 @Component
 public class FollowingEventHandler implements ApplicationListener<FollowingEvent> {

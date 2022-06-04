@@ -1,7 +1,7 @@
 package com.vivacon.dto.request;
 
-import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.entity.Attachment;
+import com.vivacon.entity.enum_type.Privacy;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;

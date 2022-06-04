@@ -1,5 +1,7 @@
 package com.vivacon.entity;
 
+import com.vivacon.entity.enum_type.NotificationType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

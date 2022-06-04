@@ -1,4 +1,4 @@
-package com.vivacon.common.enum_type;
+package com.vivacon.entity.enum_type;
 
 public enum MessageStatus {
     SENT,
