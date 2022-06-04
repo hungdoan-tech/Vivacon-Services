@@ -196,7 +196,7 @@ public class CommentCreatingEventHandler {
         String title = "New comments on your post";
         Account receiver = comment.getPost().getCreatedBy();
 
-        return new Notification(COMMENT_ON_POST, actionAuthor, receiver, post.getId(), title, content);
+        return new Notification(COMMENT_ON_POST, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
     }
 
     private Notification createReplyOnCommentNotification(Comment comment, Post post, Account actionAuthor,
@@ -207,7 +207,7 @@ public class CommentCreatingEventHandler {
         String content = commentAuthorFullName + " comment on your comment " + postAlias;
         String title = "New reply on your comment " + postAlias;
 
-        return new Notification(REPLY_ON_COMMENT, actionAuthor, receiver, post.getId(), title, content);
+        return new Notification(REPLY_ON_COMMENT, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
     }
 
     private Notification createAwareOnPostContextNotification(Comment comment, Post post, Account actionAuthor,
@@ -217,7 +217,7 @@ public class CommentCreatingEventHandler {
         String content = commentAuthorFullName + " comment " + postAlias;
         String title = "New comment on the post you are involved " + postAlias;
 
-        return new Notification(AWARE_ON_COMMENT, actionAuthor, receiver, post.getId(), title, content);
+        return new Notification(AWARE_ON_COMMENT, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
     }
 
     private Notification createAwareOnCommentContextNotification(Comment comment, Post post, Account actionAuthor,
@@ -227,7 +227,7 @@ public class CommentCreatingEventHandler {
         String content = commentAuthorFullName + " comment on the comment you are involved " + postAlias;
         String title = "New reply comment on the comment you are involved " + postAlias;
 
-        return new Notification(AWARE_ON_COMMENT, actionAuthor, receiver, post.getId(), title, content);
+        return new Notification(AWARE_ON_COMMENT, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
     }
 }
 

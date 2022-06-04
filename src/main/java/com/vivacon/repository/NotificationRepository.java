@@ -20,6 +20,14 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Page<Notification> findByReceiverIdAndStatus(Long receiverId, MessageStatus status, Pageable pageable);
 
     @Modifying
-    @Query("update Notification n set n.status = :status where n.id = :id")
-    int updateStatus(@Param("id") long id, @Param("status") MessageStatus status);
+    @Query("update Notification n " +
+            "set n.status = :status " +
+            "where n.id = :id")
+    int updateStatus(@Param("id") long id,
+                     @Param("status") MessageStatus status);
+
+    @Modifying
+    @Query("delete from Notification n where n.type = :type")
+    int deleteByTypeAndTraceId(@Param("type") NotificationType type,
+                               @Param("trace_id") Long traceId);
 }

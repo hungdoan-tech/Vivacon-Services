@@ -16,6 +16,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
+import static com.vivacon.entity.enum_type.MessageStatus.SENT;
+
 @Entity
 @Table(name = "notification")
 public class Notification {
@@ -29,8 +31,11 @@ public class Notification {
     @Column(name = "type")
     private NotificationType type;
 
-    @Column(name = "domain_Id")
-    private Long domainId;
+    @Column(name = "presentation_id")
+    private Long presentationId;
+
+    @Column(name = "trace_id")
+    private Long traceId;
 
     @ManyToOne(targetEntity = Account.class)
     @JoinColumn(name = "action_author_id")
@@ -52,17 +57,24 @@ public class Notification {
     }
 
     public Notification(String subject, String content, Account account) {
+        this.title = subject;
+        this.content = content;
+        this.receiver = account;
+        this.timestamp = LocalDateTime.now();
+        this.status = SENT;
     }
 
-    public Notification(NotificationType type, Account actionAuthor, Account receiver, Long domainId, String title, String content) {
+    public Notification(NotificationType type, Account actionAuthor, Account receiver, Long presentationId,
+                        Long traceId, String title, String content) {
         this.type = type;
-        this.domainId = domainId;
+        this.presentationId = presentationId;
+        this.traceId = traceId;
         this.receiver = receiver;
         this.title = title;
         this.content = content;
         this.actionAuthor = actionAuthor;
         this.timestamp = LocalDateTime.now();
-        this.status = MessageStatus.SENT;
+        this.status = SENT;
     }
 
     public Long getId() {
@@ -81,12 +93,12 @@ public class Notification {
         this.type = type;
     }
 
-    public Long getDomainId() {
-        return domainId;
+    public Long getPresentationId() {
+        return presentationId;
     }
 
-    public void setDomainId(Long domainId) {
-        this.domainId = domainId;
+    public void setPresentationId(Long domainId) {
+        this.presentationId = domainId;
     }
 
     public Account getReceiver() {
@@ -135,5 +147,13 @@ public class Notification {
 
     public void setStatus(MessageStatus status) {
         this.status = status;
+    }
+
+    public Long getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(Long traceId) {
+        this.traceId = traceId;
     }
 }

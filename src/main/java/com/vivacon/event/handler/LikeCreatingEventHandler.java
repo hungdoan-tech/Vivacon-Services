@@ -51,7 +51,7 @@ public class LikeCreatingEventHandler {
             Optional<Notification> existingNotification = notificationRepository.findByTypeAndDomainId(LIKE_ON_POST, post.getId());
 
             if (!existingNotification.isPresent()) {
-                Notification notification = createCommentEvent(likeAuthor, post);
+                Notification notification = createCommentEvent(likeCreatingEvent.getLike().getId(), likeAuthor, post);
                 Notification savedNotification = notificationRepository.saveAndFlush(notification);
                 websocketSender.sendNotification(savedNotification);
             } else {
@@ -63,7 +63,6 @@ public class LikeCreatingEventHandler {
     }
 
     private Notification updateTheContent(Notification notification, Account likeAuthor, Post post) {
-
         Long likeCount = likeRepository.getCountingLike(post.getId()) - 1;
         String displayOtherLikeCount = (likeCount > 0) ? " and " + likeCount + " others " : "";
         String content = likeAuthor.getFullName() + displayOtherLikeCount + " like your post";
@@ -73,12 +72,11 @@ public class LikeCreatingEventHandler {
         return notification;
     }
 
-    private Notification createCommentEvent(Account likeAuthor, Post post) {
-
+    private Notification createCommentEvent(long likeId, Account likeAuthor, Post post) {
         Long likeCount = likeRepository.getCountingLike(post.getId()) - 1;
         String displayOtherLikeCount = (likeCount > 0) ? " and " + likeCount + " others " : "";
         String content = likeAuthor.getFullName() + displayOtherLikeCount + " like your post";
-        return new Notification(LIKE_ON_POST, likeAuthor, post.getCreatedBy(), post.getId(),
+        return new Notification(LIKE_ON_POST, likeAuthor, post.getCreatedBy(), post.getId(), likeId,
                 "New like on your post", content);
     }
 }

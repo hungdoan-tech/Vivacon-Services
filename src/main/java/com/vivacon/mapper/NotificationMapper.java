@@ -40,7 +40,7 @@ public class NotificationMapper {
             case AWARE_ON_COMMENT: {
             }
             case LIKE_ON_POST: {
-                firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(notification.getDomainId())
+                firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(notification.getPresentationId())
                         .orElseThrow(RecordNotFoundException::new).getUrl();
                 break;
             }

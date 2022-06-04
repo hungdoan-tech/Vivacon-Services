@@ -1,6 +1,7 @@
 package com.vivacon.event.handler;
 
 import com.vivacon.entity.Account;
+import com.vivacon.entity.Following;
 import com.vivacon.entity.Notification;
 import com.vivacon.event.FollowingEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
@@ -34,16 +35,16 @@ public class FollowingEventHandler {
     @Async
     @EventListener
     public void onApplicationEvent(FollowingEvent followingEvent) {
-        Account formAccount = followingEvent.getFollowing().getFromAccount();
-        Account toAccount = followingEvent.getFollowing().getToAccount();
-        Notification notification = createFollowingNotification(formAccount, toAccount);
+        Notification notification = createFollowingNotification(followingEvent.getFollowing());
         Notification savedNotification = notificationRepository.saveAndFlush(notification);
         websocketSender.sendNotification(savedNotification);
     }
 
-    private Notification createFollowingNotification(Account fromAccount, Account toAccount) {
+    private Notification createFollowingNotification(Following following) {
+        Account fromAccount = following.getFromAccount();
+        Account toAccount = following.getToAccount();
         String content = fromAccount.getFullName() + " start following you";
         String title = "Someone follows you";
-        return new Notification(FOLLOWING_ON_ME, fromAccount, toAccount, fromAccount.getId(), title, content);
+        return new Notification(FOLLOWING_ON_ME, fromAccount, toAccount, fromAccount.getId(), following.getId(), title, content);
     }
 }
