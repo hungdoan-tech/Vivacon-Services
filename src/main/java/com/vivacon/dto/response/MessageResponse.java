@@ -1,10 +1,8 @@
 package com.vivacon.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.vivacon.common.enum_type.MessageStatus;
-import com.vivacon.entity.MessageType;
+import com.vivacon.entity.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.MessageType;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class MessageResponse {

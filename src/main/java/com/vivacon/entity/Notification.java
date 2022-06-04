@@ -1,5 +1,8 @@
 package com.vivacon.entity;
 
+import com.vivacon.entity.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.NotificationType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,6 +33,10 @@ public class Notification {
     private Long domainId;
 
     @ManyToOne(targetEntity = Account.class)
+    @JoinColumn(name = "action_author_id")
+    private Account actionAuthor;
+
+    @ManyToOne(targetEntity = Account.class)
     @JoinColumn(name = "receiver_id")
     private Account receiver;
 
@@ -37,25 +44,25 @@ public class Notification {
 
     private String content;
 
-    private String image;
+    private MessageStatus status;
 
     private LocalDateTime timestamp;
 
     public Notification() {
     }
 
-    public Notification(NotificationType type, Long domainId, Account receiver, String title, String content, String image, LocalDateTime timestamp) {
+    public Notification(String subject, String content, Account account) {
+    }
+
+    public Notification(NotificationType type, Account actionAuthor, Account receiver, Long domainId, String title, String content) {
         this.type = type;
         this.domainId = domainId;
         this.receiver = receiver;
         this.title = title;
         this.content = content;
-        this.image = image;
-        this.timestamp = timestamp;
-    }
-
-    public Notification(String subject, String content, Account account) {
-
+        this.actionAuthor = actionAuthor;
+        this.timestamp = LocalDateTime.now();
+        this.status = MessageStatus.SENT;
     }
 
     public Long getId() {
@@ -106,19 +113,27 @@ public class Notification {
         this.content = content;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Account getActionAuthor() {
+        return actionAuthor;
+    }
+
+    public void setActionAuthor(Account actionAuthor) {
+        this.actionAuthor = actionAuthor;
+    }
+
+    public MessageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MessageStatus status) {
+        this.status = status;
     }
 }

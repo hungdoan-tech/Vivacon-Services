@@ -1,15 +1,14 @@
 package com.vivacon.mapper;
 
-import com.vivacon.common.enum_type.MessageStatus;
 import com.vivacon.dto.request.NewParticipantMessage;
-import com.vivacon.dto.response.AccountResponse;
+import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
-import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Conversation;
 import com.vivacon.entity.Message;
-import com.vivacon.entity.MessageType;
+import com.vivacon.entity.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.MessageType;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.repository.ConversationRepository;
 import com.vivacon.service.AccountService;

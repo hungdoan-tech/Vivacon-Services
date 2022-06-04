@@ -1,6 +1,7 @@
 package com.vivacon.dto.response;
 
-import com.vivacon.entity.NotificationType;
+import com.vivacon.entity.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.NotificationType;
 
 import java.time.LocalDateTime;
 
@@ -8,17 +9,21 @@ public class NotificationResponse {
 
     private Long id;
 
-    private NotificationType type;
-
     private Long domainId;
 
     private String title;
 
     private String content;
 
-    private String image;
+    private String domainImage;
+
+    private NotificationType type;
+
+    private EssentialAccount actionAuthor;
 
     private LocalDateTime timestamp;
+
+    private MessageStatus status;
 
     public Long getId() {
         return id;
@@ -60,12 +65,12 @@ public class NotificationResponse {
         this.content = content;
     }
 
-    public String getImage() {
-        return image;
+    public EssentialAccount getActionAuthor() {
+        return actionAuthor;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setActionAuthor(EssentialAccount actionAuthor) {
+        this.actionAuthor = actionAuthor;
     }
 
     public LocalDateTime getTimestamp() {
@@ -74,5 +79,21 @@ public class NotificationResponse {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getDomainImage() {
+        return domainImage;
+    }
+
+    public void setDomainImage(String domainImage) {
+        this.domainImage = domainImage;
+    }
+
+    public MessageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MessageStatus status) {
+        this.status = status;
     }
 }

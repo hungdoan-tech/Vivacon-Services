@@ -1,4 +1,4 @@
-package com.vivacon.event.notification;
+package com.vivacon.event.notification_provider;
 
 import com.vivacon.dto.response.NotificationResponse;
 import com.vivacon.entity.Notification;

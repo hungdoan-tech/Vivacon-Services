@@ -1,6 +1,6 @@
 package com.vivacon.entity;
 
-import com.vivacon.common.enum_type.Privacy;
+import com.vivacon.entity.enum_type.Privacy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
