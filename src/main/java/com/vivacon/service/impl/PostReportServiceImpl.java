@@ -67,4 +67,9 @@ public class PostReportServiceImpl implements PostReportService {
         this.postReportRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public PostReport getDetailPostReport(Long postReportId) {
+        return this.postReportRepository.findById(postReportId).orElse(null);
+    }
 }

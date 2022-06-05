@@ -22,4 +22,6 @@ public interface PostReportService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     boolean rejectedPostReport(long id);
+
+    PostReport getDetailPostReport(Long postReportId);
 }

@@ -66,4 +66,11 @@ public class CommentReportController {
         this.commentReportService.rejectedCommentReport(id);
         return ResponseEntity.ok(null);
     }
+
+    @ApiOperation(value = "Get detail comment report")
+    @GetMapping(value = "/{id}")
+    public CommentReport getDetailCommentReport(
+            @PathVariable(name = "id") Long commentReportId) {
+        return commentReportService.getDetailCommentReport(commentReportId);
+    }
 }

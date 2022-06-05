@@ -66,4 +66,11 @@ public class PostReportController {
         this.postReportService.rejectedPostReport(id);
         return ResponseEntity.ok(null);
     }
+
+    @ApiOperation(value = "Get detail post report")
+    @GetMapping(value = "/{id}")
+    public PostReport getDetailPostReport(
+            @PathVariable(name = "id") Long postReportId) {
+        return postReportService.getDetailPostReport(postReportId);
+    }
 }

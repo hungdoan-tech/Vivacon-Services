@@ -50,7 +50,21 @@ public class AccountReportServiceImpl implements AccountReportService {
     @Override
     public PageDTO<AccountReport> getAll(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, AccountReport.class);
-        Page<AccountReport> accountReportPage = accountReportRepository.findAll(pageable);
+        Page<AccountReport> accountReportPage = accountReportRepository.findAllByActive(true, pageable);
         return PageMapper.toPageDTO(accountReportPage);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean approvedAccountReport(long id) {
+        this.accountReportRepository.deactivateById(id);
+        return true;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean rejectedAccountReport(long id) {
+        this.accountReportRepository.deleteById(id);
+        return true;
     }
 }

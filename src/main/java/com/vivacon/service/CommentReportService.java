@@ -22,4 +22,6 @@ public interface CommentReportService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     boolean rejectedCommentReport(long id);
+
+    CommentReport getDetailCommentReport(Long commentReportId);
 }

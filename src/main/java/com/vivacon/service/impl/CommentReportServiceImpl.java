@@ -67,4 +67,9 @@ public class CommentReportServiceImpl implements CommentReportService {
         this.commentReportRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public CommentReport getDetailCommentReport(Long commentReportId) {
+        return this.commentReportRepository.findById(commentReportId).orElse(null);
+    }
 }
