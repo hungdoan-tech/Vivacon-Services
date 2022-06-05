@@ -2,9 +2,11 @@ package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.AttachmentDTO;
+import com.vivacon.dto.request.EditProfileInformationRequest;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.entity.Account;
 import com.vivacon.service.ProfileService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,5 +66,11 @@ public class ProfileController {
     @PostMapping("/profile/avatar")
     public AttachmentDTO changeProfileAvatar(@Valid @RequestBody AttachmentDTO avatar) {
         return profileService.changeProfileAvatar(avatar);
+    }
+
+    @ApiOperation(value = "Edit the profile information")
+    @PostMapping("/profile/edit")
+    public Account editProfileInformation(@Valid @RequestBody EditProfileInformationRequest editProfileInformationRequest) {
+        return profileService.editProfileInformation(editProfileInformationRequest);
     }
 }
