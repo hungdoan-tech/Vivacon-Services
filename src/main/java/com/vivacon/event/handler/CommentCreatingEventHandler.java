@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static com.vivacon.entity.enum_type.NotificationType.AWARE_ON_COMMENT;
 import static com.vivacon.entity.enum_type.NotificationType.COMMENT_ON_POST;
 import static com.vivacon.entity.enum_type.NotificationType.REPLY_ON_COMMENT;
-import static com.vivacon.entity.enum_type.SettingType.PUSH_NOTIFICATION_ON_FOLLOWING;
+import static com.vivacon.entity.enum_type.SettingType.PUSH_NOTIFICATION_ON_COMMENT;
 
 @Component
 public class CommentCreatingEventHandler {
@@ -109,7 +109,7 @@ public class CommentCreatingEventHandler {
 
             Long authorPostId = accountRepository.findByUsernameIgnoreCase(username)
                     .orElseThrow(RecordNotFoundException::new).getId();
-            Boolean isActiveSending = (Boolean) settingService.evaluateSetting(authorPostId, PUSH_NOTIFICATION_ON_FOLLOWING);
+            Boolean isActiveSending = (Boolean) settingService.evaluateSetting(authorPostId, PUSH_NOTIFICATION_ON_COMMENT);
             if (isActiveSending) {
                 List<Notification> notificationsByUsername = collect.get(username);
                 if (notificationsByUsername.size() > 1) {

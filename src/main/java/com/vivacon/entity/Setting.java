@@ -29,6 +29,9 @@ public class Setting {
 
     private String value;
 
+    public Setting() {
+    }
+
     public Setting(Account account, SettingType type, String value) {
         this.account = account;
         this.type = type;
