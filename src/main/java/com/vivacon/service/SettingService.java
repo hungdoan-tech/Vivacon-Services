@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SettingService {
 
-    Object evaluateSetting(SettingType settingType);
+    Object evaluateSetting(long accountId, SettingType settingType);
 
     List<SettingResponse> getSettings();
 

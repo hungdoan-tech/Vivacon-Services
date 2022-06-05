@@ -4,10 +4,12 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Notification;
 import com.vivacon.entity.Post;
 import com.vivacon.entity.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.SettingType;
 import com.vivacon.event.LikeCreatingEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.repository.LikeRepository;
 import com.vivacon.repository.NotificationRepository;
+import com.vivacon.service.SettingService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.vivacon.entity.enum_type.NotificationType.LIKE_ON_POST;
+import static com.vivacon.entity.enum_type.SettingType.PUSH_NOTIFICATION_ON_LIKE;
 
 @Component
 public class LikeCreatingEventHandler {
@@ -27,16 +30,20 @@ public class LikeCreatingEventHandler {
     @Qualifier("emailSender")
     private NotificationProvider websocketSender;
 
+    private SettingService settingService;
+
     private NotificationRepository notificationRepository;
 
     private LikeRepository likeRepository;
 
     public LikeCreatingEventHandler(NotificationProvider emailSender,
                                     NotificationProvider websocketSender,
+                                    SettingService settingService,
                                     NotificationRepository notificationRepository,
                                     LikeRepository likeRepository) {
         this.emailSender = emailSender;
         this.websocketSender = websocketSender;
+        this.settingService = settingService;
         this.notificationRepository = notificationRepository;
         this.likeRepository = likeRepository;
     }
@@ -44,20 +51,25 @@ public class LikeCreatingEventHandler {
     @Async
     @EventListener
     public void onApplicationEvent(LikeCreatingEvent likeCreatingEvent) {
-        Account likeAuthor = likeCreatingEvent.getLike().getAccount();
-        Post post = likeCreatingEvent.getLike().getPost();
+        SettingType pushNotificationOnLikeSetting = PUSH_NOTIFICATION_ON_LIKE;
+        Long authorPostId = likeCreatingEvent.getLike().getPost().getCreatedBy().getId();
+        Boolean isActiveSetting = (Boolean) settingService.evaluateSetting(authorPostId, pushNotificationOnLikeSetting);
 
-        if (likeAuthor.getId() != post.getCreatedBy().getId()) {
-            Optional<Notification> existingNotification = notificationRepository
-                    .findByTypeAndPresentationId(LIKE_ON_POST, post.getId());
+        if (isActiveSetting) {
+            Account likeAuthor = likeCreatingEvent.getLike().getAccount();
+            Post post = likeCreatingEvent.getLike().getPost();
 
-            if (!existingNotification.isPresent()) {
-                Notification notification = createCommentEvent(likeCreatingEvent.getLike().getId(), likeAuthor, post);
+            if (likeAuthor.getId() != post.getCreatedBy().getId()) {
+                Optional<Notification> existingNotification = notificationRepository
+                        .findByTypeAndPresentationId(LIKE_ON_POST, post.getId());
+
+                Notification notification;
+                if (!existingNotification.isPresent()) {
+                    notification = createCommentEvent(likeCreatingEvent.getLike().getId(), likeAuthor, post);
+                } else {
+                    notification = updateTheContent(existingNotification.get(), likeAuthor, post);
+                }
                 Notification savedNotification = notificationRepository.saveAndFlush(notification);
-                websocketSender.sendNotification(savedNotification);
-            } else {
-                Notification updatedNotification = updateTheContent(existingNotification.get(), likeAuthor, post);
-                Notification savedNotification = notificationRepository.saveAndFlush(updatedNotification);
                 websocketSender.sendNotification(savedNotification);
             }
         }

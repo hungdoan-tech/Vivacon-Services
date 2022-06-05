@@ -52,8 +52,7 @@ public class SettingServiceImpl implements SettingService {
     }
 
     @Override
-    public Object evaluateSetting(SettingType settingType) {
-        Long accountId = accountService.getCurrentAccount().getId();
+    public Object evaluateSetting(long accountId, SettingType settingType) {
         String currentSettingValue = settingRepository
                 .findValueByAccountIdAndSettingType(accountId, settingType)
                 .orElseThrow(RecordNotFoundException::new);
