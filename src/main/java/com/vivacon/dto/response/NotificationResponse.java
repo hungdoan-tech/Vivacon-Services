@@ -9,7 +9,7 @@ public class NotificationResponse {
 
     private Long id;
 
-    private Long domainId;
+    private Long presentationId;
 
     private String title;
 
@@ -41,12 +41,12 @@ public class NotificationResponse {
         this.type = type;
     }
 
-    public Long getDomainId() {
-        return domainId;
+    public Long getPresentationId() {
+        return presentationId;
     }
 
-    public void setDomainId(Long domainId) {
-        this.domainId = domainId;
+    public void setPresentationId(Long presentationId) {
+        this.presentationId = presentationId;
     }
 
     public String getTitle() {

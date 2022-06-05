@@ -48,7 +48,8 @@ public class LikeCreatingEventHandler {
         Post post = likeCreatingEvent.getLike().getPost();
 
         if (likeAuthor.getId() != post.getCreatedBy().getId()) {
-            Optional<Notification> existingNotification = notificationRepository.findByTypeAndDomainId(LIKE_ON_POST, post.getId());
+            Optional<Notification> existingNotification = notificationRepository
+                    .findByTypeAndPresentationId(LIKE_ON_POST, post.getId());
 
             if (!existingNotification.isPresent()) {
                 Notification notification = createCommentEvent(likeCreatingEvent.getLike().getId(), likeAuthor, post);

@@ -48,6 +48,7 @@ public class FollowingServiceImpl implements FollowingService {
         this.followingRepository = followingRepository;
         this.accountMapper = accountMapper;
         this.accountService = accountService;
+        this.notificationRepository = notificationRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
