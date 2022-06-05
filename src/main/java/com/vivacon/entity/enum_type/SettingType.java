@@ -49,7 +49,7 @@ public enum SettingType {
         }
     }
 
-    public boolean isValid(String value) {
+    public boolean isValidValue(String value) {
         if (valueType.isEnum()) {
             return isInEnum(value, valueType);
         }
