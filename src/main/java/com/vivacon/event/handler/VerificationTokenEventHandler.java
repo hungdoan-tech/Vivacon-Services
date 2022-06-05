@@ -2,10 +2,13 @@ package com.vivacon.event.handler;
 
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Notification;
+import com.vivacon.entity.Setting;
+import com.vivacon.entity.enum_type.SettingType;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.repository.AccountRepository;
+import com.vivacon.repository.SettingRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Component
@@ -26,15 +31,19 @@ public class VerificationTokenEventHandler {
 
     private AccountRepository accountRepository;
 
+    private SettingRepository settingRepository;
+
     private int verifiedTokenExpirationInMiliseconds;
 
     private Random random = new Random();
 
     public VerificationTokenEventHandler(NotificationProvider emailSender,
                                          AccountRepository accountRepository,
+                                         SettingRepository settingRepository,
                                          Environment environment) {
         this.emailSender = emailSender;
         this.accountRepository = accountRepository;
+        this.settingRepository = settingRepository;
         this.environment = environment;
     }
 
@@ -47,6 +56,20 @@ public class VerificationTokenEventHandler {
     @EventListener
     public void handleUserRegistration(RegistrationCompleteEvent userRegistrationEvent) {
         Account account = userRegistrationEvent.getAccount();
+        saveDefaultSettingsForNewAccount(account);
+        sendEmailOnUserRegistrationComplete(account);
+    }
+
+    private List<Setting> saveDefaultSettingsForNewAccount(Account account) {
+        List<Setting> settings = new ArrayList<>();
+        SettingType[] settingTypes = SettingType.class.getEnumConstants();
+        for (SettingType type : settingTypes) {
+            settings.add(new Setting(account, type, type.getDefaultValue()));
+        }
+        return settingRepository.saveAllAndFlush(settings);
+    }
+
+    private void sendEmailOnUserRegistrationComplete(Account account) {
         String code = generateVerificationCodePerUsername(account);
         Integer expirationInMinutes = verifiedTokenExpirationInMiliseconds / 60000;
 

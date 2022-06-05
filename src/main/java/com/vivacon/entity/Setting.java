@@ -29,6 +29,12 @@ public class Setting {
 
     private String value;
 
+    public Setting(Account account, SettingType type, String value) {
+        this.account = account;
+        this.type = type;
+        this.value = value;
+    }
+
     public String getId() {
         return id;
     }
