@@ -9,9 +9,9 @@ import com.vivacon.event.CommentCreatingEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.repository.AccountRepository;
-import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.NotificationRepository;
+import com.vivacon.service.SettingService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import static com.vivacon.entity.enum_type.NotificationType.AWARE_ON_COMMENT;
 import static com.vivacon.entity.enum_type.NotificationType.COMMENT_ON_POST;
 import static com.vivacon.entity.enum_type.NotificationType.REPLY_ON_COMMENT;
+import static com.vivacon.entity.enum_type.SettingType.PUSH_NOTIFICATION_ON_FOLLOWING;
 
 @Component
 public class CommentCreatingEventHandler {
@@ -38,9 +39,9 @@ public class CommentCreatingEventHandler {
     @Qualifier("emailSender")
     private NotificationProvider websocketSender;
 
-    private NotificationRepository notificationRepository;
+    private SettingService settingService;
 
-    private AttachmentRepository attachmentRepository;
+    private NotificationRepository notificationRepository;
 
     private CommentRepository commentRepository;
 
@@ -48,13 +49,13 @@ public class CommentCreatingEventHandler {
 
     public CommentCreatingEventHandler(NotificationProvider emailSender,
                                        NotificationProvider websocketSender,
-                                       AttachmentRepository attachmentRepository,
+                                       SettingService settingService,
                                        NotificationRepository notificationRepository,
                                        CommentRepository commentRepository,
                                        AccountRepository accountRepository) {
         this.emailSender = emailSender;
         this.websocketSender = websocketSender;
-        this.attachmentRepository = attachmentRepository;
+        this.settingService = settingService;
         this.notificationRepository = notificationRepository;
         this.commentRepository = commentRepository;
         this.accountRepository = accountRepository;
@@ -105,24 +106,30 @@ public class CommentCreatingEventHandler {
                 .collect(Collectors.groupingBy(notification -> notification.getReceiver().getUsername()));
 
         for (String username : collect.keySet()) {
-            List<Notification> notificationsByUsername = collect.get(username);
-            if (notificationsByUsername.size() > 1) {
 
-                Comparator<Notification> reverseComparator = (t1, t2) -> {
-                    int firstItemPriority = t1.getType().ordinal();
-                    int secondItemPriority = t2.getType().ordinal();
-                    if (firstItemPriority == secondItemPriority) {
-                        return 0;
-                    } else {
-                        return firstItemPriority < secondItemPriority ? -1 : 1;
-                    }
-                };
-                Collections.sort(notificationsByUsername, reverseComparator);
+            Long authorPostId = accountRepository.findByUsernameIgnoreCase(username)
+                    .orElseThrow(RecordNotFoundException::new).getId();
+            Boolean isActiveSending = (Boolean) settingService.evaluateSetting(authorPostId, PUSH_NOTIFICATION_ON_FOLLOWING);
+            if (isActiveSending) {
+                List<Notification> notificationsByUsername = collect.get(username);
+                if (notificationsByUsername.size() > 1) {
 
+                    Comparator<Notification> reverseComparator = (t1, t2) -> {
+                        int firstItemPriority = t1.getType().ordinal();
+                        int secondItemPriority = t2.getType().ordinal();
+                        if (firstItemPriority == secondItemPriority) {
+                            return 0;
+                        } else {
+                            return firstItemPriority < secondItemPriority ? -1 : 1;
+                        }
+                    };
+                    Collections.sort(notificationsByUsername, reverseComparator);
+
+                }
+                Notification highPriorityNotification = notificationsByUsername.get(0);
+                Notification savedNotification = notificationRepository.saveAndFlush(highPriorityNotification);
+                websocketSender.sendNotification(savedNotification);
             }
-            Notification highPriorityNotification = notificationsByUsername.get(0);
-            Notification savedNotification = notificationRepository.saveAndFlush(highPriorityNotification);
-            websocketSender.sendNotification(savedNotification);
         }
     }
 

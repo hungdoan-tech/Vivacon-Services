@@ -4,7 +4,6 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Notification;
 import com.vivacon.entity.Post;
 import com.vivacon.entity.enum_type.MessageStatus;
-import com.vivacon.entity.enum_type.SettingType;
 import com.vivacon.event.LikeCreatingEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.repository.LikeRepository;
@@ -51,11 +50,10 @@ public class LikeCreatingEventHandler {
     @Async
     @EventListener
     public void onApplicationEvent(LikeCreatingEvent likeCreatingEvent) {
-        SettingType pushNotificationOnLikeSetting = PUSH_NOTIFICATION_ON_LIKE;
         Long authorPostId = likeCreatingEvent.getLike().getPost().getCreatedBy().getId();
-        Boolean isActiveSetting = (Boolean) settingService.evaluateSetting(authorPostId, pushNotificationOnLikeSetting);
+        Boolean isActiveSending = (Boolean) settingService.evaluateSetting(authorPostId, PUSH_NOTIFICATION_ON_LIKE);
 
-        if (isActiveSetting) {
+        if (isActiveSending) {
             Account likeAuthor = likeCreatingEvent.getLike().getAccount();
             Post post = likeCreatingEvent.getLike().getPost();
 
