@@ -46,11 +46,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
-        Post post = postRepository.findByIdAndActive(commentRequest.getPostId(), true).orElseThrow(RecordNotFoundException::new);
+        Post post = postRepository.findByIdAndActive(commentRequest.getPostId(), true)
+                .orElseThrow(RecordNotFoundException::new);
         Comment parentComment = null;
         if (commentRequest.getParentCommentId() != null) {
-            parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
-            if (parentComment != null && !parentComment.getPost().getId().equals(commentRequest.getPostId())) {
+
+            parentComment = commentRepository.findById(commentRequest.getParentCommentId())
+                    .orElseThrow(RecordNotFoundException::new);
+            if (!parentComment.getPost().getId().equals(commentRequest.getPostId())) {
                 throw new RecordNotFoundException("The parent comment is not match with current post of the request!");
             }
         }
@@ -70,20 +73,21 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public boolean deleteComment(Long commentId) {
-        Comment comment = commentRepository.findByIdAndActive(commentId, true).orElseThrow(RecordNotFoundException::new);
+        Comment comment = commentRepository.findByIdAndActive(commentId, true)
+                .orElseThrow(RecordNotFoundException::new);
         if (comment.getParentComment() == null) {
             deleteChildComments(comment.getId());
         }
-        this.commentRepository.deactivateById(comment.getId());
+        commentRepository.deactivateById(comment.getId());
         return true;
     }
 
     private boolean deleteChildComments(Long parentCommentId) {
-        int numberOfAffectedRows = this.commentRepository.deactivateChildCommentsByParentCommentId(parentCommentId);
+        int numberOfAffectedRows = commentRepository.deactivateChildComments(parentCommentId);
         if (numberOfAffectedRows == 0) {
             return true;
         }
-        Collection<Comment> listChildComments = this.commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, true);
+        Collection<Comment> listChildComments = commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, true);
         for (Comment comment : listChildComments) {
             deleteChildComments(comment.getId());
         }

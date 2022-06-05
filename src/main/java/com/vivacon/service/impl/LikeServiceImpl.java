@@ -11,6 +11,7 @@ import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.LikeRepository;
+import com.vivacon.repository.NotificationRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.LikeService;
@@ -27,10 +28,14 @@ import javax.persistence.NonUniqueResultException;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import static com.vivacon.entity.enum_type.NotificationType.LIKE_ON_POST;
+
 @Service
 public class LikeServiceImpl implements LikeService {
 
     private AccountService accountService;
+
+    private NotificationRepository notificationRepository;
 
     private LikeRepository likeRepository;
 
@@ -44,11 +49,13 @@ public class LikeServiceImpl implements LikeService {
                            LikeRepository likeRepository,
                            AccountService accountService,
                            PostRepository postRepository,
+                           NotificationRepository notificationRepository,
                            ApplicationEventPublisher applicationEventPublisher) {
         this.accountMapper = accountMapper;
         this.likeRepository = likeRepository;
         this.accountService = accountService;
         this.postRepository = postRepository;
+        this.notificationRepository = notificationRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -70,7 +77,11 @@ public class LikeServiceImpl implements LikeService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean unlike(Long postId) {
         Account currentAccount = accountService.getCurrentAccount();
-        this.likeRepository.unlikeByAccountIdAndPostId(currentAccount.getId(), postId);
+        Optional<Long> existingLike = likeRepository.findByAccountIdAndPostId(currentAccount.getId(), postId);
+        if (existingLike.isPresent()) {
+            notificationRepository.deleteByTypeAndTraceId(LIKE_ON_POST, existingLike.get());
+        }
+        likeRepository.unlikeByAccountIdAndPostId(currentAccount.getId(), postId);
         return true;
     }
 

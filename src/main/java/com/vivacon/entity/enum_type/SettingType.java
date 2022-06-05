@@ -39,4 +39,29 @@ public enum SettingType {
             throw new RuntimeException(e);
         }
     }
+
+    public String serialize(Object value) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
+    public boolean isValid(String value) {
+        if (valueType.isEnum()) {
+            return isInEnum(value, valueType);
+        }
+        return true;
+    }
+
+    private <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
+        for (E e : enumClass.getEnumConstants()) {
+            if (e.name().equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

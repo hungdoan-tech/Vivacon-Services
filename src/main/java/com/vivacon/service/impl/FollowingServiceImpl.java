@@ -9,6 +9,7 @@ import com.vivacon.event.FollowingEvent;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.FollowingRepository;
+import com.vivacon.repository.NotificationRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,6 +25,8 @@ import javax.persistence.NonUniqueResultException;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import static com.vivacon.entity.enum_type.NotificationType.FOLLOWING_ON_ME;
+
 @Service
 public class FollowingServiceImpl implements FollowingService {
 
@@ -33,15 +36,19 @@ public class FollowingServiceImpl implements FollowingService {
 
     private AccountService accountService;
 
+    private NotificationRepository notificationRepository;
+
     private ApplicationEventPublisher applicationEventPublisher;
 
     public FollowingServiceImpl(FollowingRepository followingRepository,
                                 AccountMapper accountMapper,
                                 AccountService accountService,
+                                NotificationRepository notificationRepository,
                                 ApplicationEventPublisher applicationEventPublisher) {
         this.followingRepository = followingRepository;
         this.accountMapper = accountMapper;
         this.accountService = accountService;
+        this.notificationRepository = notificationRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -66,6 +73,12 @@ public class FollowingServiceImpl implements FollowingService {
     public boolean unfollow(Long toAccountId) {
         Account fromAccount = accountService.getCurrentAccount();
         Account toAccount = this.accountService.getAccountById(toAccountId);
+
+        Optional<Following> existingFollowing = followingRepository.findByIdComposition(fromAccount.getId(), toAccount.getId());
+        if (existingFollowing.isPresent()) {
+            notificationRepository.deleteByTypeAndTraceId(FOLLOWING_ON_ME, existingFollowing.get().getId());
+        }
+
         this.followingRepository.unfollowById(fromAccount.getId(), toAccount.getId());
         return true;
     }

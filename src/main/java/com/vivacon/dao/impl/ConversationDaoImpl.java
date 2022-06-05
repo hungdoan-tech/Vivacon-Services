@@ -1,5 +1,6 @@
-package com.vivacon.dao;
+package com.vivacon.dao.impl;
 
+import com.vivacon.dao.ConversationDao;
 import com.vivacon.entity.Conversation;
 import org.springframework.stereotype.Component;
 
@@ -43,12 +44,12 @@ public class ConversationDaoImpl implements ConversationDao {
         procedureQuery.setParameter("principalId", principalId);
 
         procedureQuery.registerStoredProcedureParameter("keyword", String.class, ParameterMode.IN);
-        procedureQuery.setParameter("keyword",  "%" + keyword.toLowerCase(Locale.ROOT) + "%");
+        procedureQuery.setParameter("keyword", "%" + keyword.toLowerCase(Locale.ROOT) + "%");
 
         return this.getConversationFromResultSet(procedureQuery);
     }
 
-    private List<Conversation> getConversationFromResultSet(StoredProcedureQuery procedureQuery){
+    private List<Conversation> getConversationFromResultSet(StoredProcedureQuery procedureQuery) {
         List<Conversation> postsQuantityList = new ArrayList<>();
         if (procedureQuery.execute()) {
             List<Object[]> resultList = procedureQuery.getResultList();

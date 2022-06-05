@@ -6,18 +6,17 @@ import com.vivacon.entity.Notification;
 import com.vivacon.entity.Post;
 import com.vivacon.entity.enum_type.NotificationType;
 import com.vivacon.event.CommentCreatingEvent;
-import com.vivacon.event.notification.NotificationProvider;
+import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,7 +30,7 @@ import static com.vivacon.entity.enum_type.NotificationType.COMMENT_ON_POST;
 import static com.vivacon.entity.enum_type.NotificationType.REPLY_ON_COMMENT;
 
 @Component
-public class CommentCreatingEventHandler implements ApplicationListener<CommentCreatingEvent> {
+public class CommentCreatingEventHandler {
 
     @Qualifier("emailSender")
     private NotificationProvider emailSender;
@@ -62,7 +61,7 @@ public class CommentCreatingEventHandler implements ApplicationListener<CommentC
     }
 
     @Async
-    @Override
+    @EventListener
     public void onApplicationEvent(CommentCreatingEvent commentCreatingEvent) {
         Comment comment = commentCreatingEvent.getComment();
         boolean isAuthorCommentOnHisPost = comment.getPost().getCreatedBy().getId()
@@ -75,8 +74,9 @@ public class CommentCreatingEventHandler implements ApplicationListener<CommentC
 
             if (comment.getParentComment() != null) {
                 notifications.add(createCommentNotification(comment, REPLY_ON_COMMENT, comment.getParentComment().getCreatedBy()));
-                notifications.addAll(createAwareOnCommentNotifications(comment, () ->
-                        commentRepository.findAllChildCommentsByParentCommentId(comment.getParentComment().getId(), true)));
+                List<Notification> awareOnChildCommentNotifications = createAwareOnCommentNotifications(comment, () ->
+                        commentRepository.findAllChildCommentsByParentCommentId(comment.getParentComment().getId(), true));
+                notifications.addAll(awareOnChildCommentNotifications);
             } else {
                 notifications.addAll(createAwareOnCommentNotifications(comment, () ->
                         commentRepository.findAllFirstLevelComments(comment.getPost().getId(), true)));
@@ -153,26 +153,33 @@ public class CommentCreatingEventHandler implements ApplicationListener<CommentC
      * @return
      */
     private Notification createCommentNotification(Comment comment, NotificationType type, Account receiver) {
+
         Post post = comment.getPost();
-        String firstImageInPost = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(comment.getPost().getId())
-                .orElseThrow(RecordNotFoundException::new).getUrl();
+        Account actionAuthor = comment.getCreatedBy();
         String commentAuthorFullName = comment.getCreatedBy().getFullName();
+        boolean isFirstLevelComment = comment.getParentComment() == null;
 
         Notification notification = null;
         switch (type) {
             case COMMENT_ON_POST: {
-                notification = createCommentOnPostNotification(comment, post, firstImageInPost, commentAuthorFullName);
+                notification = createCommentOnPostNotification(comment, post, actionAuthor, commentAuthorFullName);
                 break;
             }
             case REPLY_ON_COMMENT: {
                 if (comment.getParentComment() != null) {
-                    notification = createReplyOnCommentNotification(comment, post, firstImageInPost, commentAuthorFullName);
+                    notification = createReplyOnCommentNotification(comment, post, actionAuthor, commentAuthorFullName);
                 }
                 break;
             }
             case AWARE_ON_COMMENT: {
                 if (receiver != null) {
-                    notification = createAwareOnCommentNotification(comment, post, receiver, firstImageInPost, commentAuthorFullName);
+                    if (isFirstLevelComment) {
+                        notification = createAwareOnPostContextNotification(comment, post, actionAuthor,
+                                receiver, commentAuthorFullName);
+                    } else {
+                        notification = createAwareOnCommentContextNotification(comment, post, actionAuthor,
+                                receiver, commentAuthorFullName);
+                    }
                 }
                 break;
             }
@@ -183,44 +190,44 @@ public class CommentCreatingEventHandler implements ApplicationListener<CommentC
         return notification;
     }
 
-    private Notification createCommentOnPostNotification(Comment comment, Post post, String firstImageInPost,
+    private Notification createCommentOnPostNotification(Comment comment, Post post, Account actionAuthor,
                                                          String commentAuthorFullName) {
-        Long totalCommentsCount = commentRepository.getCountingCommentsByPost(post.getId()) - 1;
-        String displayOtherCommentCount = (totalCommentsCount > 0) ? " and " + totalCommentsCount + " others " : "";
-        String content = commentAuthorFullName + displayOtherCommentCount + " comment on your post";
+        String content = commentAuthorFullName + " comment on your post";
         String title = "New comments on your post";
-        return new Notification(COMMENT_ON_POST, comment.getId(), comment.getPost().getCreatedBy(),
-                title, content, firstImageInPost, LocalDateTime.now());
+        Account receiver = comment.getPost().getCreatedBy();
+
+        return new Notification(COMMENT_ON_POST, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
     }
 
-    private Notification createReplyOnCommentNotification(Comment comment, Post post, String firstImageInPost,
+    private Notification createReplyOnCommentNotification(Comment comment, Post post, Account actionAuthor,
                                                           String commentAuthorFullName) {
-        Long totalChildCommentsCount = commentRepository
-                .getCountingChildComments(comment.getParentComment().getId(), comment.getPost().getId()) - 1;
-        String postAlias = " at " + (post.getCreatedBy().getFullName().equals(commentAuthorFullName)
-                ? " your " : post.getCreatedBy().getFullName()) + " post";
-        String displayOtherCommentCount = (totalChildCommentsCount > 0) ? " and " + totalChildCommentsCount
-                + " others " : "";
-        String content = commentAuthorFullName + displayOtherCommentCount + " comment on your comment "
-                + postAlias;
+        Account receiver = comment.getParentComment().getCreatedBy();
+        String postAlias = " in " + (post.getCreatedBy().getFullName().equals(receiver.getFullName())
+                ? " your post" : post.getCreatedBy().getFullName()) + " post";
+        String content = commentAuthorFullName + " comment on your comment " + postAlias;
         String title = "New reply on your comment " + postAlias;
-        return new Notification(REPLY_ON_COMMENT, comment.getId(), comment.getParentComment().getCreatedBy(),
-                title, content, firstImageInPost, LocalDateTime.now());
+
+        return new Notification(REPLY_ON_COMMENT, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
     }
 
-    private Notification createAwareOnCommentNotification(Comment comment, Post post, Account receiver,
-                                                          String firstImageInPost, String commentAuthorFullName) {
-        Long totalChildCommentsCount = commentRepository
-                .getCountingChildComments(comment.getParentComment().getId(), comment.getPost().getId()) - 1;
-        String postAlias = " at " + (post.getCreatedBy().getFullName().equals(commentAuthorFullName)
-                ? " your " : post.getCreatedBy().getFullName()) + " post";
-        String displayOtherCommentCount = (totalChildCommentsCount > 0) ? " and " + totalChildCommentsCount
-                + " others " : "";
-        String content = commentAuthorFullName + displayOtherCommentCount + " comment on the comment which be aware by you, "
-                + postAlias;
+    private Notification createAwareOnPostContextNotification(Comment comment, Post post, Account actionAuthor,
+                                                              Account receiver, String commentAuthorFullName) {
+        String postAlias = " in " + (post.getCreatedBy().getFullName().equals(receiver.getFullName())
+                ? " your post" : post.getCreatedBy().getFullName()) + " post";
+        String content = commentAuthorFullName + " comment " + postAlias;
+        String title = "New comment on the post you are involved " + postAlias;
+
+        return new Notification(AWARE_ON_COMMENT, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
+    }
+
+    private Notification createAwareOnCommentContextNotification(Comment comment, Post post, Account actionAuthor,
+                                                                 Account receiver, String commentAuthorFullName) {
+        String postAlias = " in " + (post.getCreatedBy().getFullName().equals(receiver.getFullName())
+                ? " your post" : post.getCreatedBy().getFullName()) + " post";
+        String content = commentAuthorFullName + " comment on the comment you are involved " + postAlias;
         String title = "New reply comment on the comment you are involved " + postAlias;
-        return new Notification(AWARE_ON_COMMENT, comment.getId(), receiver, title, content, firstImageInPost,
-                LocalDateTime.now());
+
+        return new Notification(AWARE_ON_COMMENT, actionAuthor, receiver, post.getId(), comment.getId(), title, content);
     }
 }
 
