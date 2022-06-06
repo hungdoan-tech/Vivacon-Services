@@ -13,6 +13,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
+import com.vivacon.event.PostCreatingEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
@@ -21,6 +22,7 @@ import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.PostService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -50,24 +52,27 @@ public class PostServiceImpl implements PostService {
 
     private CommentRepository commentRepository;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public PostServiceImpl(PostMapper postMapper,
                            AccountRepository accountRepository,
                            PostRepository postRepository,
                            AttachmentRepository attachmentRepository,
-                           CommentRepository commentRepository) {
+                           CommentRepository commentRepository,
+                           ApplicationEventPublisher applicationEventPublisher) {
         this.postMapper = postMapper;
         this.accountRepository = accountRepository;
         this.postRepository = postRepository;
         this.attachmentRepository = attachmentRepository;
         this.commentRepository = commentRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public NewsfeedPost createPost(PostRequest postRequest) {
         Post post = postMapper.toPost(postRequest);
         post.setActive(true);
-        Post savedPost = postRepository.save(post);
+        Post savedPost = postRepository.saveAndFlush(post);
 
         List<Attachment> attachments = postRequest.getAttachments()
                 .stream().map(attachment -> new Attachment(
@@ -78,7 +83,9 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
         attachmentRepository.saveAll(attachments);
 
-        return postMapper.toNewsfeedPost(savedPost);
+        applicationEventPublisher.publishEvent(new PostCreatingEvent(this, savedPost));
+
+        return postMapper.toNewsfeedPost(post);
     }
 
     @Override
