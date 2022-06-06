@@ -2,11 +2,13 @@ package com.vivacon.repository;
 
 import com.vivacon.dto.response.TopHashTagResponse;
 import com.vivacon.entity.HashTagRelPost;
+import com.vivacon.entity.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface HashTagRelPostRepository extends JpaRepository<HashTagRelPost, Long> {
@@ -14,6 +16,8 @@ public interface HashTagRelPostRepository extends JpaRepository<HashTagRelPost, 
             "FROM HashTagRelPost hashTagRel " +
             "GROUP BY hashTagRel.hashTag.id, hashTag.name " +
             "ORDER BY COUNT(hashTagRel.id) DESC")
-    List<TopHashTagResponse> findTopHashTag();
+    Page<TopHashTagResponse> findTopHashTag(Pageable pageable);
 
+    @Query("SELECT h.post FROM HashTagRelPost h WHERE h.hashTag.id = :id")
+    Page<Post> findByHashTagId(@Param("id") Long id, Pageable pageable);
 }
