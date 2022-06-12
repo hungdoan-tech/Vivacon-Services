@@ -35,6 +35,7 @@ public class FollowingEventHandler {
         this.emailSender = emailSender;
         this.websocketSender = websocketSender;
         this.notificationRepository = notificationRepository;
+        this.settingService = settingService;
     }
 
     @Async
