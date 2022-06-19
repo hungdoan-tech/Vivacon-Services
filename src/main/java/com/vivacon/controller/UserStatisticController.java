@@ -1,7 +1,7 @@
 package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
-import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserAccountMostFollowerResponse;
 import com.vivacon.service.UserStatisticService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +26,7 @@ public class UserStatisticController {
 
     @ApiOperation(value = "Get top account most followers statistic")
     @GetMapping("/user/most/followers")
-    public List<UserAccountMostFollower> getTheTopAccountMostFollowerStatistic(@RequestParam(value = "limit") Optional<Integer> limit) {
+    public List<UserAccountMostFollowerResponse> getTheTopAccountMostFollowerStatistic(@RequestParam(value = "limit") Optional<Integer> limit) {
         return this.userStatisticService.getTheTopAccountMostFollowerStatistic(limit.orElse(5));
     }
 }

@@ -1,11 +1,11 @@
 package com.vivacon.service;
 
-import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserAccountMostFollowerResponse;
 
 import java.util.List;
 
 public interface UserStatisticService {
 
-    List<UserAccountMostFollower> getTheTopAccountMostFollowerStatistic(Integer limit);
+    List<UserAccountMostFollowerResponse> getTheTopAccountMostFollowerStatistic(Integer limit);
 
 }
