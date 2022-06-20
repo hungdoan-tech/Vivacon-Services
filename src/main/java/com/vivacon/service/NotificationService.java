@@ -11,4 +11,6 @@ public interface NotificationService {
     PageDTO<NotificationResponse> findAllByPrincipal(Optional<MessageStatus> status, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
     boolean updateStatus(long id, MessageStatus status);
+
+    boolean updateAllToStatus(MessageStatus status);
 }

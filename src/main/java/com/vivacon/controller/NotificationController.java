@@ -51,4 +51,11 @@ public class NotificationController {
         notificationService.updateStatus(id, status);
         return ResponseEntity.ok().body(null);
     }
+
+    @ApiOperation(value = "Update all to a specific status")
+    @PutMapping(value = "/notification/status")
+    public ResponseEntity<Object> updateAllToReceivedStatus(@Valid @RequestBody MessageStatus status) {
+        notificationService.updateAllToStatus(status);
+        return ResponseEntity.ok().body(null);
+    }
 }

@@ -28,4 +28,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("delete from Notification n where n.type = :type and n.traceId = :trace_id")
     int deleteByTypeAndTraceId(@Param("type") NotificationType type,
                                @Param("trace_id") Long traceId);
+
+    @Modifying
+    @Query("update Notification n set n.status = :status where n.receiver.id = :receiverId")
+    int updateAllToStatus(MessageStatus status, Long receiverId);
 }
