@@ -5,7 +5,9 @@ import com.vivacon.dto.response.OutlineAccount;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Like;
+import com.vivacon.entity.Notification;
 import com.vivacon.entity.Post;
+import com.vivacon.entity.enum_type.MessageStatus;
 import com.vivacon.event.LikeCreatingEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.vivacon.entity.enum_type.NotificationType.LIKE_ON_POST;
@@ -79,10 +82,32 @@ public class LikeServiceImpl implements LikeService {
         Account currentAccount = accountService.getCurrentAccount();
         Optional<Long> existingLike = likeRepository.findByAccountIdAndPostId(currentAccount.getId(), postId);
         if (existingLike.isPresent()) {
-            notificationRepository.deleteByTypeAndTraceId(LIKE_ON_POST, existingLike.get());
+            updateLikeNotificationContent(postId, existingLike.get());
+            likeRepository.unlikeByAccountIdAndPostId(currentAccount.getId(), postId);
+            return true;
         }
-        likeRepository.unlikeByAccountIdAndPostId(currentAccount.getId(), postId);
-        return true;
+        return false;
+    }
+
+    private Notification updateLikeNotificationContent(Long postId, Long likeId) {
+
+        Notification notification = notificationRepository
+                .findByTypeAndPresentationId(LIKE_ON_POST, postId)
+                .orElseThrow(RecordNotFoundException::new);
+        Post post = postRepository.findByIdAndActive(postId, true)
+                .orElseThrow(RecordNotFoundException::new);
+        Long likeCount = likeRepository.getCountingLike(post.getId());
+
+        if (likeCount == 1) {
+            notificationRepository.deleteByTypeAndTraceId(LIKE_ON_POST, likeId);
+            return null;
+        } else {
+            String content = likeCount - 1 + " persons like your post";
+            notification.setContent(content);
+            notification.setTimestamp(LocalDateTime.now());
+            notification.setStatus(MessageStatus.SENT);
+            return notificationRepository.saveAndFlush(notification);
+        }
     }
 
     @Override

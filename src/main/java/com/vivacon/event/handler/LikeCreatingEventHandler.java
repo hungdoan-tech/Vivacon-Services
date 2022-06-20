@@ -63,7 +63,7 @@ public class LikeCreatingEventHandler {
 
                 Notification notification;
                 if (!existingNotification.isPresent()) {
-                    notification = createCommentEvent(likeCreatingEvent.getLike().getId(), likeAuthor, post);
+                    notification = createLikeNotification(likeCreatingEvent.getLike().getId(), likeAuthor, post);
                 } else {
                     notification = updateTheContent(existingNotification.get(), likeAuthor, post);
                 }
@@ -83,7 +83,7 @@ public class LikeCreatingEventHandler {
         return notification;
     }
 
-    private Notification createCommentEvent(long likeId, Account likeAuthor, Post post) {
+    private Notification createLikeNotification(long likeId, Account likeAuthor, Post post) {
         Long likeCount = likeRepository.getCountingLike(post.getId()) - 1;
         String displayOtherLikeCount = (likeCount > 0) ? " and " + likeCount + " others " : "";
         String content = likeAuthor.getFullName() + displayOtherLikeCount + " like your post";

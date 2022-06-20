@@ -43,7 +43,7 @@ public class NotificationController {
     }
 
     @ApiOperation(value = "Update the status of notification")
-    @PutMapping("/notification/{id}")
+    @PutMapping(value = "/notification/{id}")
     public ResponseEntity<Object> updateTheStatusOfSpecificNotification(@PathVariable(value = "id") long id, @Valid @RequestBody MessageStatus status) {
         if (status.equals(MessageStatus.SENT)) {
             return ResponseEntity.badRequest().body("Invalid request updating notification status");
