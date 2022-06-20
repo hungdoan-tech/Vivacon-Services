@@ -12,5 +12,5 @@ public interface NotificationService {
 
     boolean updateStatus(long id, MessageStatus status);
 
-    boolean updateAllToStatus(MessageStatus status);
+    boolean updateAllToStatus(MessageStatus fromStatus, MessageStatus toStatus);
 }

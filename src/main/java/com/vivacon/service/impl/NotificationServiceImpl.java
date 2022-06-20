@@ -59,8 +59,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
-    public boolean updateAllToStatus(MessageStatus status) {
+    public boolean updateAllToStatus(MessageStatus fromStatus, MessageStatus toStatus) {
         Long receiverId = accountService.getCurrentAccount().getId();
-        return notificationRepository.updateAllToStatus(status, receiverId) > 0;
+        return notificationRepository.updateAllFromStatusToStatus(receiverId, fromStatus, toStatus) > 0;
     }
 }

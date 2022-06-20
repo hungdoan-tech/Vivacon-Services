@@ -44,7 +44,8 @@ public class NotificationController {
 
     @ApiOperation(value = "Update the status of notification")
     @PutMapping(value = "/notification/{id}")
-    public ResponseEntity<Object> updateTheStatusOfSpecificNotification(@PathVariable(value = "id") long id, @Valid @RequestBody MessageStatus status) {
+    public ResponseEntity<Object> updateTheStatusOfSpecificNotification(@PathVariable(value = "id") long id,
+                                                                        @Valid @RequestBody MessageStatus status) {
         if (status.equals(MessageStatus.SENT)) {
             return ResponseEntity.badRequest().body("Invalid request updating notification status");
         }
@@ -52,10 +53,10 @@ public class NotificationController {
         return ResponseEntity.ok().body(null);
     }
 
-    @ApiOperation(value = "Update all to a specific status")
-    @PutMapping(value = "/notification/status")
-    public ResponseEntity<Object> updateAllToReceivedStatus(@Valid @RequestBody MessageStatus status) {
-        notificationService.updateAllToStatus(status);
+    @ApiOperation(value = "Update all notification from sent status to received status")
+    @PutMapping(value = "/notification/status/from/sent/to/received")
+    public ResponseEntity<Object> updateAllFromSentToReceived() {
+        notificationService.updateAllToStatus(MessageStatus.SENT, MessageStatus.RECEIVED);
         return ResponseEntity.ok().body(null);
     }
 }

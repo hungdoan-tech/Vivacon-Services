@@ -30,6 +30,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
                                @Param("trace_id") Long traceId);
 
     @Modifying
-    @Query("update Notification n set n.status = :status where n.receiver.id = :receiverId")
-    int updateAllToStatus(MessageStatus status, Long receiverId);
+    @Query("update Notification n set n.status = :toStatus where n.receiver.id = :receiverId and n.status = :fromStatus")
+    int updateAllFromStatusToStatus(Long receiverId, MessageStatus fromStatus, MessageStatus toStatus);
 }
