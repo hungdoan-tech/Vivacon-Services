@@ -79,6 +79,7 @@ public class LikeCreatingEventHandler {
         String content = likeAuthor.getFullName() + displayOtherLikeCount + " like your post";
         notification.setContent(content);
         notification.setTimestamp(LocalDateTime.now());
+        notification.setActionAuthor(likeAuthor);
         notification.setStatus(MessageStatus.SENT);
         return notification;
     }

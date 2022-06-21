@@ -1,7 +1,7 @@
 INSERT INTO "role" ("id", "name")
 VALUES (1, 'ADMIN'),
        (2, 'USER'),
-       (1, 'SUPER_ADMIN');
+       (3, 'SUPER_ADMIN');
 
 INSERT INTO "account" ("id", "full_name", "password", "refresh_token", "token_expired_date", "username", "role_id",
                        "created_at", "created_by_account_id", "last_modified_at", "last_modified_by_account_id", "bio",
