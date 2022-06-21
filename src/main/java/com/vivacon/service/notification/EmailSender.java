@@ -23,7 +23,7 @@ public class EmailSender implements NotificationProvider {
     @Override
     public void sendNotification(Account recipient, String title, String content) {
         String toAddress = recipient.getEmail();
-        String fromAddress = "vivacon.service@gmail.com";
+        String fromAddress = "vivacon.service@outlook.com";
         String senderName = "Vivacon Social Media Company";
 
         MimeMessage message = mailSender.createMimeMessage();

@@ -1,21 +1,27 @@
 package com.vivacon.dto.response;
 
-import java.math.BigInteger;
+import com.vivacon.dto.AttachmentDTO;
 
-public class UserAccountMostFollower {
+import java.math.BigInteger;
+import java.util.List;
+
+public class UserAccountMostFollowerResponse {
 
     private BigInteger id;
 
     private String userName;
 
+    private List<AttachmentDTO> attachments;
+
     private BigInteger accountQuantity;
 
-    public UserAccountMostFollower() {
+    public UserAccountMostFollowerResponse() {
     }
 
-    public UserAccountMostFollower(BigInteger id, String userName, BigInteger accountQuantity) {
+    public UserAccountMostFollowerResponse(BigInteger id, String userName, List<AttachmentDTO> attachments, BigInteger accountQuantity) {
         this.id = id;
         this.userName = userName;
+        this.attachments = attachments;
         this.accountQuantity = accountQuantity;
     }
 
@@ -33,6 +39,14 @@ public class UserAccountMostFollower {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public List<AttachmentDTO> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<AttachmentDTO> attachments) {
+        this.attachments = attachments;
     }
 
     public BigInteger getAccountQuantity() {

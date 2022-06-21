@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,7 +28,10 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     @Query("select p from Post p where p.id = :postId and p.active = :active")
     Optional<Post> findByIdAndActive(@Param("postId") Long postId, @Param("active") boolean active);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Post p SET p.active = false WHERE p.id = :id")
     int deactivateById(@Param("id") Long id);
+
+    @Query("select p from Post p where p.createdBy.id = :accountId and p.active = true")
+    List<Post> getAllByAccountId(@Param("accountId") Long accountId);
 }

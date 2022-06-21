@@ -1,7 +1,10 @@
 package com.vivacon.dto.response;
 
+import com.vivacon.dto.AttachmentDTO;
+
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostInteraction {
 
@@ -22,6 +25,21 @@ public class PostInteraction {
     private BigInteger totalLike;
 
     private BigInteger totalInteraction;
+
+    private List<AttachmentDTO> lstAttachmentDTO;
+
+    public PostInteraction(BigInteger postId, String caption, LocalDateTime createdAt, String userName, String fullName, String url, BigInteger totalComment, BigInteger totalLike, BigInteger totalInteraction, List<AttachmentDTO> lstAttachmentDTO) {
+        this.postId = postId;
+        this.caption = caption;
+        this.createdAt = createdAt;
+        this.userName = userName;
+        this.fullName = fullName;
+        this.url = url;
+        this.totalComment = totalComment;
+        this.totalLike = totalLike;
+        this.totalInteraction = totalInteraction;
+        this.lstAttachmentDTO = lstAttachmentDTO;
+    }
 
     public PostInteraction(BigInteger postId, String caption, LocalDateTime createdAt, String userName, String fullName, String url, BigInteger totalComment, BigInteger totalLike, BigInteger totalInteraction) {
         this.postId = postId;
@@ -105,5 +123,13 @@ public class PostInteraction {
 
     public void setTotalInteraction(BigInteger totalInteraction) {
         this.totalInteraction = totalInteraction;
+    }
+
+    public List<AttachmentDTO> getLstAttachmentDTO() {
+        return lstAttachmentDTO;
+    }
+
+    public void setLstAttachmentDTO(List<AttachmentDTO> lstAttachmentDTO) {
+        this.lstAttachmentDTO = lstAttachmentDTO;
     }
 }

@@ -36,4 +36,6 @@ public interface AccountService {
             Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
     
     Account verifyAccount(String code);
+
+    boolean deactivate(Long id);
 }

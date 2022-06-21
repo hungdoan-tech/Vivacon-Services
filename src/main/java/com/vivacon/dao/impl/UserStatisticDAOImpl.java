@@ -41,10 +41,9 @@ public class UserStatisticDAOImpl implements UserStatisticDAO {
             for (int currentIndex = 0; currentIndex < resultList.size(); currentIndex++) {
                 BigInteger accountId = (BigInteger) resultList.get(currentIndex)[0];
                 String userName = (String) resultList.get(currentIndex)[1];
-                String url = (String) resultList.get(currentIndex)[2];
-                BigInteger accountQuantity = (BigInteger) resultList.get(currentIndex)[3];
+                BigInteger accountQuantity = (BigInteger) resultList.get(currentIndex)[2];
 
-                userAccountMostFollowersList.add(new UserAccountMostFollower(accountId, userName, url, accountQuantity));
+                userAccountMostFollowersList.add(new UserAccountMostFollower(accountId, userName, accountQuantity));
             }
 
             return userAccountMostFollowersList;

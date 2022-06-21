@@ -10,7 +10,7 @@ public interface CommentService {
 
     CommentResponse createComment(CommentRequest postRequest);
 
-    boolean deleteComment(Long commentId);
+    boolean deactivateComment(Long commentId);
 
     PageDTO<CommentResponse> getAllFirstLevelComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId);
 

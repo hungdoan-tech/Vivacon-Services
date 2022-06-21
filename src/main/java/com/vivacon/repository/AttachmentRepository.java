@@ -16,6 +16,8 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
 
     List<Attachment> findByPostId(Long postId);
 
+    List<Attachment> findByProfileId(Long profileId);
+
     Page<Attachment> findByProfileId(Long profileId, Pageable pageable);
 
     Optional<Attachment> findFirstByProfileIdOrderByTimestampDesc(Long profileId);
