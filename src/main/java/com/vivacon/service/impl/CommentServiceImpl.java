@@ -63,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
-    public boolean deleteComment(Long commentId) {
+    public boolean deactivateComment(Long commentId) {
         Comment comment = commentRepository.findByIdAndActive(commentId, true).orElseThrow(RecordNotFoundException::new);
         if (comment.getParentComment() == null) {
             deleteChildComments(comment.getId());

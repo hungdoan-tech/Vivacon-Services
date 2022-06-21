@@ -20,6 +20,7 @@ import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.RoleRepository;
 import com.vivacon.security.UserDetailImpl;
 import com.vivacon.service.AccountService;
+import com.vivacon.service.PostService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,22 +41,22 @@ public class AccountServiceImpl implements AccountService {
 
     private AccountMapper accountMapper;
     private AccountRepository accountRepository;
-
     private RoleRepository roleRepository;
-
     private PasswordEncoder passwordEncoder;
-
     private ApplicationEventPublisher applicationEventPublisher;
+    private PostService postService;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               RoleRepository roleRepository,
                               PasswordEncoder passwordEncoder,
                               AccountMapper accountMapper,
+                              PostService postService,
                               ApplicationEventPublisher applicationEventPublisher) {
         this.accountRepository = accountRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.postService = postService;
         this.accountMapper = accountMapper;
     }
 
@@ -175,5 +177,12 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
         }
+    }
+
+    @Override
+    public boolean deactivate(Long accountId) {
+        List<Long> allIdPost = postService.getAllIdByAccountId(accountId);
+        this.postService.deactivatePost(allIdPost);
+        return accountRepository.deactivateById(accountId) > 0;
     }
 }
