@@ -77,6 +77,6 @@ public class CommentReportServiceImpl implements CommentReportService {
 
     @Override
     public CommentReport getDetailCommentReport(Long commentReportId) {
-        return this.commentReportRepository.findById(commentReportId).orElse(null);
+        return this.commentReportRepository.findById(commentReportId).orElseThrow(RecordNotFoundException::new);
     }
 }

@@ -66,7 +66,7 @@ public class PostReportServiceImpl implements PostReportService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean approvedPostReport(long id) {
         PostReport postReport = postReportRepository.findById(id).orElseThrow(RecordNotFoundException::new);
-        postService.deactivePost(postReport.getPost().getId());
+        postService.deactivatePost(postReport.getPost().getId());
         return this.postReportRepository.deactivateById(id) > 0;
     }
 
@@ -78,6 +78,6 @@ public class PostReportServiceImpl implements PostReportService {
 
     @Override
     public PostReport getDetailPostReport(Long postReportId) {
-        return this.postReportRepository.findById(postReportId).orElse(null);
+        return this.postReportRepository.findById(postReportId).orElseThrow(RecordNotFoundException::new);
     }
 }

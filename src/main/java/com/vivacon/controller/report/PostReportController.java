@@ -69,8 +69,7 @@ public class PostReportController {
 
     @ApiOperation(value = "Get detail post report")
     @GetMapping(value = "/{id}")
-    public PostReport getDetailPostReport(
-            @PathVariable(name = "id") Long postReportId) {
+    public PostReport getDetailPostReport(@PathVariable(name = "id") Long postReportId) {
         return postReportService.getDetailPostReport(postReportId);
     }
 }

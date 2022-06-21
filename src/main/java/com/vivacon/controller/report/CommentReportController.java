@@ -69,8 +69,7 @@ public class CommentReportController {
 
     @ApiOperation(value = "Get detail comment report")
     @GetMapping(value = "/{id}")
-    public CommentReport getDetailCommentReport(
-            @PathVariable(name = "id") Long commentReportId) {
+    public CommentReport getDetailCommentReport(@PathVariable(name = "id") Long commentReportId) {
         return commentReportService.getDetailCommentReport(commentReportId);
     }
 }

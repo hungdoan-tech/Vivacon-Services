@@ -37,4 +37,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("select count(a.id) from Account a where a.active = true")
     Long getAllAccountCounting();
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Account a SET a.active = false WHERE a.id = :id")
+    int deactivateById(@Param("id") Long id);
 }

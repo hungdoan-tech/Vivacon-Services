@@ -29,4 +29,6 @@ public interface AccountService {
     Account changePassword(ChangePasswordRequest changePasswordRequest);
 
     Account verifyAccount(String code);
+
+    boolean deactivate(Long id);
 }
