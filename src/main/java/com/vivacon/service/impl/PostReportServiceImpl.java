@@ -5,11 +5,13 @@ import com.vivacon.dto.request.PostReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Post;
 import com.vivacon.entity.PostReport;
+import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostReportMapper;
 import com.vivacon.repository.PostReportRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.PostReportService;
+import com.vivacon.service.PostService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -30,10 +32,16 @@ public class PostReportServiceImpl implements PostReportService {
 
     private PostRepository postRepository;
 
-    public PostReportServiceImpl(PostReportMapper postReportMapper, PostReportRepository postReportRepository, PostRepository postRepository) {
+    private PostService postService;
+
+    public PostReportServiceImpl(PostReportMapper postReportMapper,
+                                 PostReportRepository postReportRepository,
+                                 PostService postService,
+                                 PostRepository postRepository) {
         this.postReportMapper = postReportMapper;
         this.postReportRepository = postReportRepository;
         this.postRepository = postRepository;
+        this.postService = postService;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
@@ -57,14 +65,14 @@ public class PostReportServiceImpl implements PostReportService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean approvedPostReport(long id) {
-        this.postReportRepository.deactivateById(id);
-        return true;
+        PostReport postReport = postReportRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+        postService.deactivePost(postReport.getPost().getId());
+        return this.postReportRepository.deactivateById(id) > 0;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean rejectedPostReport(long id) {
-        this.postReportRepository.deleteById(id);
-        return true;
+        return this.postReportRepository.deactivateById(id) > 0;
     }
 }

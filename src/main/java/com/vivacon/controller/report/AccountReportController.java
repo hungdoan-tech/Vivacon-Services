@@ -1,4 +1,4 @@
-package com.vivacon.controller;
+package com.vivacon.controller.report;
 
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.AccountReportRequest;

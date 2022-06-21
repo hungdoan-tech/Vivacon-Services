@@ -98,9 +98,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
-    public boolean deleteById(long id) {
-        this.postRepository.deactivateById(id);
-        this.commentRepository.deactivateByPostId(id);
+    public boolean deactivePost(long id) {
+        postRepository.deactivateById(id);
+        commentRepository.deactivateByPostId(id);
         return true;
     }
 
