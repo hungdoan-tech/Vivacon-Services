@@ -15,9 +15,6 @@ import java.time.LocalDateTime;
 
 @Component
 public class CommentMapper {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommentMapper.class);
-
     private ModelMapper mapper;
 
     private AuditableHelper auditableHelper;

@@ -29,6 +29,14 @@ public abstract class AuditableEntity {
     protected AuditableEntity() {
     }
 
+    protected AuditableEntity(Account createdBy, LocalDateTime createdAt, Account lastModifiedBy, LocalDateTime lastModifiedAt, Boolean active) {
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.lastModifiedBy = lastModifiedBy;
+        this.lastModifiedAt = lastModifiedAt;
+        this.active = active;
+    }
+
     public Account getCreatedBy() {
         return createdBy;
     }

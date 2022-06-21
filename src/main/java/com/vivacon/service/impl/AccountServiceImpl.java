@@ -1,10 +1,13 @@
 package com.vivacon.service.impl;
 
 import com.vivacon.common.enum_type.RoleType;
+import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.ChangePasswordRequest;
 import com.vivacon.dto.request.ForgotPasswordRequest;
 import com.vivacon.dto.request.RegistrationRequest;
 import com.vivacon.dto.response.AccountResponse;
+import com.vivacon.dto.response.EssentialAccount;
+import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
@@ -12,6 +15,7 @@ import com.vivacon.exception.InvalidPasswordException;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.VerificationTokenException;
 import com.vivacon.mapper.AccountMapper;
+import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.RoleRepository;
 import com.vivacon.security.UserDetailImpl;
@@ -19,6 +23,8 @@ import com.vivacon.service.AccountService;
 import com.vivacon.service.PostService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -158,6 +164,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public PageDTO<EssentialAccount> findByName(String name, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Account.class);
+        Page<Account> pageAccount = accountRepository.findByApproximatelyName(name, pageable);
+        return PageMapper.toPageDTO(pageAccount, account -> accountMapper.toEssentialAccount(account));
+    }
+    
     public Account verifyAccount(String code) {
         Optional<Account> account = accountRepository.findByVerificationToken(code);
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
