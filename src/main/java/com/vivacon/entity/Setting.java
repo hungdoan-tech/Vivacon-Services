@@ -18,7 +18,7 @@ public class Setting {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "setting_id_generator")
     @SequenceGenerator(name = "setting_id_generator", sequenceName = "setting_id_seq", allocationSize = 1)
-    private String id;
+    private Long id;
 
     @ManyToOne(targetEntity = Account.class)
     @JoinColumn(name = "account_id")
@@ -38,11 +38,11 @@ public class Setting {
         this.value = value;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

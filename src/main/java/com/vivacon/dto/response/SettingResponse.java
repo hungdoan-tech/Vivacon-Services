@@ -5,7 +5,7 @@ import com.vivacon.entity.enum_type.SettingType;
 
 public class SettingResponse {
 
-    private String id;
+    private Long id;
 
     private Long accountId;
 
@@ -13,7 +13,7 @@ public class SettingResponse {
 
     private String value;
 
-    public SettingResponse(String id, Long accountId, SettingType type, String value) {
+    public SettingResponse(Long id, Long accountId, SettingType type, String value) {
         this.id = id;
         this.accountId = accountId;
         this.type = type;
@@ -27,11 +27,11 @@ public class SettingResponse {
         this.accountId = setting.getAccount().getId();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

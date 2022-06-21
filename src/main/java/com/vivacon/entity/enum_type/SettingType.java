@@ -7,7 +7,7 @@ public enum SettingType {
 
     EMAIL_ON_REPORTING_RESULT(Boolean.class, String.valueOf(true)),
 
-    EMAIL_ON_MISSED_ACTIVITIES(Boolean.class, String.valueOf(true)),
+    EMAIL_ON_MISSED_ACTIVITIES(Boolean.class, String.valueOf(false)),
 
     PUSH_NOTIFICATION_ON_COMMENT(Boolean.class, String.valueOf(true)),
 

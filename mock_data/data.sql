@@ -281,3 +281,4 @@ VALUES (1, 1, 'EMAIL_ON_REPORTING_RESULT', 'false'),
        (28, 6, 'PUSH_NOTIFICATION_ON_COMMENT', 'true'),
        (29, 6, 'PUSH_NOTIFICATION_ON_LIKE', 'true'),
        (30, 6, 'PUSH_NOTIFICATION_ON_FOLLOWING', 'true');
+SELECT setval('setting_id_seq', (SELECT MAX(id) FROM setting) + 1);
