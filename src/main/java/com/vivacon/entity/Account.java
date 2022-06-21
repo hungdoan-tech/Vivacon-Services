@@ -1,7 +1,11 @@
 package com.vivacon.entity;
 
+import com.vivacon.common.enum_type.Gender;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -54,6 +58,13 @@ public class Account extends AuditableEntity {
     @Column(name = "verification_expired_date")
     private Instant verificationExpiredDate;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
+    private Gender gender;
+
     public Account() {
 
     }
@@ -67,6 +78,40 @@ public class Account extends AuditableEntity {
         this.bio = bio;
         this.active = active;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Account(String username, String email, String password, String fullName, Role role, String bio, String phoneNumber, Gender gender, boolean active) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+        this.bio = bio;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.active = active;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Account(Long id, String username, String email, String password, String fullName, Role role, String bio, String refreshToken, Instant tokenExpiredDate, String verificationToken, Instant verificationExpiredDate, String phoneNumber, Gender gender, Account createdBy, LocalDateTime createdAt, Account lastModifiedBy, boolean active) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+        this.bio = bio;
+        this.refreshToken = refreshToken;
+        this.tokenExpiredDate = tokenExpiredDate;
+        this.verificationToken = verificationToken;
+        this.verificationExpiredDate = verificationExpiredDate;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.lastModifiedBy = lastModifiedBy;
+        this.lastModifiedAt = LocalDateTime.now();
+        this.active = active;
     }
 
     public Long getId() {
@@ -157,6 +202,22 @@ public class Account extends AuditableEntity {
         this.verificationExpiredDate = verificationExpiredDate;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
     public static class AccountBuilder {
 
         private String username;
@@ -170,6 +231,10 @@ public class Account extends AuditableEntity {
         private Role role;
 
         private String bio;
+
+        private String phoneNumber;
+
+        private Gender gender;
 
         private boolean active;
 
@@ -213,13 +278,23 @@ public class Account extends AuditableEntity {
             return this;
         }
 
+        public AccountBuilder phoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public AccountBuilder gender(Gender gender) {
+            this.gender = gender;
+            return this;
+        }
+
         public AccountBuilder active(boolean active) {
             this.active = active;
             return this;
         }
 
         public Account build() {
-            return new Account(username, email, password, fullName, role, bio, active);
+            return new Account(username, email, password, fullName, role, bio, phoneNumber, gender, active);
         }
     }
 }

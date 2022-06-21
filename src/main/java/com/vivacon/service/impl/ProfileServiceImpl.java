@@ -2,6 +2,7 @@ package com.vivacon.service.impl;
 
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
+import com.vivacon.dto.request.EditProfileInformationRequest;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
@@ -81,6 +82,7 @@ public class ProfileServiceImpl implements ProfileService {
         return this.getOutlinePost(requestAccount, order, sort, pageSize, pageIndex);
     }
 
+
     private DetailProfile getProfile(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Optional<Attachment> avatar = attachmentRepository.findFirstByProfileIdOrderByTimestampDesc(requestAccount.getId());
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
@@ -105,5 +107,14 @@ public class ProfileServiceImpl implements ProfileService {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, pageable);
         return PageMapper.toPageDTO(pagePost, post -> this.postMapper.toOutlinePost(post));
+    }
+
+    @Override
+    public Account editProfileInformation(EditProfileInformationRequest editProfileInformationRequest) {
+        Account accountByUserName = this.accountRepository.findByUsernameIgnoreCase(editProfileInformationRequest.getUserName().trim()).orElseThrow(RecordNotFoundException::new);
+        Account accountByEmail = this.accountRepository.findByEmail(editProfileInformationRequest.getEmail().trim()).orElseThrow(RecordNotFoundException::new);
+
+        Account updatedAccount = new Account(accountByEmail.getId(), accountByEmail.getUsername(), accountByEmail.getEmail(), accountByEmail.getPassword(), editProfileInformationRequest.getFullName(), accountByEmail.getRole(), editProfileInformationRequest.getBio(), accountByEmail.getRefreshToken(), accountByEmail.getTokenExpiredDate(), accountByEmail.getVerificationToken(), accountByEmail.getVerificationExpiredDate(), editProfileInformationRequest.getPhoneNumber(), editProfileInformationRequest.getGender(), accountByEmail.getCreatedBy(), accountByEmail.getCreatedAt(), accountByEmail.getLastModifiedBy(), accountByEmail.getActive());
+        return this.accountRepository.save(updatedAccount);
     }
 }
