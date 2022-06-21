@@ -75,4 +75,9 @@ public class PostReportServiceImpl implements PostReportService {
     public boolean rejectedPostReport(long id) {
         return this.postReportRepository.deactivateById(id) > 0;
     }
+
+    @Override
+    public PostReport getDetailPostReport(Long postReportId) {
+        return this.postReportRepository.findById(postReportId).orElse(null);
+    }
 }

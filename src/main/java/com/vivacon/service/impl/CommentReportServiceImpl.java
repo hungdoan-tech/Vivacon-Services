@@ -74,4 +74,9 @@ public class CommentReportServiceImpl implements CommentReportService {
     public boolean rejectedCommentReport(long id) {
         return commentReportRepository.deactivateById(id) > 0;
     }
+
+    @Override
+    public CommentReport getDetailCommentReport(Long commentReportId) {
+        return this.commentReportRepository.findById(commentReportId).orElse(null);
+    }
 }
