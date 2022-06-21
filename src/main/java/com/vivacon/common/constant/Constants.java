@@ -71,10 +71,15 @@ public class Constants {
     public static final String PREFIX_CONVERSATION_QUEUE_DESTINATION = "/conversation/";
     public static final String SUFFIX_CONVERSATION_QUEUE_DESTINATION = "/message";
     public static final String PREFIX_USER_QUEUE_DESTINATION = "/user/";
+    public static final String SUFFIX_NOTIFICATION_QUEUE_DESTINATION = "/notification";
+
+    public static final String USERNAME_PLACEHOLDER = "@@username@@";
+
+    public static final String NOTIFICATION_QUEUE_DESTINATION = PREFIX_USER_QUEUE_DESTINATION + USERNAME_PLACEHOLDER + SUFFIX_NOTIFICATION_QUEUE_DESTINATION;
     public static final String SUFFIX_USER_QUEUE_NEW_CONVERSATION_DESTINATION = "/conversation/new";
 
     public static final String SUFFIX_USER_QUEUE_ERROR_DESTINATION = "/error";
-    public static final String CONNECTED_CONVERSATION_NAME_TOKEN = ",";
+    public static final String CONNECTED_NAME_TOKEN = ", ";
 
     private Constants() {
 

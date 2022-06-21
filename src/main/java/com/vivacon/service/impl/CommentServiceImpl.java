@@ -6,12 +6,14 @@ import com.vivacon.dto.response.CommentResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
+import com.vivacon.event.CommentCreatingEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.CommentMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.CommentService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -28,24 +30,30 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
-
     private PostRepository postRepository;
-
     private CommentMapper commentMapper;
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, CommentMapper commentMapper) {
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              PostRepository postRepository,
+                              CommentMapper commentMapper,
+                              ApplicationEventPublisher applicationEventPublisher) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.commentMapper = commentMapper;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
     public CommentResponse createComment(CommentRequest commentRequest) {
-        Post post = postRepository.findByIdAndActive(commentRequest.getPostId(), true).orElseThrow(RecordNotFoundException::new);
+        Post post = postRepository.findByIdAndActive(commentRequest.getPostId(), true)
+                .orElseThrow(RecordNotFoundException::new);
         Comment parentComment = null;
         if (commentRequest.getParentCommentId() != null) {
-            parentComment = commentRepository.findById(commentRequest.getParentCommentId()).orElse(null);
-            if (parentComment != null && !parentComment.getPost().getId().equals(commentRequest.getPostId())) {
+
+            parentComment = commentRepository.findById(commentRequest.getParentCommentId())
+                    .orElseThrow(RecordNotFoundException::new);
+            if (!parentComment.getPost().getId().equals(commentRequest.getPostId())) {
                 throw new RecordNotFoundException("The parent comment is not match with current post of the request!");
             }
         }
@@ -56,28 +64,30 @@ public class CommentServiceImpl implements CommentService {
         comment.setPost(post);
         comment.setParentComment(parentComment);
 
-        Comment savedComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.saveAndFlush(comment);
 
+        applicationEventPublisher.publishEvent(new CommentCreatingEvent(this, savedComment));
         return commentMapper.toResponse(savedComment);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     @Override
     public boolean deactivateComment(Long commentId) {
-        Comment comment = commentRepository.findByIdAndActive(commentId, true).orElseThrow(RecordNotFoundException::new);
+        Comment comment = commentRepository.findByIdAndActive(commentId, true)
+        .orElseThrow(RecordNotFoundException::new);
         if (comment.getParentComment() == null) {
             deleteChildComments(comment.getId());
         }
-        this.commentRepository.deactivateById(comment.getId());
+        commentRepository.deactivateById(comment.getId());
         return true;
     }
 
     private boolean deleteChildComments(Long parentCommentId) {
-        int numberOfAffectedRows = this.commentRepository.deactivateChildCommentsByParentCommentId(parentCommentId);
+        int numberOfAffectedRows = commentRepository.deactivateChildComments(parentCommentId);
         if (numberOfAffectedRows == 0) {
             return true;
         }
-        Collection<Comment> listChildComments = this.commentRepository.findAllChildCommentsByParentCommentId(parentCommentId);
+        Collection<Comment> listChildComments = commentRepository.findAllChildCommentsByParentCommentId(parentCommentId, true);
         for (Comment comment : listChildComments) {
             deleteChildComments(comment.getId());
         }

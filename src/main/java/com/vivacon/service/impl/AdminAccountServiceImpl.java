@@ -11,7 +11,7 @@ import com.vivacon.mapper.AccountAdminMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.RoleRepository;
-import com.vivacon.service.AdminService;
+import com.vivacon.service.AdminAccountService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminAccountServiceImpl implements AdminAccountService {
 
     private AccountRepository accountRepository;
 
@@ -36,10 +36,10 @@ public class AdminServiceImpl implements AdminService {
 
     private AccountAdminMapper accountAdminMapper;
 
-    public AdminServiceImpl(AccountRepository accountRepository,
-                            RoleRepository roleRepository,
-                            PasswordEncoder passwordEncoder,
-                            AccountAdminMapper accountAdminMapper) {
+    public AdminAccountServiceImpl(AccountRepository accountRepository,
+                                   RoleRepository roleRepository,
+                                   PasswordEncoder passwordEncoder,
+                                   AccountAdminMapper accountAdminMapper) {
         this.accountRepository = accountRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;

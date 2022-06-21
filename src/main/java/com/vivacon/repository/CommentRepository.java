@@ -10,38 +10,67 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
-    @Query("SELECT comment FROM Comment comment WHERE comment.id = :id and comment.active = :isActive")
-    Optional<Comment> findByIdAndActive(@Param(value = "id") long id, @Param(value = "isActive") boolean isActive);
+    @Query("SELECT comment " +
+            "FROM Comment comment " +
+            "WHERE comment.id = :id and comment.active = :isActive")
+    Optional<Comment> findByIdAndActive(@Param(value = "id") long id,
+                                        @Param(value = "isActive") boolean isActive);
 
-    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId and comment.post.id= :postId AND comment.active = true")
-    Page<Comment> findActiveChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId, Pageable pageable);
+    @Query("SELECT comment " +
+            "FROM Comment comment " +
+            "WHERE comment.parentComment.id= :parentCommentId and comment.post.id= :postId AND comment.active = true")
+    Page<Comment> findActiveChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId,
+                                                           @Param(value = "postId") Long postId, Pageable pageable);
 
-    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id= :parentCommentId")
-    Collection<Comment> findAllChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId);
+    @Query("SELECT comment " +
+            "FROM Comment comment " +
+            "WHERE comment.parentComment.id= :parentCommentId and comment.active = :isActive")
+    List<Comment> findAllChildCommentsByParentCommentId(@Param(value = "parentCommentId") Long parentCommentId,
+                                                        @Param(value = "isActive") boolean isActive);
 
-    @Query("SELECT comment FROM Comment comment WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = true")
-    Page<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId, Pageable pageable);
+    @Query("SELECT comment " +
+            "FROM Comment comment " +
+            "WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = true")
+    Page<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId,
+                                            Pageable pageable);
 
-    @Query("SELECT COUNT(comment.id) FROM Comment comment WHERE comment.parentComment.id = :parentCommentId and comment.post.id= :postId AND comment.active = true")
-    Long getCountingChildComments(@Param(value = "parentCommentId") Long parentCommentId, @Param(value = "postId") Long postId);
+    @Query("SELECT comment " +
+            "FROM Comment comment " +
+            "WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = :isActive")
+    List<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId,
+                                            @Param(value = "isActive") boolean isActive);
 
-    @Query("SELECT COUNT(comment.id) FROM Comment comment WHERE comment.post.id= :postId AND comment.active = true")
+    @Query("SELECT COUNT(comment.id) " +
+            "FROM Comment comment " +
+            "WHERE comment.parentComment.id = :parentCommentId and comment.post.id= :postId AND comment.active = true")
+    Long getCountingChildComments(@Param(value = "parentCommentId") Long parentCommentId,
+                                  @Param(value = "postId") Long postId);
+
+    @Query("SELECT COUNT(comment.id) " +
+            "FROM Comment comment " +
+            "WHERE comment.post.id= :postId AND comment.active = true")
     Long getCountingCommentsByPost(@Param(value = "postId") Long postId);
 
     @Modifying
-    @Query("UPDATE Comment comment SET comment.active = false WHERE comment.id = :id")
+    @Query("UPDATE Comment comment " +
+            "SET comment.active = false " +
+            "WHERE comment.id = :id")
     int deactivateById(@Param("id") Long id);
 
     @Modifying
-    @Query("UPDATE Comment comment SET comment.active = false WHERE comment.parentComment.id = :parentCommentId")
-    int deactivateChildCommentsByParentCommentId(@Param("parentCommentId") Long parentCommentId);
+    @Query("UPDATE Comment comment " +
+            "SET comment.active = false " +
+            "WHERE comment.parentComment.id = :parentCommentId")
+    int deactivateChildComments(@Param("parentCommentId") Long parentCommentId);
 
     @Modifying
-    @Query("UPDATE Comment comment SET comment.active = false WHERE comment.post.id = :postId")
+    @Query("UPDATE Comment comment " +
+            "SET comment.active = false " +
+            "WHERE comment.post.id = :postId")
     int deactivateByPostId(@Param("postId") Long postId);
 }

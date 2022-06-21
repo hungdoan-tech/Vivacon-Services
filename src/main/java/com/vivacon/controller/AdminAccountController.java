@@ -4,7 +4,7 @@ import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.AdminRegistrationRequest;
 import com.vivacon.dto.response.AccountAdminResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.service.AdminService;
+import com.vivacon.service.AdminAccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +22,12 @@ import java.util.Optional;
 @Api(value = "Admin Controller")
 @RestController
 @RequestMapping(value = Constants.API_V1)
-public class AdminController {
+public class AdminAccountController {
 
-    private AdminService adminService;
+    private AdminAccountService adminAccountService;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    public AdminAccountController(AdminAccountService adminAccountService) {
+        this.adminAccountService = adminAccountService;
     }
 
     @ApiOperation(value = "Get list account admin based on criteria")
@@ -37,20 +37,20 @@ public class AdminController {
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return adminService.getAll(sort, order, pageSize, pageIndex);
+        return adminAccountService.getAll(sort, order, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Create account admin")
     @PostMapping("/admin")
     public ResponseEntity<Object> createAccount(@RequestBody AdminRegistrationRequest registrationRequest) {
-        adminService.registerNewAccount(registrationRequest);
+        adminAccountService.registerNewAccount(registrationRequest);
         return ResponseEntity.ok().body(null);
     }
 
     @ApiOperation(value = "Delete account admin")
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Object> deleteAccount(@PathVariable(name = "id") Long id) {
-        adminService.deleteAccount(id);
+        adminAccountService.deleteAccount(id);
         return ResponseEntity.ok().body(null);
     }
 }

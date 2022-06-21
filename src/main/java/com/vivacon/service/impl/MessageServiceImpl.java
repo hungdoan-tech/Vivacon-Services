@@ -1,20 +1,16 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.enum_type.MessageStatus;
 import com.vivacon.common.utility.PageableBuilder;
-import com.vivacon.dto.request.MessageRequest;
 import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.request.TypingMessage;
+import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
-import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
-import com.vivacon.entity.Comment;
-import com.vivacon.entity.Conversation;
 import com.vivacon.entity.Message;
-import com.vivacon.entity.MessageType;
-import com.vivacon.exception.RecordNotFoundException;
+import com.vivacon.entity.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.MessageType;
 import com.vivacon.exception.UnauthorizedWebSocketException;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.MessageMapper;
@@ -62,7 +58,7 @@ public class MessageServiceImpl implements MessageService {
         this.messageMapper = messageMapper;
         this.accountService = accountService;
         this.participantRepository = participantRepository;
-        this.accountMapper =  accountMapper;
+        this.accountMapper = accountMapper;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
@@ -97,7 +93,7 @@ public class MessageServiceImpl implements MessageService {
         return messageResponse;
     }
 
-    private boolean checkAuthorizedConversation(long conversationId){
+    private boolean checkAuthorizedConversation(long conversationId) {
         Account principal = accountService.getCurrentAccount();
         participantRepository.findByConversationIdAndAccountId(conversationId, principal.getId()).orElseThrow(UnauthorizedWebSocketException::new);
         return true;

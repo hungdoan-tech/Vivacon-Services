@@ -5,11 +5,14 @@ import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Following;
+import com.vivacon.event.FollowingEvent;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.FollowingRepository;
+import com.vivacon.repository.NotificationRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,8 @@ import javax.persistence.NonUniqueResultException;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import static com.vivacon.entity.enum_type.NotificationType.FOLLOWING_ON_ME;
+
 @Service
 public class FollowingServiceImpl implements FollowingService {
 
@@ -31,12 +36,20 @@ public class FollowingServiceImpl implements FollowingService {
 
     private AccountService accountService;
 
+    private NotificationRepository notificationRepository;
+
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public FollowingServiceImpl(FollowingRepository followingRepository,
                                 AccountMapper accountMapper,
-                                AccountService accountService) {
+                                AccountService accountService,
+                                NotificationRepository notificationRepository,
+                                ApplicationEventPublisher applicationEventPublisher) {
         this.followingRepository = followingRepository;
         this.accountMapper = accountMapper;
         this.accountService = accountService;
+        this.notificationRepository = notificationRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
 
@@ -47,7 +60,8 @@ public class FollowingServiceImpl implements FollowingService {
 
         Following following = new Following(fromAccount, toAccount);
         try {
-            this.followingRepository.save(following);
+            Following savedFollowing = followingRepository.save(following);
+            applicationEventPublisher.publishEvent(new FollowingEvent(this, savedFollowing));
         } catch (DataIntegrityViolationException e) {
             throw new NonUniqueResultException("The following table already have one record which contain this account follow that account");
         }
@@ -59,6 +73,12 @@ public class FollowingServiceImpl implements FollowingService {
     public boolean unfollow(Long toAccountId) {
         Account fromAccount = accountService.getCurrentAccount();
         Account toAccount = this.accountService.getAccountById(toAccountId);
+
+        Optional<Following> existingFollowing = followingRepository.findByIdComposition(fromAccount.getId(), toAccount.getId());
+        if (existingFollowing.isPresent()) {
+            notificationRepository.deleteByTypeAndTraceId(FOLLOWING_ON_ME, existingFollowing.get().getId());
+        }
+
         this.followingRepository.unfollowById(fromAccount.getId(), toAccount.getId());
         return true;
     }

@@ -15,7 +15,6 @@ import com.vivacon.mapper.ConversationMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.ConversationRepository;
-import com.vivacon.repository.MessageRepository;
 import com.vivacon.repository.ParticipantRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
@@ -35,7 +34,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static com.vivacon.common.constant.Constants.CONNECTED_CONVERSATION_NAME_TOKEN;
+import static com.vivacon.common.constant.Constants.CONNECTED_NAME_TOKEN;
 
 @Service
 public class ConversationServiceImpl implements ConversationService {
@@ -115,8 +114,8 @@ public class ConversationServiceImpl implements ConversationService {
      */
     private String getConversationName(Set<String> participants) {
         StringBuilder namingBuilder = new StringBuilder();
-        participants.forEach(username -> namingBuilder.append(username).append(CONNECTED_CONVERSATION_NAME_TOKEN));
-        namingBuilder.delete(namingBuilder.length() - CONNECTED_CONVERSATION_NAME_TOKEN.length(), namingBuilder.length());
+        participants.forEach(username -> namingBuilder.append(username).append(CONNECTED_NAME_TOKEN));
+        namingBuilder.delete(namingBuilder.length() - CONNECTED_NAME_TOKEN.length(), namingBuilder.length());
         return namingBuilder.toString();
     }
 

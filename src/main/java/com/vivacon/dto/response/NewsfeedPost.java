@@ -1,9 +1,9 @@
 package com.vivacon.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.AuditableResponse;
+import com.vivacon.entity.enum_type.Privacy;
 
 import java.util.List;
 

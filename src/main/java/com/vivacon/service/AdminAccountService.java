@@ -7,7 +7,7 @@ import com.vivacon.entity.Account;
 
 import java.util.Optional;
 
-public interface AdminService {
+public interface AdminAccountService {
 
     PageDTO<AccountAdminResponse> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
