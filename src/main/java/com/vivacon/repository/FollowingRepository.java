@@ -17,10 +17,13 @@ import java.util.Optional;
 public interface FollowingRepository extends JpaRepository<Following, Long> {
 
     @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM Following following WHERE following.fromAccount.id = :fromId AND following.toAccount.id = :toId")
+    @Query("DELETE FROM Following following " +
+            "WHERE following.fromAccount.id = :fromId AND following.toAccount.id = :toId")
     void unfollowById(@Param("fromId") long fromId, @Param("toId") long toId);
 
-    @Query("SELECT following FROM Following following WHERE following.fromAccount.id = :fromId AND following.toAccount.id = :toId")
+    @Query("SELECT following " +
+            "FROM Following following " +
+            "WHERE following.fromAccount.id = :fromId AND following.toAccount.id = :toId")
     Optional<Following> findByIdComposition(@Param("fromId") long fromId, @Param("toId") long toId);
 
     @Query("SELECT following.fromAccount " +

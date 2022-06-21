@@ -1,6 +1,7 @@
 package com.vivacon.entity;
 
-import com.vivacon.common.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.MessageStatus;
+import com.vivacon.entity.enum_type.MessageType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

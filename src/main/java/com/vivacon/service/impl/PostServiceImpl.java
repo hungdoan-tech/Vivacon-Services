@@ -1,6 +1,5 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.DetailPost;
@@ -13,6 +12,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.Post;
+import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.event.PostCreatingEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageMapper;

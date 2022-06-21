@@ -1,10 +1,10 @@
 package com.vivacon.service.impl;
 
-import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.dto.sorting_filtering.PostFilter;
 import com.vivacon.entity.Account;
+import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.repository.FollowingRepository;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.NewsfeedService;

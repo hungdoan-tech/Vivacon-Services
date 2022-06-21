@@ -30,7 +30,6 @@ import static com.vivacon.common.constant.Constants.AUTHORIZATION_HEADER;
 import static com.vivacon.common.constant.Constants.CAN_NOT_SET_AUTHENTICATION_VALUE;
 import static com.vivacon.common.constant.Constants.ERROR_MESSAGE_ATTRIBUTE_HTTP_REQUEST;
 import static com.vivacon.common.constant.Constants.URL_WHITELIST;
-import static com.vivacon.common.constant.Constants.WHITELIST_URL_REGEX;
 
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
@@ -58,7 +57,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         AccountStatusUserDetailsChecker statusUserDetailsChecker = new AccountStatusUserDetailsChecker();
         String requestURI = request.getRequestURI();
-        if(checkoutWSAccess(requestURI)){
+        if (checkoutWSAccess(requestURI) || checkStaticFileAccess(requestURI)) {
             filterChain.doFilter(request, response);
         } else {
             if (URL_WHITELIST.stream().noneMatch(requestURI::equals)) {
@@ -88,8 +87,14 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean checkoutWSAccess(String uri){
+    private boolean checkoutWSAccess(String uri) {
         Pattern pattern = Pattern.compile("(/ws).*");
+        Matcher matcher = pattern.matcher(uri);
+        return matcher.find();
+    }
+
+    private boolean checkStaticFileAccess(String uri) {
+        Pattern pattern = Pattern.compile("(\\/static\\/).*");
         Matcher matcher = pattern.matcher(uri);
         return matcher.find();
     }

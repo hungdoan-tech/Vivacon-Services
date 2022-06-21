@@ -1,12 +1,12 @@
 package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
-import com.vivacon.common.enum_type.Privacy;
 import com.vivacon.dto.request.PostRequest;
 import com.vivacon.dto.response.DetailPost;
 import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.dto.sorting_filtering.PostFilter;
+import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.service.PostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
