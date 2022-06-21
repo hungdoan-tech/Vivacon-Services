@@ -98,10 +98,28 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
-    public boolean deleteById(long id) {
-        this.postRepository.deactivateById(id);
-        this.commentRepository.deactivateByPostId(id);
+    public boolean deactivatePost(long id) {
+        postRepository.deactivateById(id);
+        commentRepository.deactivateByPostId(id);
         return true;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public boolean deactivatePost(List<Long> ids) {
+        for (Long id : ids) {
+            postRepository.deactivateById(id);
+            commentRepository.deactivateByPostId(id);
+        }
+        return true;
+    }
+
+    @Override
+    public List<Long> getAllIdByAccountId(Long accountId) {
+        return postRepository.getAllByAccountId(accountId)
+                .stream()
+                .map(post -> post.getId())
+                .collect(Collectors.toList());
     }
 
     private Specification<Post> createTheCombiningPostSpecification(PostFilter filter, Optional<String> keyword) {

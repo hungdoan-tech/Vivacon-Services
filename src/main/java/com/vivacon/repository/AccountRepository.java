@@ -14,9 +14,14 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
+    @Query("SELECT account FROM Account account WHERE account.id = :id and account.active = :isActive")
+    Optional<Account> findByIdAndActive(@Param(value = "id") long id, @Param(value = "isActive") boolean isActive);
+
     Optional<Account> findByUsernameIgnoreCase(String username);
 
     Optional<Account> findByRefreshToken(String token);
+
+    Page<Account> findAll(Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query("update Account a set a.refreshToken = null, a.tokenExpiredDate = null where a.username = :username")
@@ -37,4 +42,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     
     @Query("select count(a.id) from Account a where a.active = true")
     Long getAllAccountCounting();
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Account a SET a.active = false WHERE a.id = :id")
+    int deactivateById(@Param("id") Long id);
 }

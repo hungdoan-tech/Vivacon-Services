@@ -56,19 +56,19 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
             "WHERE comment.post.id= :postId AND comment.active = true")
     Long getCountingCommentsByPost(@Param(value = "postId") Long postId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Comment comment " +
             "SET comment.active = false " +
             "WHERE comment.id = :id")
     int deactivateById(@Param("id") Long id);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Comment comment " +
             "SET comment.active = false " +
             "WHERE comment.parentComment.id = :parentCommentId")
     int deactivateChildComments(@Param("parentCommentId") Long parentCommentId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Comment comment " +
             "SET comment.active = false " +
             "WHERE comment.post.id = :postId")

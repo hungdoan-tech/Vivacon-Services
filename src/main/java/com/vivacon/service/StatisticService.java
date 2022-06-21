@@ -20,5 +20,4 @@ public interface StatisticService {
     List<PostInteraction> getTheTopPostInteraction(Integer limit);
 
     List<PostNewest> getTopNewestPost(Integer limit);
-
 }
