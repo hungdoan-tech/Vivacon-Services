@@ -24,7 +24,7 @@ public class PostGenerator extends DataGenerator {
 
                 String createdAt = getRandomTimestamp();
                 String lastModifiedAt = getRandomTimestamp();
-                String caption = generateSentence(10);
+                String caption = generateSentence(10, true);
                 int privacy = RANDOM.nextInt(2);
 
                 value = value.replace("[[id]]", String.valueOf(counting++));

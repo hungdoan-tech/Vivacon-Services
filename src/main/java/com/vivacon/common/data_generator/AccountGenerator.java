@@ -24,7 +24,7 @@ public class AccountGenerator extends DataGenerator {
 
             String fullName = FIRST_NAME.get(RANDOM.nextInt(firstNameLength)) + " " + MockData.LAST_NAME.get(RANDOM.nextInt(lastNameLength));
             String username = fullName.replace(" ", "") + accountId;
-            String bio = generateSentence(10);
+            String bio = generateSentence(10, false);
             String email = username + "@gmail.com";
             String createdAt = getRandomTimestamp();
 

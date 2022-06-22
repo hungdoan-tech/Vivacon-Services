@@ -35,7 +35,7 @@ public class CommentGenerator extends DataGenerator {
         String value = "([[id]], '[[created_at]]', NULL, '[[content]]', NULL ,[[post_id]], [[created_by_account_id]], NULL, true),\n";
 
         String timestamp = getRandomTimestamp();
-        String content = generateSentence(7);
+        String content = generateSentence(7, false);
 
         value = value.replace("[[id]]", String.valueOf(commentId));
         value = value.replace("[[created_at]]", timestamp);
@@ -50,7 +50,7 @@ public class CommentGenerator extends DataGenerator {
         String value = "([[id]], '[[created_at]]', NULL, '[[content]]', [[parent_comment_id]], [[post_id]], [[created_by_account_id]], NULL, true),\n";
 
         String timestamp = getRandomTimestamp();
-        String content = generateSentence(7);
+        String content = generateSentence(7, false);
 
         value = value.replace("[[id]]", String.valueOf(commentId));
         value = value.replace("[[created_at]]", timestamp);
