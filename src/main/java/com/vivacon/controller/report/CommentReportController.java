@@ -1,4 +1,4 @@
-package com.vivacon.controller;
+package com.vivacon.controller.report;
 
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.CommentReportRequest;
@@ -69,8 +69,7 @@ public class CommentReportController {
 
     @ApiOperation(value = "Get detail comment report")
     @GetMapping(value = "/{id}")
-    public CommentReport getDetailCommentReport(
-            @PathVariable(name = "id") Long commentReportId) {
+    public CommentReport getDetailCommentReport(@PathVariable(name = "id") Long commentReportId) {
         return commentReportService.getDetailCommentReport(commentReportId);
     }
 }

@@ -5,6 +5,7 @@ import com.vivacon.dto.request.AccountReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.AccountReport;
+import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountReportMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountReportRepository;
@@ -57,14 +58,14 @@ public class AccountReportServiceImpl implements AccountReportService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean approvedAccountReport(long id) {
-        this.accountReportRepository.deactivateById(id);
-        return true;
+        AccountReport report = accountReportRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+        accountService.deactivate(report.getAccount().getId());
+        return accountReportRepository.deactivateById(id) > 0;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean rejectedAccountReport(long id) {
-        this.accountReportRepository.deleteById(id);
-        return true;
+        return this.accountReportRepository.deactivateById(id) > 0;
     }
 }

@@ -35,8 +35,8 @@ vivacon:
   verification_token:
     expiration: 18000 # 5 * 60 * 60 - 5 minutes
   email:
-    address: vivacon.service@gmail.com
-    password: Admin123*
+    address: vivacon.service@outlook.com
+    password: Tt*12345Tt*
 
 aws:
   access_key_id: AKIAV3KWG2VTG47Q667Q

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
@@ -22,5 +23,10 @@ public interface PostService {
     DetailPost getDetailPost(Long postId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
-    boolean deleteById(long id);
+    boolean deactivatePost(long id);
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    boolean deactivatePost(List<Long> ids);
+
+    List<Long> getAllIdByAccountId(Long accountId);
 }
