@@ -10,6 +10,8 @@ public class AccountAdminResponse {
 
     private String username;
 
+    private String fullName;
+
     private LocalDateTime createdAt;
 
     private String gender;
@@ -20,10 +22,11 @@ public class AccountAdminResponse {
 
     }
 
-    public AccountAdminResponse(Long id, String email, String username, LocalDateTime createdAt, String gender, String phoneNumber) {
+    public AccountAdminResponse(Long id, String email, String username, String fullName, LocalDateTime createdAt, String gender, String phoneNumber) {
         this.id = id;
         this.email = email;
         this.username = username;
+        this.fullName = fullName;
         this.createdAt = createdAt;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
@@ -51,6 +54,14 @@ public class AccountAdminResponse {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -21,7 +21,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findByRefreshToken(String token);
 
-    Page<Account> findAll(Pageable pageable);
+    @Query("SELECT account FROM Account account WHERE account.role.id = 1")
+    Page<Account> findAllByRole(Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query("update Account a set a.refreshToken = null, a.tokenExpiredDate = null where a.username = :username")
@@ -39,7 +40,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             "where " +
             "a.username like CONCAT('%',:keyword,'%') or a.fullName like CONCAT('%',:keyword,'%')")
     Page<Account> findByApproximatelyName(@Param("keyword") String keyword, Pageable pageable);
-    
+
     @Query("select count(a.id) from Account a where a.active = true")
     Long getAllAccountCounting();
 

@@ -49,7 +49,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public PageDTO<AccountAdminResponse> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, AccountAdminResponse.class);
-        Page<Account> accountAdminResponses = accountRepository.findAll(pageable);
+        Page<Account> accountAdminResponses = accountRepository.findAllByRole(pageable);
         return PageMapper.toPageDTO(accountAdminResponses, account -> accountAdminMapper.toUserAccountMostFollower(account));
     }
 
