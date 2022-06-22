@@ -88,13 +88,13 @@ public class ProfileController {
     }
 
     @ApiOperation(value = "Get recommend account")
-    @GetMapping("/profile/recommend")
+    @GetMapping("/account/recommend")
     public Set<RecommendAccountResponse> getRecommendationInNewsFeed() {
         return profileService.getRecommendationAccountToFollow();
     }
 
     @ApiOperation(value = "Get recommend account")
-    @GetMapping("/profile/recommend/{id}")
+    @GetMapping("/account/recommend/profile/{id}")
     public Set<AccountResponse> getRecommendationInNewsFeed(@PathVariable("id") long accountId) {
         return followingService.findFollowing(accountId, Optional.empty(), Optional.empty(),
                         Optional.of(10), Optional.of(0))
