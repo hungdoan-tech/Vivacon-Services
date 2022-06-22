@@ -109,6 +109,7 @@ public class AccountServiceImpl implements AccountService {
                     .password(passwordEncoder.encode(registrationRequest.getPassword()))
                     .role(roleRepository.findByName(RoleType.USER.toString()))
                     .active(false)
+                    .publicKey(registrationRequest.getPublicKey())
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);
             applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount));
@@ -169,7 +170,7 @@ public class AccountServiceImpl implements AccountService {
         Page<Account> pageAccount = accountRepository.findByApproximatelyName(name, pageable);
         return PageMapper.toPageDTO(pageAccount, account -> accountMapper.toEssentialAccount(account));
     }
-    
+
     public Account verifyAccount(String code) {
         Optional<Account> account = accountRepository.findByVerificationToken(code);
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {

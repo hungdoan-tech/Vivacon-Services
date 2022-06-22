@@ -35,6 +35,9 @@ public class RegistrationRequest {
     @NotEmpty
     private String matchingPassword;
 
+    @NotEmpty
+    private String publicKey;
+
     public String getEmail() {
         return email;
     }
@@ -73,5 +76,13 @@ public class RegistrationRequest {
 
     public void setMatchingPassword(String matchingPassword) {
         this.matchingPassword = matchingPassword;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 }
