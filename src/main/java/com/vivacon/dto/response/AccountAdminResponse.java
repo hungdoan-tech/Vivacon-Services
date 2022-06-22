@@ -1,8 +1,6 @@
 package com.vivacon.dto.response;
 
-import com.vivacon.dto.AttachmentDTO;
-
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class AccountAdminResponse {
 
@@ -12,17 +10,23 @@ public class AccountAdminResponse {
 
     private String username;
 
-    private List<AttachmentDTO> attachments;
+    private LocalDateTime createdAt;
+
+    private String gender;
+
+    private String phoneNumber;
 
     public AccountAdminResponse() {
 
     }
 
-    public AccountAdminResponse(Long id, String email, String username, List<AttachmentDTO> attachments) {
+    public AccountAdminResponse(Long id, String email, String username, LocalDateTime createdAt, String gender, String phoneNumber) {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.attachments = attachments;
+        this.createdAt = createdAt;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
     }
 
     public Long getId() {
@@ -49,11 +53,27 @@ public class AccountAdminResponse {
         this.username = username;
     }
 
-    public List<AttachmentDTO> getAttachments() {
-        return attachments;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setAttachments(List<AttachmentDTO> attachments) {
-        this.attachments = attachments;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
