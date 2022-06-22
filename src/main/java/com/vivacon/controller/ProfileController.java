@@ -3,10 +3,14 @@ package com.vivacon.controller;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.EditProfileInformationRequest;
+import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
+import com.vivacon.dto.response.RecommendAccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
+import com.vivacon.recommendation.FollowRecommendationService;
+import com.vivacon.service.FollowingService;
 import com.vivacon.service.ProfileService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = Constants.API_V1)
@@ -26,8 +32,15 @@ public class ProfileController {
 
     private ProfileService profileService;
 
-    public ProfileController(ProfileService profileService) {
+    private FollowRecommendationService followRecommendationService;
+    private FollowingService followingService;
+
+    public ProfileController(ProfileService profileService,
+                             FollowRecommendationService followRecommendationService,
+                             FollowingService followingService) {
         this.profileService = profileService;
+        this.followingService = followingService;
+        this.followRecommendationService = followRecommendationService;
     }
 
     @ApiOperation(value = "Get list following of an account")
@@ -72,5 +85,21 @@ public class ProfileController {
     @PostMapping("/profile/edit")
     public Account editProfileInformation(@Valid @RequestBody EditProfileInformationRequest editProfileInformationRequest) {
         return profileService.editProfileInformation(editProfileInformationRequest);
+    }
+
+    @ApiOperation(value = "Get recommend account")
+    @GetMapping("/profile/recommend")
+    public Set<RecommendAccountResponse> getRecommendationInNewsFeed() {
+        return profileService.getRecommendationAccountToFollow();
+    }
+
+    @ApiOperation(value = "Get recommend account")
+    @GetMapping("/profile/recommend/{id}")
+    public Set<AccountResponse> getRecommendationInNewsFeed(@PathVariable("id") long accountId) {
+        return followingService.findFollowing(accountId, Optional.empty(), Optional.empty(),
+                        Optional.of(10), Optional.of(0))
+                .getContent().stream()
+                .filter(accountResponse -> accountResponse.isFollowing() == false)
+                .collect(Collectors.toSet());
     }
 }

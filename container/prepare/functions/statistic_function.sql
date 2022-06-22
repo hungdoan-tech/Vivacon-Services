@@ -381,6 +381,26 @@ LANGUAGE plpgsql;
 
 --SELECT * FROM userQuantityStatisticInYears()
 
+DROP FUNCTION if exists getAllFollowerPerUser;
+
+CREATE
+OR REPLACE FUNCTION getAllFollowerPerUser()
+RETURNS TABLE
+(account bigint,
+followers text)
+as $$
+
+BEGIN
+
+RETURN QUERY
+select to_account as account, array_to_string(array_agg(from_account), ',') as follower
+from Following
+group by to_account;
+
+END;
+$$
+LANGUAGE plpgsql;
+
 
 
 
