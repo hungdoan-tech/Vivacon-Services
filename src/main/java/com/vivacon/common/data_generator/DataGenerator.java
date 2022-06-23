@@ -7,14 +7,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Set;
 
 public abstract class DataGenerator {
 
-    public static final int AMOUNT_OF_USER = 1000;
+    public static final int AMOUNT_OF_USER = 50;
 
     protected static final String BASE_DIRECTORY_PATH = "./mock_data/sql/";
 
@@ -26,25 +26,37 @@ public abstract class DataGenerator {
 
     protected static final long DIFF_OFFSET = END_OFFSET - START_OFFSET;
 
+    protected static final Set<HashTagRelPost> hashTagRelPost = new HashSet<>();
+
     public static void main(String[] args) {
 
-//        DataGenerator generator = new AccountGenerator();
-//        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "account");
-//
-//        generator = new FollowingGenerator();
-//        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "following");
-//
-//        generator = new PostGenerator();
-//        int amountOfPost = generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "post") - 2;
-//
-//        generator = new AttachmentGenerator();
-//        generator.exportMockDataToSQLFile(1, amountOfPost, "attachment");
-//
-//        generator = new CommentGenerator();
-//        generator.exportMockDataToSQLFile(1, amountOfPost, "comment");
-//
-//        generator = new LikingGenerator();
-//        generator.exportMockDataToSQLFile(1, amountOfPost, "liking");
+        DataGenerator generator = new AccountGenerator();
+        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "account");
+
+        generator = new FollowingGenerator();
+        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "following");
+
+        generator = new HashTagGenerator();
+        generator.exportMockDataToSQLFile(0, 0, "hashtag");
+
+        generator = new PostGenerator();
+        int amountOfPost = generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "post") - 2;
+
+        generator = new HashTagRelPostGenerator();
+        generator.exportMockDataToSQLFile(0, 0, "hashtag_rel_post");
+
+        generator = new AttachmentGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfPost, "attachment");
+
+        generator = new CommentGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfPost, "comment");
+
+        generator = new LikingGenerator();
+        generator.exportMockDataToSQLFile(1, amountOfPost, "liking");
+
+        generator = new SettingGenerator();
+        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "setting");
+
     }
 
     public abstract List<String> generateSQLStatements(int startIndex, int endIndex);
@@ -53,9 +65,7 @@ public abstract class DataGenerator {
 
         int numberOfWords = MockData.WORDS.size() - 1;
         StringBuilder sentence = new StringBuilder();
-        if (isHashTag) {
-            generateHashTag(sentence);
-        }
+
         for (int i = 0; i < wordCount; i++) {
             sentence.append(MockData.WORDS.get(RANDOM.nextInt(numberOfWords)));
             sentence.append(" ");
@@ -63,31 +73,6 @@ public abstract class DataGenerator {
         return sentence.toString();
     }
 
-    protected void generateHashTag(StringBuilder wordCount) {
-        List<String> gfg = new ArrayList<>(
-                List.of("#foody",
-                        "#movie",
-                        "#warrior",
-                        "#fire",
-                        "#water",
-                        "#tree",
-                        "#kid",
-                        "#color",
-                        "#parent",
-                        "#heart",
-                        "#friend",
-                        "#god",
-                        "#flower",
-                        "#people",
-                        "#life",
-                        "#love",
-                        "#king",
-                        "#queen"
-                ));
-        int postCount = ThreadLocalRandom.current().nextInt(1, 15);
-        wordCount.append(gfg.get(postCount));
-        wordCount.append(" ");
-    }
 
     protected String getRandomTimestamp() {
         Timestamp rand = new Timestamp(START_OFFSET + (long) (Math.random() * DIFF_OFFSET));

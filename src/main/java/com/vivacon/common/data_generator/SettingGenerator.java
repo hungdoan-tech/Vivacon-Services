@@ -1,5 +1,7 @@
 package com.vivacon.common.data_generator;
 
+import com.vivacon.entity.enum_type.SettingType;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,30 +12,25 @@ public class SettingGenerator extends DataGenerator {
     public List<String> generateSQLStatements(int startAccountIndex, int endAccountIndex) {
         List<String> values = new LinkedList<>();
 
-        String insertStatement = "INSERT INTO \"setting\" (\"id\", \"account_id\", \"type\", \"value\") \nVALUES ";
+        String insertStatement = "INSERT INTO \"setting\" (\"id\", \"type\", \"value\", \"account_id\") \nVALUES ";
         values.add(insertStatement);
+
+        SettingType[] settingTypes = SettingType.class.getEnumConstants();
 
         String value;
         long counting = 1L;
         for (int accountId = startAccountIndex; accountId <= endAccountIndex; accountId++) {
 
             int settingCount = ThreadLocalRandom.current().nextInt(5, 20);
-            for (int settingIndex = 0; settingIndex < settingCount; settingIndex++) {
+            for (int settingIndex = 0; settingIndex < settingTypes.length; settingIndex++) {
+                value = "([[id]], '[[type]]', '[[value]]', [[account_id]]),\n";
 
-                value = "([[id]], '[[account_id]]', '[[type]]', '[[value]]'),\n";
-
-                String createdAt = getRandomTimestamp();
-                String lastModifiedAt = getRandomTimestamp();
-                String caption = generateSentence(10, true);
-                int privacy = RANDOM.nextInt(2);
-
-                value = value.replace("[[id]]", String.valueOf(counting++));
-                value = value.replace("[[created_at]]", createdAt);
-                value = value.replace("[[last_modified_at]]", lastModifiedAt);
-                value = value.replace("[[caption]]", caption);
-                value = value.replace("[[privacy]]", String.valueOf(privacy));
-                value = value.replace("[[created_by_account_id]]", String.valueOf(accountId));
+                value = value.replace("[[id]]", String.valueOf(counting));
+                value = value.replace("[[type]]", settingTypes[settingIndex].toString());
+                value = value.replace("[[value]]", settingTypes[settingIndex].getDefaultValue());
+                value = value.replace("[[account_id]]", String.valueOf(accountId));
                 values.add(value);
+                counting++;
             }
         }
         return values;

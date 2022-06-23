@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -13,7 +14,8 @@ import javax.persistence.Table;
 public class HashTagRelPost {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hashtag_rel_post_id_generator")
+    @SequenceGenerator(name = "hashtag_rel_post_id_generator", sequenceName = "hashtag_rel_post_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(targetEntity = HashTag.class)
