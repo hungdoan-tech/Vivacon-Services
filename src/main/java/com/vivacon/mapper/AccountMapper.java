@@ -86,6 +86,7 @@ public class AccountMapper {
         String avatarUrl = attachment.isPresent() ? attachment.get().getUrl() : BLANK_AVATAR_URL;
         essentialAccount.setAvatar(avatarUrl);
         essentialAccount.setIsOnline(activeSessionManager.getAll().contains(account.getUsername()));
+        essentialAccount.setPublicKey(account.getPublicKey());
 
         return essentialAccount;
     }
