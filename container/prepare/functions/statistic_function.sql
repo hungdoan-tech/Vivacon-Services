@@ -145,7 +145,7 @@ LANGUAGE plpgsql;
 DROP FUNCTION if exists getTopPostInteraction;
 
 CREATE
-OR REPLACE FUNCTION getTopPostInteraction(limit_value int)
+OR REPLACE FUNCTION getTopPostInteraction(limit_value int, page_index int)
 RETURNS TABLE
 (postId bigint,
 caption character varying(255),
@@ -216,13 +216,14 @@ RETURN QUERY
 	ORDER BY
 		totalInteraction DESC
 	LIMIT limit_value
+	OFFSET page_index
 	;
 
 END;
 $$
 LANGUAGE plpgsql;
 
---SELECT * FROM getTopPostInteraction(20)
+--SELECT * FROM getTopPostInteraction(5, 3)
 
 
 -- Select newest posts
