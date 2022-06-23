@@ -65,6 +65,9 @@ public class Account extends AuditableEntity {
     @Column(name = "gender")
     private Gender gender;
 
+    @Column(name = "public_key")
+    private String publicKey;
+
     public Account() {
 
     }
@@ -90,6 +93,21 @@ public class Account extends AuditableEntity {
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.active = active;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Account(String username, String email, String password, String fullName, Role role, String bio, String phoneNumber, Gender gender, boolean active,
+                   String publicKey) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+        this.bio = bio;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.active = active;
+        this.publicKey = publicKey;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -218,6 +236,14 @@ public class Account extends AuditableEntity {
         this.gender = gender;
     }
 
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
     public static class AccountBuilder {
 
         private String username;
@@ -237,6 +263,8 @@ public class Account extends AuditableEntity {
         private Gender gender;
 
         private boolean active;
+
+        private String publicKey;
 
         public AccountBuilder username(String username) {
             this.username = username;
@@ -293,8 +321,13 @@ public class Account extends AuditableEntity {
             return this;
         }
 
+        public AccountBuilder publicKey(String publicKey) {
+            this.publicKey = publicKey;
+            return this;
+        }
+
         public Account build() {
-            return new Account(username, email, password, fullName, role, bio, phoneNumber, gender, active);
+            return new Account(username, email, password, fullName, role, bio, phoneNumber, gender, active, publicKey);
         }
     }
 }

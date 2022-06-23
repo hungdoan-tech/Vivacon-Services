@@ -19,6 +19,7 @@
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <modelmapper.version>2.3.5</modelmapper.version>
         <aws.version>1.11.163</aws.version>
+        <hadoop.version>3.1.0</hadoop.version>
         <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
         <node.version>v16.15.1</node.version>
         <npm.version>8.11.0</npm.version>
@@ -118,6 +119,39 @@
             <artifactId>frontend-maven-plugin</artifactId>
             <version>${frontend-maven-plugin.version}</version>
         </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.hadoop</groupId>-->
+        <!--            <artifactId>hadoop-common</artifactId>-->
+        <!--            <version>${hadoop.version}</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.hadoop</groupId>-->
+        <!--            <artifactId>hadoop-mapreduce-client-jobclient</artifactId>-->
+        <!--            <version>${hadoop.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.hadoop</groupId>-->
+        <!--            <artifactId>hadoop-hdfs</artifactId>-->
+        <!--            <version>${hadoop.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.hadoop</groupId>-->
+        <!--            <artifactId>hadoop-core</artifactId>-->
+        <!--            <version>1.2.1</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.hadoop</groupId>-->
+        <!--            <artifactId>hadoop-client</artifactId>-->
+        <!--            <version>${hadoop.version}</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+
     </dependencies>
 
     <build>

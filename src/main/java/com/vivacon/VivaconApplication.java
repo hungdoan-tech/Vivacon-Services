@@ -2,12 +2,14 @@ package com.vivacon;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @EnableTransactionManagement
+@EnableScheduling
 @SpringBootApplication
 public class VivaconApplication {
 

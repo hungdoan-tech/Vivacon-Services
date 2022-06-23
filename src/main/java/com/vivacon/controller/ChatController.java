@@ -1,13 +1,13 @@
 package com.vivacon.controller;
 
 import com.vivacon.dto.request.AddParticipantMessage;
-import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.request.ConversationCreatingRequest;
+import com.vivacon.dto.request.NewParticipantMessage;
 import com.vivacon.dto.request.TypingMessage;
+import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.MessageResponse;
 import com.vivacon.dto.response.OutlineConversation;
-import com.vivacon.dto.request.UsualTextMessage;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.ConversationService;
@@ -64,8 +64,8 @@ public class ChatController {
     public void processChatMessage(@Payload @Valid UsualTextMessage messageRequest) {
         MessageResponse messageResponse = messageService.save(messageRequest);
         String path = PREFIX_CONVERSATION_QUEUE_DESTINATION +
-                        messageRequest.getConversationId() +
-                        SUFFIX_CONVERSATION_QUEUE_DESTINATION;
+                messageRequest.getConversationId() +
+                SUFFIX_CONVERSATION_QUEUE_DESTINATION;
         messagingTemplate.convertAndSend(path, messageResponse);
     }
 

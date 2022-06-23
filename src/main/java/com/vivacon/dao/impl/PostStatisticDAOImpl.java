@@ -56,10 +56,10 @@ public class PostStatisticDAOImpl implements PostStatisticDAO {
     }
 
     @Override
-    public List<PostInteraction> getTheTopPostInteraction(int limit) {
+    public List<PostInteraction> getTheTopPostInteraction(int limit, int pageIndex) {
         StoredProcedureQuery procedureQuery;
         procedureQuery = entityManager.createStoredProcedureQuery("getTopPostInteraction");
-        return this.fetchingTheTopPostInteractionData(procedureQuery, limit);
+        return this.fetchingTheTopPostInteractionData(procedureQuery, limit, pageIndex);
     }
 
     @Override
@@ -93,11 +93,13 @@ public class PostStatisticDAOImpl implements PostStatisticDAO {
         }
     }
 
-    private List<PostInteraction> fetchingTheTopPostInteractionData(StoredProcedureQuery procedureQuery, int limit) {
+    private List<PostInteraction> fetchingTheTopPostInteractionData(StoredProcedureQuery procedureQuery, int limit, int pageIndex) {
         List<PostInteraction> postsTopInteractionList = new ArrayList<>();
 
         procedureQuery.registerStoredProcedureParameter("limit_value", Integer.class, ParameterMode.IN);
         procedureQuery.setParameter("limit_value", limit);
+        procedureQuery.registerStoredProcedureParameter("page_index", Integer.class, ParameterMode.IN);
+        procedureQuery.setParameter("page_index", pageIndex);
 
         if (procedureQuery.execute()) {
             List<Object[]> resultList = procedureQuery.getResultList();

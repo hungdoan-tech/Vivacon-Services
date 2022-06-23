@@ -1,6 +1,7 @@
 package com.vivacon.service;
 
 import com.vivacon.common.enum_type.TimePeriod;
+import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.PostInteraction;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
@@ -17,7 +18,9 @@ public interface StatisticService {
 
     List<PostsQuantityInCertainTime> getThePostQuantityStatisticInTimePeriods(TimePeriod timePeriodOption);
 
-    List<PostInteraction> getTheTopPostInteraction(Integer limit);
+    List<PostInteraction> getTheTopPostInteraction(Integer limit, Integer pageIndex);
+
+    List<OutlinePost> getTheTopTrendingPost(Integer limit, Integer pageIndex);
 
     List<PostNewest> getTopNewestPost(Integer limit);
 }

@@ -11,6 +11,8 @@ public class EssentialAccount {
     private String avatar;
     private boolean isOnline;
 
+    private String publicKey;
+
     public Long getId() {
         return id;
     }
@@ -51,4 +53,11 @@ public class EssentialAccount {
         isOnline = online;
     }
 
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
 }
