@@ -61,8 +61,9 @@ public class StatisticController {
 
     @ApiOperation(value = "Get top posts interaction statistic")
     @GetMapping("/post/top/interaction")
-    public List<PostInteraction> getTheTopPostInteraction(@RequestParam(value = "limit") Optional<Integer> limit) {
-        return this.statisticService.getTheTopPostInteraction(limit.orElse(5));
+    public List<PostInteraction> getTheTopPostInteraction(@RequestParam(value = "limit") Optional<Integer> limit,
+                                                          @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
+        return this.statisticService.getTheTopPostInteraction(limit.orElse(5), pageIndex.orElse(0));
     }
 
     @ApiOperation(value = "Get top posts newest statistic")

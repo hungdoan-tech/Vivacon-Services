@@ -3,11 +3,14 @@ package com.vivacon.service.impl;
 import com.vivacon.common.enum_type.TimePeriod;
 import com.vivacon.dao.PostStatisticDAO;
 import com.vivacon.dao.UserStatisticDAO;
+import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.PostInteraction;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.StatisticDataQuantity;
 import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.mapper.PageMapper;
+import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.StatisticService;
@@ -26,14 +29,18 @@ public class StatisticServiceImpl implements StatisticService {
 
     private PostStatisticDAO postStatisticDAO;
 
+    private PostMapper postMapper;
+
     public StatisticServiceImpl(PostRepository postRepository,
                                 AccountRepository accountRepository,
                                 UserStatisticDAO userStatisticDAO,
-                                PostStatisticDAO postStatisticDAO) {
+                                PostStatisticDAO postStatisticDAO,
+                                PostMapper postMapper) {
         this.postRepository = postRepository;
         this.accountRepository = accountRepository;
         this.userStatisticDAO = userStatisticDAO;
         this.postStatisticDAO = postStatisticDAO;
+        this.postMapper = postMapper;
     }
 
     @Override
@@ -52,8 +59,13 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<PostInteraction> getTheTopPostInteraction(Integer limit) {
-        return this.postStatisticDAO.getTheTopPostInteraction(limit);
+    public List<PostInteraction> getTheTopPostInteraction(Integer limit, Integer pageIndex) {
+        return this.postStatisticDAO.getTheTopPostInteraction(limit, pageIndex);
+    }
+
+    @Override
+    public List<OutlinePost> getTheTopTrendingPost(Integer limit, Integer pageIndex) {
+        return PageMapper.toDTOs(this.postStatisticDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toOutlinePost(post));
     }
 
     @Override

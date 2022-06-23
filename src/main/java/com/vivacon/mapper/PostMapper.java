@@ -7,6 +7,7 @@ import com.vivacon.dto.response.CommentResponse;
 import com.vivacon.dto.response.DetailPost;
 import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.response.OutlinePost;
+import com.vivacon.dto.response.PostInteraction;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
@@ -21,8 +22,6 @@ import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.LikeRepository;
 import com.vivacon.security.UserDetailImpl;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -80,7 +79,7 @@ public class PostMapper {
                 .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
                 .collect(Collectors.toList());
         newsfeedPost.setAttachments(attachmentDTOS);
-        
+
         Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
         newsfeedPost.setCommentCount(commentCount);
 
@@ -131,6 +130,20 @@ public class PostMapper {
         detailPost.setLikeCount(likeCount);
 
         return detailPost;
+    }
+
+    public OutlinePost toOutlinePost(PostInteraction post) {
+        List<AttachmentDTO> attachmentDTOS = attachmentRepository
+                .findByPostId(post.getPostId().longValue())
+                .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
+                .collect(Collectors.toList());
+        post.setLstAttachmentDTO(attachmentDTOS);
+
+        AttachmentDTO firstImage = post.getLstAttachmentDTO().get(0);
+        boolean isMultipleImages = post.getLstAttachmentDTO().size() > 1;
+        Long likeCount = post.getTotalLike().longValue();
+        Long commentCount = post.getTotalComment().longValue();
+        return new OutlinePost(post.getPostId().longValue(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
     }
 }
 
