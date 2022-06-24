@@ -8,6 +8,7 @@ import com.vivacon.dto.response.DetailPost;
 import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.PostInteraction;
+import com.vivacon.dto.response.PostInteractionDTO;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
@@ -144,6 +145,18 @@ public class PostMapper {
         Long likeCount = post.getTotalLike().longValue();
         Long commentCount = post.getTotalComment().longValue();
         return new OutlinePost(post.getPostId().longValue(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
+    }
+
+    public PostInteractionDTO toPostInteraction(PostInteraction post) {
+        PostInteractionDTO postInteractionDTO = mapper.map(post, PostInteractionDTO.class);
+
+        List<AttachmentDTO> attachmentDTOS = attachmentRepository
+                .findByPostId(post.getPostId().longValue())
+                .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
+                .collect(Collectors.toList());
+        postInteractionDTO.setLstAttachmentDTO(attachmentDTOS);
+
+        return postInteractionDTO;
     }
 }
 

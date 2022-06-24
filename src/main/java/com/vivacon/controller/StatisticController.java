@@ -2,7 +2,7 @@ package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
 import com.vivacon.common.enum_type.TimePeriod;
-import com.vivacon.dto.response.PostInteraction;
+import com.vivacon.dto.response.PostInteractionDTO;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.StatisticDataQuantity;
@@ -61,8 +61,8 @@ public class StatisticController {
 
     @ApiOperation(value = "Get top posts interaction statistic")
     @GetMapping("/post/top/interaction")
-    public List<PostInteraction> getTheTopPostInteraction(@RequestParam(value = "limit") Optional<Integer> limit,
-                                                          @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
+    public List<PostInteractionDTO> getTheTopPostInteraction(@RequestParam(value = "limit") Optional<Integer> limit,
+                                                             @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
         return this.statisticService.getTheTopPostInteraction(limit.orElse(5), pageIndex.orElse(0));
     }
 

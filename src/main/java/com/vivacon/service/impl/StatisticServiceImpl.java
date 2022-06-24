@@ -4,7 +4,7 @@ import com.vivacon.common.enum_type.TimePeriod;
 import com.vivacon.dao.PostStatisticDAO;
 import com.vivacon.dao.UserStatisticDAO;
 import com.vivacon.dto.response.OutlinePost;
-import com.vivacon.dto.response.PostInteraction;
+import com.vivacon.dto.response.PostInteractionDTO;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.StatisticDataQuantity;
@@ -59,8 +59,8 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<PostInteraction> getTheTopPostInteraction(Integer limit, Integer pageIndex) {
-        return this.postStatisticDAO.getTheTopPostInteraction(limit, pageIndex);
+    public List<PostInteractionDTO> getTheTopPostInteraction(Integer limit, Integer pageIndex) {
+        return PageMapper.toDTOs(this.postStatisticDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toPostInteraction(post));
     }
 
     @Override
