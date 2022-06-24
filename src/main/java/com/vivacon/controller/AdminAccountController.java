@@ -2,7 +2,7 @@ package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.AdminRegistrationRequest;
-import com.vivacon.dto.response.AccountAdminResponse;
+import com.vivacon.dto.response.OutlineAccount;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.service.AdminAccountService;
 import io.swagger.annotations.Api;
@@ -32,7 +32,7 @@ public class AdminAccountController {
 
     @ApiOperation(value = "Get list account admin based on criteria")
     @GetMapping(value = "/admin")
-    public PageDTO<AccountAdminResponse> getAll(
+    public PageDTO<OutlineAccount> getAll(
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,

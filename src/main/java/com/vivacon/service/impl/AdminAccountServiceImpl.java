@@ -4,13 +4,16 @@ import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.AdminRegistrationRequest;
 import com.vivacon.dto.response.AccountAdminResponse;
+import com.vivacon.dto.response.OutlineAccount;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
+import com.vivacon.entity.Role;
 import com.vivacon.exception.RecordNotFoundException;
-import com.vivacon.mapper.AccountAdminMapper;
+import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.RoleRepository;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.AdminAccountService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
@@ -34,23 +37,28 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     private PasswordEncoder passwordEncoder;
 
-    private AccountAdminMapper accountAdminMapper;
+    private AccountService accountService;
+
+    private AccountMapper accountMapper;
 
     public AdminAccountServiceImpl(AccountRepository accountRepository,
                                    RoleRepository roleRepository,
                                    PasswordEncoder passwordEncoder,
-                                   AccountAdminMapper accountAdminMapper) {
+                                   AccountMapper accountMapper,
+                                   AccountService accountService) {
         this.accountRepository = accountRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-        this.accountAdminMapper = accountAdminMapper;
+        this.accountService = accountService;
+        this.accountMapper = accountMapper;
     }
 
     @Override
-    public PageDTO<AccountAdminResponse> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public PageDTO<OutlineAccount> getAll(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, AccountAdminResponse.class);
-        Page<Account> accountAdminResponses = accountRepository.findAll(pageable);
-        return PageMapper.toPageDTO(accountAdminResponses, account -> accountAdminMapper.toUserAccountMostFollower(account));
+        Role role = roleRepository.findByName(RoleType.ADMIN.toString());
+        Page<Account> accountAdminResponses = accountRepository.findByRoleIdAndActive(role.getId(), true, pageable);
+        return PageMapper.toPageDTO(accountAdminResponses, account -> accountMapper.toOutlineAccount(account));
     }
 
     @Override
@@ -75,7 +83,6 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     @Override
     public boolean deleteAccount(Long id) {
         Account account = accountRepository.findByIdAndActive(id, true).orElseThrow(RecordNotFoundException::new);
-        this.accountRepository.deleteById(account.getId());
-        return true;
+        return accountService.deactivate(account.getId());
     }
 }

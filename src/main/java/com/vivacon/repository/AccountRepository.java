@@ -39,11 +39,14 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             "where " +
             "a.username like CONCAT('%',:keyword,'%') or a.fullName like CONCAT('%',:keyword,'%')")
     Page<Account> findByApproximatelyName(@Param("keyword") String keyword, Pageable pageable);
-    
+
     @Query("select count(a.id) from Account a where a.active = true")
     Long getAllAccountCounting();
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Account a SET a.active = false WHERE a.id = :id")
     int deactivateById(@Param("id") Long id);
+
+    @Query("SELECT a from Account a where a.role.id = :roleId and a.active = :active")
+    Page<Account> findByRoleIdAndActive(@Param("roleId") long roleId, @Param("active") boolean active, Pageable pageable);
 }

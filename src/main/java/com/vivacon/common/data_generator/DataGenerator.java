@@ -22,7 +22,7 @@ public abstract class DataGenerator {
 
     protected static final long START_OFFSET = Timestamp.valueOf("2020-01-01 00:00:00").getTime();
 
-    protected static final long END_OFFSET = Timestamp.valueOf("2022-02-01 00:00:00").getTime();
+    protected static final long END_OFFSET = Timestamp.valueOf("2022-05-01 00:00:00").getTime();
 
     protected static final long DIFF_OFFSET = END_OFFSET - START_OFFSET;
 
