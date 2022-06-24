@@ -18,6 +18,7 @@ public class AccountGenerator extends DataGenerator {
         String insertStatement = "INSERT INTO \"account\" (\"id\", \"full_name\", \"password\", \"refresh_token\", \"token_expired_date\", \"username\", \"role_id\", \"created_at\", \"created_by_account_id\", \"last_modified_at\", \"last_modified_by_account_id\", \"bio\", \"email\", \"verification_token\", verification_expired_date, \"active\") \nVALUES ";
         statements.add(insertStatement);
 
+        int totalAccount = startAccountIndex;
         String statement;
         for (int accountId = startAccountIndex; accountId <= endAccountIndex; accountId++) {
             statement = "([[id]], '[[full_name]]', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, '[[username]]', 2, '[[created_at]]', NULL, NULL, NULL, '[[bio]]', '[[email]]', NULL, NULL, true),\n";
@@ -35,7 +36,47 @@ public class AccountGenerator extends DataGenerator {
             statement = statement.replace("[[bio]]", bio);
             statement = statement.replace("[[email]]", email);
             statements.add(statement);
+            totalAccount++;
         }
+
+        statements = appendAdminAccounts(statements, totalAccount);
+        return statements;
+    }
+
+    private List<String> appendAdminAccounts(List<String> statements, int accountId) {
+
+        String[] usernames = {"thanhthuy", "hanpham", "xuanthuy"};
+        String[] fullnames = {"Thanh Thuy", "Han Pham", "Xuan Thuy"};
+
+        for (int i = 0; i < 3; i++) {
+            String statement = "([[id]], '[[full_name]]', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, '[[username]]', 1, '[[created_at]]', NULL, NULL, NULL, '[[bio]]', '[[email]]', NULL, NULL, true),\n";
+
+            String createdAt = getRandomTimestamp();
+
+            statement = statement.replace("[[id]]", String.valueOf(accountId));
+            statement = statement.replace("[[full_name]]", fullnames[i]);
+            statement = statement.replace("[[username]]", usernames[i].toLowerCase(Locale.ROOT));
+            statement = statement.replace("[[created_at]]", createdAt);
+            statement = statement.replace("[[bio]]", "");
+            statement = statement.replace("[[email]]", usernames[i].toLowerCase(Locale.ROOT) + "@gmail.com");
+            statements.add(statement);
+
+            accountId++;
+        }
+
+        // super admin section
+        String statement = "([[id]], '[[full_name]]', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, '[[username]]', 3, '[[created_at]]', NULL, NULL, NULL, '[[bio]]', '[[email]]', NULL, NULL, true),\n";
+        String createdAt = getRandomTimestamp();
+
+        statement = statement.replace("[[id]]", String.valueOf(accountId));
+        statement = statement.replace("[[full_name]]", "Super Amin");
+        statement = statement.replace("[[username]]", "admin");
+        statement = statement.replace("[[created_at]]", createdAt);
+        statement = statement.replace("[[bio]]", "");
+        statement = statement.replace("[[email]]", "admin@gmail.com");
+        statements.add(statement);
+        accountId++;
+        
         return statements;
     }
 }

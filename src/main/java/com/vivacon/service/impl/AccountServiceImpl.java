@@ -109,7 +109,7 @@ public class AccountServiceImpl implements AccountService {
                     .password(passwordEncoder.encode(registrationRequest.getPassword()))
                     .role(roleRepository.findByName(RoleType.USER.toString()))
                     .active(false)
-                    .publicKey(registrationRequest.getPublicKey())
+                    .publicKey("each-person-publickey")
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);
             applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount));

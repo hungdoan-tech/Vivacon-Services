@@ -14,7 +14,7 @@ import java.util.Set;
 
 public abstract class DataGenerator {
 
-    public static final int AMOUNT_OF_USER = 50;
+    public static final int AMOUNT_OF_USER = 100;
 
     protected static final String BASE_DIRECTORY_PATH = "./mock_data/sql/";
 
@@ -22,7 +22,7 @@ public abstract class DataGenerator {
 
     protected static final long START_OFFSET = Timestamp.valueOf("2020-01-01 00:00:00").getTime();
 
-    protected static final long END_OFFSET = Timestamp.valueOf("2022-05-01 00:00:00").getTime();
+    protected static final long END_OFFSET = Timestamp.valueOf("2022-06-01 00:00:00").getTime();
 
     protected static final long DIFF_OFFSET = END_OFFSET - START_OFFSET;
 
