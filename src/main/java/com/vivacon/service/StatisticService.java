@@ -18,6 +18,8 @@ public interface StatisticService {
 
     List<PostsQuantityInCertainTime> getThePostQuantityStatisticInTimePeriods(TimePeriod timePeriodOption);
 
+    List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption);
+
     List<PostInteractionDTO> getTheTopPostInteraction(Integer limit, Integer pageIndex);
 
     List<OutlinePost> getTheTopTrendingPost(Integer limit, Integer pageIndex);

@@ -56,6 +56,29 @@ public class PostStatisticDAOImpl implements PostStatisticDAO {
     }
 
     @Override
+    public List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption) {
+        StoredProcedureQuery procedureQuery;
+        switch (timePeriodOption) {
+            case MONTH: {
+                procedureQuery = entityManager.createStoredProcedureQuery("userQuantityStatisticInRecentMonths");
+                break;
+            }
+            case QUARTER: {
+                procedureQuery = entityManager.createStoredProcedureQuery("userQuantityStatisticInQuarters");
+                break;
+            }
+            case YEAR: {
+                procedureQuery = entityManager.createStoredProcedureQuery("userQuantityStatisticInYears");
+                break;
+            }
+            default: {
+                return new ArrayList<>();
+            }
+        }
+        return this.fetchingTheQuantityPostStatisticData(procedureQuery);
+    }
+
+    @Override
     public List<PostInteraction> getTheTopPostInteraction(int limit, int pageIndex) {
         StoredProcedureQuery procedureQuery;
         procedureQuery = entityManager.createStoredProcedureQuery("getTopPostInteraction");

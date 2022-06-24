@@ -11,6 +11,8 @@ public interface PostStatisticDAO {
 
     List<PostsQuantityInCertainTime> getThePostQuantityStatisticInTimePeriods(TimePeriod timePeriodOption);
 
+    List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption);
+
     List<PostInteraction> getTheTopPostInteraction(int limit, int pageIndex);
 
     List<PostNewest> getTopNewestPost(int limit);

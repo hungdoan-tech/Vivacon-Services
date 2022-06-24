@@ -71,4 +71,22 @@ public class StatisticController {
     public List<PostNewest> getPostByNewestCreatedAt(@RequestParam(value = "limit") Optional<Integer> limit) {
         return this.statisticService.getTopNewestPost(limit.orElse(5));
     }
+
+    @ApiOperation(value = "Get post quantity statistic in recent months")
+    @GetMapping("/user/in/months")
+    public List<PostsQuantityInCertainTime> getUserQuantityStatisticInMonths() {
+        return this.statisticService.getTheUserQuantityStatisticInTimePeriods(TimePeriod.MONTH);
+    }
+
+    @ApiOperation(value = "Get post quantity statistic in recent quarters")
+    @GetMapping("/user/in/quarters")
+    public List<PostsQuantityInCertainTime> getUserQuantityStatisticInQuarters() {
+        return this.statisticService.getTheUserQuantityStatisticInTimePeriods(TimePeriod.QUARTER);
+    }
+
+    @ApiOperation(value = "Get post quantity statistic in recent years")
+    @GetMapping("/user/in/years")
+    public List<PostsQuantityInCertainTime> getUserQuantityStatisticInYears() {
+        return this.statisticService.getTheUserQuantityStatisticInTimePeriods(TimePeriod.YEAR);
+    }
 }

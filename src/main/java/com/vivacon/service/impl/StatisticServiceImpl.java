@@ -59,6 +59,11 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
+    public List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption) {
+        return this.postStatisticDAO.getTheUserQuantityStatisticInTimePeriods(timePeriodOption);
+    }
+
+    @Override
     public List<PostInteractionDTO> getTheTopPostInteraction(Integer limit, Integer pageIndex) {
         return PageMapper.toDTOs(this.postStatisticDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toPostInteraction(post));
     }
