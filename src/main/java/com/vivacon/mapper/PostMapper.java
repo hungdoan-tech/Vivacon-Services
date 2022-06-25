@@ -99,7 +99,7 @@ public class PostMapper {
 
     public OutlinePost toOutlinePost(Post post) {
         Attachment firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
-        boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 0;
+        boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 1;
         Long likeCount = likeRepository.getCountingLike(post.getId());
         Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
         return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
