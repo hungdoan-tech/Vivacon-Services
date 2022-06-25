@@ -7,7 +7,7 @@ import com.vivacon.dto.response.PostsQuantityInCertainTime;
 
 import java.util.List;
 
-public interface PostStatisticDAO {
+public interface PostDAO {
 
     List<PostsQuantityInCertainTime> getThePostQuantityStatisticInTimePeriods(TimePeriod timePeriodOption);
 

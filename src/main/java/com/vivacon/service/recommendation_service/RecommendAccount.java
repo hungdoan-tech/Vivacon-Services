@@ -1,4 +1,4 @@
-package com.vivacon.recommendation;
+package com.vivacon.service.recommendation_service;
 
 import java.util.List;
 

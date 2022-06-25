@@ -4,12 +4,10 @@ import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.EditProfileInformationRequest;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
-import com.vivacon.dto.response.RecommendAccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 
 import java.util.Optional;
-import java.util.Set;
 
 public interface ProfileService {
 
@@ -22,6 +20,4 @@ public interface ProfileService {
     PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
     Account editProfileInformation(EditProfileInformationRequest editProfileInformationRequest);
-
-    Set<RecommendAccountResponse> getRecommendationAccountToFollow();
 }

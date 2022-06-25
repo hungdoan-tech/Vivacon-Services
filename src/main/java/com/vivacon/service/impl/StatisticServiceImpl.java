@@ -1,8 +1,8 @@
 package com.vivacon.service.impl;
 
 import com.vivacon.common.enum_type.TimePeriod;
-import com.vivacon.dao.PostStatisticDAO;
-import com.vivacon.dao.UserStatisticDAO;
+import com.vivacon.dao.PostDAO;
+import com.vivacon.dao.UserDAO;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.PostInteractionDTO;
 import com.vivacon.dto.response.PostNewest;
@@ -25,21 +25,21 @@ public class StatisticServiceImpl implements StatisticService {
 
     private AccountRepository accountRepository;
 
-    private UserStatisticDAO userStatisticDAO;
+    private UserDAO userDAO;
 
-    private PostStatisticDAO postStatisticDAO;
+    private PostDAO postDAO;
 
     private PostMapper postMapper;
 
     public StatisticServiceImpl(PostRepository postRepository,
                                 AccountRepository accountRepository,
-                                UserStatisticDAO userStatisticDAO,
-                                PostStatisticDAO postStatisticDAO,
+                                UserDAO userDAO,
+                                PostDAO postDAO,
                                 PostMapper postMapper) {
         this.postRepository = postRepository;
         this.accountRepository = accountRepository;
-        this.userStatisticDAO = userStatisticDAO;
-        this.postStatisticDAO = postStatisticDAO;
+        this.userDAO = userDAO;
+        this.postDAO = postDAO;
         this.postMapper = postMapper;
     }
 
@@ -50,31 +50,31 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public List<UserAccountMostFollower> getTheTopAccountMostFollowerStatistic(Integer limit) {
-        return this.userStatisticDAO.getTheTopAccountMostFollowerStatistic(limit);
+        return this.userDAO.getTheTopAccountMostFollowerStatistic(limit);
     }
 
     @Override
     public List<PostsQuantityInCertainTime> getThePostQuantityStatisticInTimePeriods(TimePeriod timePeriodOption) {
-        return this.postStatisticDAO.getThePostQuantityStatisticInTimePeriods(timePeriodOption);
+        return this.postDAO.getThePostQuantityStatisticInTimePeriods(timePeriodOption);
     }
 
     @Override
     public List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption) {
-        return this.userStatisticDAO.getTheUserQuantityStatisticInTimePeriods(timePeriodOption);
+        return this.userDAO.getTheUserQuantityStatisticInTimePeriods(timePeriodOption);
     }
 
     @Override
     public List<PostInteractionDTO> getTheTopPostInteraction(Integer limit, Integer pageIndex) {
-        return PageMapper.toDTOs(this.postStatisticDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toPostInteraction(post));
+        return PageMapper.toDTOs(this.postDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toPostInteraction(post));
     }
 
     @Override
     public List<OutlinePost> getTheTopTrendingPost(Integer limit, Integer pageIndex) {
-        return PageMapper.toDTOs(this.postStatisticDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toOutlinePost(post));
+        return PageMapper.toDTOs(this.postDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toOutlinePost(post));
     }
 
     @Override
     public List<PostNewest> getTopNewestPost(Integer limit) {
-        return this.postStatisticDAO.getTopNewestPost(limit);
+        return this.postDAO.getTopNewestPost(limit);
     }
 }

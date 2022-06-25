@@ -1,7 +1,7 @@
 package com.vivacon.dao.impl;
 
 import com.vivacon.common.enum_type.TimePeriod;
-import com.vivacon.dao.PostStatisticDAO;
+import com.vivacon.dao.PostDAO;
 import com.vivacon.dao.StatisticDAO;
 import com.vivacon.dto.response.PostInteraction;
 import com.vivacon.dto.response.PostNewest;
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class PostStatisticDAOImpl extends StatisticDAO implements PostStatisticDAO {
+public class PostDAOImpl extends StatisticDAO implements PostDAO {
 
     private EntityManager entityManager;
 
-    public PostStatisticDAOImpl(EntityManager entityManager) {
+    public PostDAOImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 

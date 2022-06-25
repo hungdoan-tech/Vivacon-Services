@@ -6,9 +6,11 @@ import com.vivacon.dto.response.UserAccountMostFollower;
 
 import java.util.List;
 
-public interface UserStatisticDAO {
+public interface UserDAO {
 
     List<UserAccountMostFollower> getTheTopAccountMostFollowerStatistic(int limit);
 
     List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption);
+
+    String getFollowersPerAccount();
 }

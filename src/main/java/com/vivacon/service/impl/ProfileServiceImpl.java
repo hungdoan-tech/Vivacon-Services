@@ -5,7 +5,6 @@ import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.EditProfileInformationRequest;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
-import com.vivacon.dto.response.RecommendAccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
@@ -14,7 +13,6 @@ import com.vivacon.entity.Post;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
-import com.vivacon.recommendation.FollowRecommendationService;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.FollowingRepository;
@@ -26,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static com.vivacon.common.constant.Constants.BLANK_AVATAR_URL;
 
@@ -45,21 +42,17 @@ public class ProfileServiceImpl implements ProfileService {
 
     private PostMapper postMapper;
 
-    private FollowRecommendationService followRecommendationService;
-
     public ProfileServiceImpl(AccountService accountService,
                               AttachmentRepository attachmentRepository,
                               PostRepository postRepository,
                               FollowingRepository followingRepository,
                               AccountRepository accountRepository,
-                              FollowRecommendationService followRecommendationService,
                               PostMapper postMapper) {
         this.accountService = accountService;
         this.attachmentRepository = attachmentRepository;
         this.postRepository = postRepository;
         this.followingRepository = followingRepository;
         this.accountRepository = accountRepository;
-        this.followRecommendationService = followRecommendationService;
         this.postMapper = postMapper;
     }
 
@@ -118,16 +111,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Account editProfileInformation(EditProfileInformationRequest editProfileInformationRequest) {
-        Account accountByUserName = this.accountRepository.findByUsernameIgnoreCase(editProfileInformationRequest.getUserName().trim()).orElseThrow(RecordNotFoundException::new);
         Account accountByEmail = this.accountRepository.findByEmail(editProfileInformationRequest.getEmail().trim()).orElseThrow(RecordNotFoundException::new);
-
         Account updatedAccount = new Account(accountByEmail.getId(), accountByEmail.getUsername(), accountByEmail.getEmail(), accountByEmail.getPassword(), editProfileInformationRequest.getFullName(), accountByEmail.getRole(), editProfileInformationRequest.getBio(), accountByEmail.getRefreshToken(), accountByEmail.getTokenExpiredDate(), accountByEmail.getVerificationToken(), accountByEmail.getVerificationExpiredDate(), editProfileInformationRequest.getPhoneNumber(), editProfileInformationRequest.getGender(), accountByEmail.getCreatedBy(), accountByEmail.getCreatedAt(), accountByEmail.getLastModifiedBy(), accountByEmail.getActive());
         return this.accountRepository.save(updatedAccount);
-    }
-
-    @Override
-    public Set<RecommendAccountResponse> getRecommendationAccountToFollow() {
-        Account currentAccount = this.accountService.getCurrentAccount();
-        return followRecommendationService.getRecommendAccountToFollowByAccountId(currentAccount.getId());
     }
 }

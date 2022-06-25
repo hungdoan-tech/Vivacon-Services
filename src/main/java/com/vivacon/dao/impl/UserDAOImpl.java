@@ -2,12 +2,13 @@ package com.vivacon.dao.impl;
 
 import com.vivacon.common.enum_type.TimePeriod;
 import com.vivacon.dao.StatisticDAO;
-import com.vivacon.dao.UserStatisticDAO;
+import com.vivacon.dao.UserDAO;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.UserAccountMostFollower;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import java.math.BigInteger;
@@ -15,11 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class UserStatisticDAOImpl extends StatisticDAO implements UserStatisticDAO {
+public class UserDAOImpl extends StatisticDAO implements UserDAO {
 
+    private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
 
-    public UserStatisticDAOImpl(EntityManager entityManager) {
+    public UserDAOImpl(EntityManagerFactory entityManagerFactory,
+                       EntityManager entityManager) {
+        this.entityManagerFactory = entityManagerFactory;
         this.entityManager = entityManager;
     }
 
@@ -74,5 +78,26 @@ public class UserStatisticDAOImpl extends StatisticDAO implements UserStatisticD
             }
         }
         return this.fetchingTheQuantityPostStatisticData(procedureQuery);
+    }
+
+    @Override
+    public String getFollowersPerAccount() {
+        // using the same variable name with the stronger scope to override
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+
+        StringBuilder valueBuilder = new StringBuilder();
+        StoredProcedureQuery procedureQuery;
+        procedureQuery = entityManager.createStoredProcedureQuery("getAllFollowerPerUser");
+        procedureQuery.execute();
+        List<Object[]> resultList = procedureQuery.getResultList();
+        for (int currentIndex = 0; currentIndex < resultList.size(); currentIndex++) {
+            Object[] result = resultList.get(currentIndex);
+            BigInteger account = (BigInteger) result[0];
+            String follower = (String) result[1];
+            valueBuilder.append(account + " " + follower + "\t");
+        }
+
+        entityManager.close();
+        return valueBuilder.toString();
     }
 }

@@ -9,9 +9,10 @@ import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.RecommendAccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
-import com.vivacon.recommendation.FollowRecommendationService;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
 import com.vivacon.service.ProfileService;
+import com.vivacon.service.recommendation_service.RecommendationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,16 +32,20 @@ import java.util.stream.Collectors;
 public class ProfileController {
 
     private ProfileService profileService;
-
-    private FollowRecommendationService followRecommendationService;
     private FollowingService followingService;
 
+    private RecommendationService recommendationService;
+
+    private AccountService accountService;
+
     public ProfileController(ProfileService profileService,
-                             FollowRecommendationService followRecommendationService,
+                             RecommendationService recommendationService,
+                             AccountService accountService,
                              FollowingService followingService) {
         this.profileService = profileService;
         this.followingService = followingService;
-        this.followRecommendationService = followRecommendationService;
+        this.recommendationService = recommendationService;
+        this.accountService = accountService;
     }
 
     @ApiOperation(value = "Get list following of an account")
@@ -90,7 +95,8 @@ public class ProfileController {
     @ApiOperation(value = "Get recommend account")
     @GetMapping("/account/recommend")
     public Set<RecommendAccountResponse> getRecommendationInNewsFeed() {
-        return profileService.getRecommendationAccountToFollow();
+        Long principalId = accountService.getCurrentAccount().getId();
+        return recommendationService.getRecommendAccountToFollowByAccountId(principalId);
     }
 
     @ApiOperation(value = "Get recommend account")

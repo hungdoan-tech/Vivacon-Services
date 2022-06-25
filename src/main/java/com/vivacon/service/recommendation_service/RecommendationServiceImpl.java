@@ -1,18 +1,14 @@
-package com.vivacon.recommendation;
+package com.vivacon.service.recommendation_service;
 
-import com.vivacon.dao.UserStatisticDAO;
+import com.vivacon.dao.UserDAO;
 import com.vivacon.dto.response.RecommendAccountResponse;
 import com.vivacon.entity.Account;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.repository.AccountRepository;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.StoredProcedureQuery;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,33 +21,31 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@Component
-public class FollowRecommendationService {
+@Service
+public class RecommendationServiceImpl implements RecommendationService {
 
-    private EntityManager entityManager;
-    private UserStatisticDAO userStatisticDAO;
+    private UserDAO userDAO;
     private AccountRepository accountRepository;
     private AccountMapper accountMapper;
     private List<AccountRelationship> accountRelationships = new LinkedList<>();
     private static Map<Long, List<RecommendAccount>> recommendAccountsPerAccount = new HashMap<>();
 
-    public FollowRecommendationService(EntityManager entityManager,
-                                       UserStatisticDAO userStatisticDAO,
-                                       AccountMapper accountMapper,
-                                       AccountRepository accountRepository) {
-        this.entityManager = entityManager;
-        this.userStatisticDAO = userStatisticDAO;
+    public RecommendationServiceImpl(UserDAO userDAO,
+                                     AccountMapper accountMapper,
+                                     AccountRepository accountRepository) {
+        this.userDAO = userDAO;
         this.accountRepository = accountRepository;
         this.accountMapper = accountMapper;
     }
 
+    @Override
     public Set<RecommendAccountResponse> getRecommendAccountToFollowByAccountId(long accountId) {
 
         if (recommendAccountsPerAccount == null || recommendAccountsPerAccount.isEmpty()) {
             performRecommendationProcessing();
         }
 
-        List<RecommendAccount> recommendAccounts = FollowRecommendationService.recommendAccountsPerAccount.get(accountId);
+        List<RecommendAccount> recommendAccounts = RecommendationServiceImpl.recommendAccountsPerAccount.get(accountId);
         Set<RecommendAccountResponse> recommendAccountResponses = recommendAccounts.stream()
                 .map(recommendAccount -> {
                     Account account = accountRepository.findById(recommendAccount.accountId).orElseThrow(RecordNotFoundException::new);
@@ -62,7 +56,7 @@ public class FollowRecommendationService {
 
         if (recommendAccounts.size() < 6) {
             int accountsAmountNeedToFill = 6 - recommendAccounts.size();
-            Set<RecommendAccountResponse> recommendMostFollowerAccounts = userStatisticDAO.getTheTopAccountMostFollowerStatistic(accountsAmountNeedToFill)
+            Set<RecommendAccountResponse> recommendMostFollowerAccounts = userDAO.getTheTopAccountMostFollowerStatistic(accountsAmountNeedToFill)
                     .stream().map(userAccountMostFollower -> {
                         Account account = accountRepository.findById(userAccountMostFollower.getId().longValue())
                                 .orElseThrow(RecordNotFoundException::new);
@@ -76,10 +70,9 @@ public class FollowRecommendationService {
         return recommendAccountResponses;
     }
 
-    @Async
-    @Scheduled(fixedDelay = 1000 * 60 * 5, initialDelay = 1000 * 60 * 1)
+    @Scheduled(fixedDelay = 1000 * 60 * 5, initialDelay = 1000 * 60 * 0)
     public void performRecommendationProcessing() {
-        String value = getFollowersPerAccount();
+        String value = userDAO.getFollowersPerAccount();
         String lines[] = value.split("\t");
         for (String line : lines) {
             map(line);
@@ -98,24 +91,9 @@ public class FollowRecommendationService {
 
         recommendAccountsPerAccount.clear();
         for (Map.Entry<Long, List<MutualFriendPerAccount>> entry : hashMap.entrySet()) {
-            List<RecommendAccount> recommendAccount = reduce(entry.getKey(), entry.getValue());
+            List<RecommendAccount> recommendAccount = reduce(entry.getValue());
             recommendAccountsPerAccount.put(entry.getKey(), recommendAccount);
         }
-    }
-
-    private String getFollowersPerAccount() {
-        StringBuilder valueBuilder = new StringBuilder();
-        StoredProcedureQuery procedureQuery;
-        procedureQuery = entityManager.createStoredProcedureQuery("getAllFollowerPerUser");
-        procedureQuery.execute();
-        List<Object[]> resultList = procedureQuery.getResultList();
-        for (int currentIndex = 0; currentIndex < resultList.size(); currentIndex++) {
-            Object[] result = resultList.get(currentIndex);
-            BigInteger account = (BigInteger) result[0];
-            String follower = (String) result[1];
-            valueBuilder.append(account + " " + follower + "\t");
-        }
-        return valueBuilder.toString();
     }
 
     private void map(String eachLine) {
@@ -140,7 +118,7 @@ public class FollowRecommendationService {
         }
     }
 
-    private List<RecommendAccount> reduce(Long account, List<MutualFriendPerAccount> values) {
+    private List<RecommendAccount> reduce(List<MutualFriendPerAccount> values) {
 
         final java.util.Map<Long, List<Long>> mutualFriends = new HashMap<>();
 
