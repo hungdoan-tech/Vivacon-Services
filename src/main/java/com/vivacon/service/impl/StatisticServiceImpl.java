@@ -60,7 +60,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption) {
-        return this.postStatisticDAO.getTheUserQuantityStatisticInTimePeriods(timePeriodOption);
+        return this.userStatisticDAO.getTheUserQuantityStatisticInTimePeriods(timePeriodOption);
     }
 
     @Override

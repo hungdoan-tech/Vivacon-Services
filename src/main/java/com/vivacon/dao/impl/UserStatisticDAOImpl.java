@@ -1,8 +1,10 @@
 package com.vivacon.dao.impl;
 
+import com.vivacon.common.enum_type.TimePeriod;
+import com.vivacon.dao.StatisticDAO;
 import com.vivacon.dao.UserStatisticDAO;
+import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.UserAccountMostFollower;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -13,11 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class UserStatisticDAOImpl implements UserStatisticDAO {
+public class UserStatisticDAOImpl extends StatisticDAO implements UserStatisticDAO {
 
     private EntityManager entityManager;
 
-    @Autowired
     public UserStatisticDAOImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
@@ -50,5 +51,28 @@ public class UserStatisticDAOImpl implements UserStatisticDAO {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public List<PostsQuantityInCertainTime> getTheUserQuantityStatisticInTimePeriods(TimePeriod timePeriodOption) {
+        StoredProcedureQuery procedureQuery;
+        switch (timePeriodOption) {
+            case MONTH: {
+                procedureQuery = entityManager.createStoredProcedureQuery("userQuantityStatisticInRecentMonths");
+                break;
+            }
+            case QUARTER: {
+                procedureQuery = entityManager.createStoredProcedureQuery("userQuantityStatisticInQuarters");
+                break;
+            }
+            case YEAR: {
+                procedureQuery = entityManager.createStoredProcedureQuery("userQuantityStatisticInYears");
+                break;
+            }
+            default: {
+                return new ArrayList<>();
+            }
+        }
+        return this.fetchingTheQuantityPostStatisticData(procedureQuery);
     }
 }
