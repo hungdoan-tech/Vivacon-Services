@@ -1,4 +1,6 @@
-package com.vivacon.entity;
+package com.vivacon.entity.report;
+
+import com.vivacon.entity.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;

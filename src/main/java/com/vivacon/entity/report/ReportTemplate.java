@@ -1,6 +1,7 @@
-package com.vivacon.entity;
+package com.vivacon.entity.report;
 
 import com.vivacon.common.enum_type.SentitiveType;
+import com.vivacon.entity.AuditableEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

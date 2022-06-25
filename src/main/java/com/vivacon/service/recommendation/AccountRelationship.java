@@ -1,4 +1,4 @@
-package com.vivacon.service.recommendation_service;
+package com.vivacon.service.recommendation;
 
 public class AccountRelationship {
 

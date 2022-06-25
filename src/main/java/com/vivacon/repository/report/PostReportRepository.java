@@ -1,6 +1,6 @@
-package com.vivacon.repository;
+package com.vivacon.repository.report;
 
-import com.vivacon.entity.AccountReport;
+import com.vivacon.entity.report.PostReport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,13 +10,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AccountReportRepository extends JpaRepository<AccountReport, Long> {
+public interface PostReportRepository extends JpaRepository<PostReport, Long> {
 
-    @Query("select a from AccountReport a where a.active = :active")
-    Page<AccountReport> findAllByActive(@Param("active") boolean active, Pageable pageable);
+    @Query("select p from PostReport p where p.active = :active")
+    Page<PostReport> findAllByActive(@Param("active") boolean active, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE AccountReport a SET a.active = false WHERE a.id = :id")
+    @Query("UPDATE PostReport p " +
+            "SET p.active = false " +
+            "WHERE p.id = :id")
     int deactivateById(@Param("id") Long id);
 
 }

@@ -1,6 +1,6 @@
-package com.vivacon.repository;
+package com.vivacon.repository.report;
 
-import com.vivacon.entity.CommentReport;
+import com.vivacon.entity.report.CommentReport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

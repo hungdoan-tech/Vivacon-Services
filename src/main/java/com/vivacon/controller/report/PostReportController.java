@@ -3,8 +3,8 @@ package com.vivacon.controller.report;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.request.PostReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.entity.PostReport;
-import com.vivacon.service.PostReportService;
+import com.vivacon.entity.report.PostReport;
+import com.vivacon.service.report.PostReportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -46,11 +46,12 @@ public class PostReportController {
     @ApiOperation(value = "Get list post report based on criteria")
     @GetMapping()
     public PageDTO<PostReport> getAll(
+            @RequestParam(value = "isActive", required = false) Optional<Boolean> isActive,
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return postReportService.getAll(order, sort, pageSize, pageIndex);
+        return postReportService.getAll(isActive, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Approved a post report")

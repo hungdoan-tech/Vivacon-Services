@@ -3,7 +3,7 @@ package com.vivacon.mapper;
 import com.vivacon.common.utility.AuditableHelper;
 import com.vivacon.dto.request.PostReportRequest;
 import com.vivacon.entity.AuditableEntity;
-import com.vivacon.entity.PostReport;
+import com.vivacon.entity.report.PostReport;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

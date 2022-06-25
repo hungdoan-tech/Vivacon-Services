@@ -1,8 +1,8 @@
-package com.vivacon.service;
+package com.vivacon.service.report;
 
 import com.vivacon.dto.request.CommentReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.entity.CommentReport;
+import com.vivacon.entity.report.CommentReport;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.transaction.annotation.Propagation;

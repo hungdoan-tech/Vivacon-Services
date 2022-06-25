@@ -1,17 +1,20 @@
-package com.vivacon.service.impl;
+package com.vivacon.service.report;
 
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.PostReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.entity.Account;
 import com.vivacon.entity.Post;
-import com.vivacon.entity.PostReport;
+import com.vivacon.entity.report.PostReport;
+import com.vivacon.event.PostReportApprovingEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostReportMapper;
-import com.vivacon.repository.PostReportRepository;
 import com.vivacon.repository.PostRepository;
-import com.vivacon.service.PostReportService;
+import com.vivacon.repository.report.PostReportRepository;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.PostService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -34,14 +38,22 @@ public class PostReportServiceImpl implements PostReportService {
 
     private PostService postService;
 
+    private AccountService accountService;
+
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public PostReportServiceImpl(PostReportMapper postReportMapper,
+                                 ApplicationEventPublisher applicationEventPublisher,
                                  PostReportRepository postReportRepository,
                                  PostService postService,
+                                 AccountService accountService,
                                  PostRepository postRepository) {
         this.postReportMapper = postReportMapper;
         this.postReportRepository = postReportRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.postRepository = postRepository;
         this.postService = postService;
+        this.accountService = accountService;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
@@ -56,18 +68,26 @@ public class PostReportServiceImpl implements PostReportService {
     }
 
     @Override
-    public PageDTO<PostReport> getAll(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public PageDTO<PostReport> getAll(Optional<Boolean> isActive, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, PostReport.class);
-        Page<PostReport> postReportPage = postReportRepository.findAllByActive(true, pageable);
+        boolean isActiveReport = isActive.isPresent() ? isActive.get() : true;
+        Page<PostReport> postReportPage = postReportRepository.findAllByActive(isActiveReport, pageable);
         return PageMapper.toPageDTO(postReportPage);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean approvedPostReport(long id) {
+        Account principal = accountService.getCurrentAccount();
+
         PostReport postReport = postReportRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+        postReport.setLastModifiedBy(principal);
+        postReport.setLastModifiedAt(LocalDateTime.now());
+        postReport.setActive(false);
         postService.deactivatePost(postReport.getPost().getId());
-        return this.postReportRepository.deactivateById(id) > 0;
+        postReportRepository.saveAndFlush(postReport);
+        applicationEventPublisher.publishEvent(new PostReportApprovingEvent(this, postReport));
+        return true;
     }
 
     @Override

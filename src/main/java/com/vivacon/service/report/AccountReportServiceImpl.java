@@ -1,15 +1,14 @@
-package com.vivacon.service.impl;
+package com.vivacon.service.report;
 
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.AccountReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
-import com.vivacon.entity.AccountReport;
+import com.vivacon.entity.report.AccountReport;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountReportMapper;
 import com.vivacon.mapper.PageMapper;
-import com.vivacon.repository.AccountReportRepository;
-import com.vivacon.service.AccountReportService;
+import com.vivacon.repository.report.AccountReportRepository;
 import com.vivacon.service.AccountService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;

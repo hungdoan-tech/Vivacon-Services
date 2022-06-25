@@ -1,16 +1,15 @@
-package com.vivacon.service.impl;
+package com.vivacon.service.report;
 
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.CommentReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Comment;
-import com.vivacon.entity.CommentReport;
+import com.vivacon.entity.report.CommentReport;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.CommentReportMapper;
 import com.vivacon.mapper.PageMapper;
-import com.vivacon.repository.CommentReportRepository;
 import com.vivacon.repository.CommentRepository;
-import com.vivacon.service.CommentReportService;
+import com.vivacon.repository.report.CommentReportRepository;
 import com.vivacon.service.CommentService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;

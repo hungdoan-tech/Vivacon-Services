@@ -3,13 +3,15 @@ package com.vivacon.event.notification_provider;
 import com.vivacon.dto.response.NotificationResponse;
 import com.vivacon.entity.Notification;
 import com.vivacon.mapper.NotificationMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import static com.vivacon.common.constant.Constants.NOTIFICATION_QUEUE_DESTINATION;
 import static com.vivacon.common.constant.Constants.USERNAME_PLACEHOLDER;
 
-@Component
+@Service
+@Qualifier("webSocketSender")
 public class WebsocketSender implements NotificationProvider {
     private SimpMessagingTemplate messagingTemplate;
 

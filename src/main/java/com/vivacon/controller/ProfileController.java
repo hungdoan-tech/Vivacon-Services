@@ -12,7 +12,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
 import com.vivacon.service.ProfileService;
-import com.vivacon.service.recommendation_service.RecommendationService;
+import com.vivacon.service.recommendation.RecommendationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

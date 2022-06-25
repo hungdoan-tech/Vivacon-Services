@@ -1,4 +1,4 @@
-package com.vivacon.service.recommendation_service;
+package com.vivacon.service.recommendation;
 
 import com.vivacon.dao.UserDAO;
 import com.vivacon.dto.response.RecommendAccountResponse;

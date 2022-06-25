@@ -11,8 +11,8 @@ public class ScheduledConfiguration implements SchedulingConfigurer {
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(2);
-        threadPoolTaskScheduler.setThreadNamePrefix("your-scheduler-");
+        threadPoolTaskScheduler.setPoolSize(4);
+        threadPoolTaskScheduler.setThreadNamePrefix("vivacon-scheduler-");
         threadPoolTaskScheduler.initialize();
         scheduledTaskRegistrar.setTaskScheduler(threadPoolTaskScheduler);
     }
