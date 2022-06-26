@@ -24,6 +24,8 @@
         <node.version>v16.15.1</node.version>
         <npm.version>8.11.0</npm.version>
         <yarn.version>v1.22.17</yarn.version>
+        <uap-java.version>1.4.0</uap-java.version>
+        <geoip2.version>2.15.0</geoip2.version>
     </properties>
     <dependencies>
 
@@ -112,6 +114,20 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ua-parser</groupId>
+            <artifactId>uap-java</artifactId>
+            <version>${uap-java.version}</version>
+        </dependency>
+
+        <!-- maxmind dependency -->
+
+        <dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>${geoip2.version}</version>
         </dependency>
 
         <dependency>

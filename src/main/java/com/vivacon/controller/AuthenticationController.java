@@ -15,6 +15,7 @@ import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.TokenRefreshException;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.RefreshTokenService;
+import com.vivacon.service.impl.DeviceServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -53,15 +56,19 @@ public class AuthenticationController {
 
     private AccountService accountService;
 
+    private DeviceServiceImpl deviceService;
+
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     JwtUtils jwtTokenUtil,
                                     RefreshTokenService refreshTokenService,
-                                    AccountService accountService) {
+                                    AccountService accountService,
+                                    DeviceServiceImpl deviceService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtils = jwtTokenUtil;
         this.refreshTokenService = refreshTokenService;
         this.accountService = accountService;
+        this.deviceService = deviceService;
     }
 
     private AuthenticationResponse generateAuthenticationResponse(String username, List<String> authorities) {
@@ -82,11 +89,14 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "Login to the system")
     @PostMapping("/login")
-    public AuthenticationResponse login(@Valid @RequestBody LoginRequest loginRequest) {
-
-        Authentication authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    public AuthenticationResponse login(final HttpServletRequest request,
+                                        final HttpServletResponse response,
+                                        @Valid @RequestBody LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+        Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         UserDetails userDetail = (UserDetails) authenticate.getPrincipal();
+        Account account = accountService.getAccountByUsernameIgnoreCase(userDetail.getUsername());
+        deviceService.verifyDevice(account, request);
         return generateAuthenticationResponse(userDetail.getUsername(),
                 userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
