@@ -54,14 +54,14 @@ public class PostReportHandler {
         Account postAuthor = postReport.getPost().getCreatedBy();
         List<Notification> notifications = new LinkedList<>();
 
-        String title = "Your post report has been approved";
-        String content = "Your report on the post of " + postAuthor.getFullName() + "has been review and approved " +
+        String title = "Vivacon - Your post report has been approved";
+        String content = "Your report on the post of " + postAuthor.getFullName() + " has been review and approved " +
                 "\n Thanks for your support.";
         Notification notificationForActionAuthor = createNotification(title, content, postReport,
                 NotificationType.POST_REPORT_APPROVING_ACTION_AUTHOR, reportAuthor, reportAuthor);
         notifications.add(notificationForActionAuthor);
 
-        title = "Your post has been banned";
+        title = "Vivacon - Your post has been banned";
         content = "We found that your post of has been violate your community terms on " + postReport.getSentitiveType() +
                 "\n So we delete it and its related resources.";
         Notification notificationForReportedPerson = createNotification(title, content, postReport,

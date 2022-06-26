@@ -112,7 +112,7 @@ public class AuthenticationController {
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, Constants.REFRESH_TOKEN_NOT_STORE));
     }
 
-    @ApiOperation(value = "Check new unique username")
+    @ApiOperation(value = "Check unique username/email")
     @GetMapping("/account/check")
     public AccountResponse checkUniqueUsername(@RequestParam(value = "username", required = false) Optional<String> username,
                                                @RequestParam(value = "email", required = false) Optional<String> email) {

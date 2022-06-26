@@ -9,6 +9,7 @@ import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.RecommendAccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
+import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
 import com.vivacon.service.ProfileService;
@@ -61,23 +62,23 @@ public class ProfileController {
 
     @ApiOperation(value = "Get list outlinePost of an account")
     @GetMapping("/profile/{username}/outline-post")
-    public PageDTO<OutlinePost> getAll(
-            @PathVariable(value = "username") String username,
-            @RequestParam(value = "_order", required = false) Optional<String> order,
-            @RequestParam(value = "_sort", required = false) Optional<String> sort,
-            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
-            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
+    public PageDTO<OutlinePost> getAll(@PathVariable(value = "username") String username,
+                                       @RequestParam(value = "_order", required = false) Optional<String> order,
+                                       @RequestParam(value = "_sort", required = false) Optional<String> sort,
+                                       @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
+                                       @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return profileService.getOutlinePostByUsername(username, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get the list of the profile avatar of an specific account")
     @GetMapping("/profile/{id}/avatar")
     public PageDTO<AttachmentDTO> getListProfileAvatars(@PathVariable(value = "id") Long accountId,
+                                                        @RequestParam(value = "privacy", required = false) Optional<Privacy> privacy,
                                                         @RequestParam(value = "_order", required = false) Optional<String> order,
                                                         @RequestParam(value = "_sort", required = false) Optional<String> sort,
                                                         @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
                                                         @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return profileService.getProfileAvatarsByAccountId(accountId, order, sort, pageSize, pageIndex);
+        return profileService.getProfileAvatarsByAccountId(accountId, privacy, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Change the profile avatar")
