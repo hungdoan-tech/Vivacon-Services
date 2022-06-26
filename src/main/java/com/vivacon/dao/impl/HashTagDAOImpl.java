@@ -48,7 +48,6 @@ public class HashTagDAOImpl extends StatisticDAO implements HashTagDAO {
                 String name = (String) resultList.get(currentIndex)[0];
                 BigDecimal quantity = (BigDecimal) resultList.get(currentIndex)[1];
 
-
                 hashTagQuantityInCertainTimes.add(new HashTagQuantityInCertainTime(name, quantity));
             }
 
