@@ -8,6 +8,7 @@ import com.vivacon.entity.report.PostReport;
 import com.vivacon.event.PostReportApprovingEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.repository.NotificationRepository;
+import com.vivacon.service.SettingService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.vivacon.entity.enum_type.SettingType.EMAIL_ON_REPORTING_RESULT;
 
 @Component
 public class PostReportHandler {
@@ -28,12 +31,16 @@ public class PostReportHandler {
 
     private NotificationRepository notificationRepository;
 
+    private SettingService settingService;
+
     public PostReportHandler(NotificationProvider emailSender,
                              NotificationProvider websocketSender,
+                             SettingService settingService,
                              NotificationRepository notificationRepository) {
         this.emailSender = emailSender;
         this.websocketSender = websocketSender;
         this.notificationRepository = notificationRepository;
+        this.settingService = settingService;
     }
 
     @Async
@@ -44,7 +51,14 @@ public class PostReportHandler {
 
         notificationRepository.saveAllAndFlush(approvingNotifications);
         approvingNotifications.stream().forEach(notification -> {
-            emailSender.sendNotification(notification);
+
+            if (notification.getType() == NotificationType.POST_REPORT_APPROVING_ACTION_AUTHOR) {
+                Boolean isEmailOnReportResult = Boolean.valueOf(settingService.evaluateSetting(
+                        postReport.getCreatedBy().getId(), EMAIL_ON_REPORTING_RESULT).toString());
+                if (isEmailOnReportResult) {
+                    emailSender.sendNotification(notification);
+                }
+            }
             websocketSender.sendNotification(notification);
         });
     }

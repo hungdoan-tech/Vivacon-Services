@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,17 +30,19 @@ public class NewsfeedController {
 
     @ApiOperation(value = "Get newsfeed of the current user")
     @GetMapping("/newsfeed")
-    public PageDTO<NewsfeedPost> getNewsfeed(
-            @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
-            @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
+    public PageDTO<NewsfeedPost> getNewsfeed(@RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
+                                             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
         return newsfeedService.getNewsfeed(pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get top trending post")
     @GetMapping("/trending")
-    public List<OutlinePost> getTopTrendingPost(
-            @RequestParam(value = "limit") Optional<Integer> limit,
-            @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
-        return statisticService.getTheTopTrendingPost(limit.orElse(5), pageIndex.orElse(0));
+    public PageDTO<OutlinePost> getTopTrendingPost(@RequestParam(value = "limit") Optional<Integer> limit,
+                                                   @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
+
+        PageDTO<OutlinePost> pageResponse = new PageDTO<>();
+        pageResponse.setContent(statisticService.getTheTopTrendingPost(limit.orElse(5), pageIndex.orElse(0)));
+        pageResponse.setLast(false);
+        return pageResponse;
     }
 }

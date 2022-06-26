@@ -66,8 +66,7 @@ public class ProfileServiceImpl implements ProfileService {
         this.accountMapper = accountMapper;
         this.postMapper = postMapper;
     }
-
-
+    
     @Override
     public AccountInfo getProfileInformation() {
         Account principal = accountService.getCurrentAccount();
