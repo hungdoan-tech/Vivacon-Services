@@ -4,6 +4,7 @@ import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.EditProfileInformationRequest;
+import com.vivacon.dto.response.AccountInfo;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
@@ -14,6 +15,7 @@ import com.vivacon.entity.Post;
 import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.RestrictAccessUserResourceException;
+import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
@@ -47,25 +49,37 @@ public class ProfileServiceImpl implements ProfileService {
 
     private PostMapper postMapper;
 
+    private AccountMapper accountMapper;
+
     public ProfileServiceImpl(AccountService accountService,
                               AttachmentRepository attachmentRepository,
                               PostRepository postRepository,
                               FollowingRepository followingRepository,
                               AccountRepository accountRepository,
+                              AccountMapper accountMapper,
                               PostMapper postMapper) {
         this.accountService = accountService;
         this.attachmentRepository = attachmentRepository;
         this.postRepository = postRepository;
         this.followingRepository = followingRepository;
         this.accountRepository = accountRepository;
+        this.accountMapper = accountMapper;
         this.postMapper = postMapper;
     }
 
+
     @Override
-    public Account editProfileInformation(EditProfileInformationRequest editProfileInformationRequest) {
+    public AccountInfo getProfileInformation() {
+        Account principal = accountService.getCurrentAccount();
+        return accountMapper.toAccountInfo(principal);
+    }
+
+    @Override
+    public AccountInfo editProfileInformation(EditProfileInformationRequest editProfileInformationRequest) {
         Account accountByEmail = this.accountRepository.findByEmail(editProfileInformationRequest.getEmail().trim()).orElseThrow(RecordNotFoundException::new);
-        Account updatedAccount = new Account(accountByEmail.getId(), accountByEmail.getUsername(), accountByEmail.getEmail(), accountByEmail.getPassword(), editProfileInformationRequest.getFullName(), accountByEmail.getRole(), editProfileInformationRequest.getBio(), accountByEmail.getRefreshToken(), accountByEmail.getTokenExpiredDate(), accountByEmail.getVerificationToken(), accountByEmail.getVerificationExpiredDate(), editProfileInformationRequest.getPhoneNumber(), editProfileInformationRequest.getGender(), accountByEmail.getCreatedBy(), accountByEmail.getCreatedAt(), accountByEmail.getLastModifiedBy(), accountByEmail.getActive());
-        return accountRepository.save(updatedAccount);
+        Account updatingAccount = new Account(accountByEmail.getId(), accountByEmail.getUsername(), accountByEmail.getEmail(), accountByEmail.getPassword(), editProfileInformationRequest.getFullName(), accountByEmail.getRole(), editProfileInformationRequest.getBio(), accountByEmail.getRefreshToken(), accountByEmail.getTokenExpiredDate(), accountByEmail.getVerificationToken(), accountByEmail.getVerificationExpiredDate(), editProfileInformationRequest.getPhoneNumber(), editProfileInformationRequest.getGender(), accountByEmail.getCreatedBy(), accountByEmail.getCreatedAt(), accountByEmail.getLastModifiedBy(), accountByEmail.getActive());
+        Account updatedAccount = accountRepository.save(updatingAccount);
+        return accountMapper.toAccountInfo(updatedAccount);
     }
 
     @Override

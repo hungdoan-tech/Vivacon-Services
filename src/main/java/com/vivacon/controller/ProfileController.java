@@ -3,12 +3,12 @@ package com.vivacon.controller;
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.EditProfileInformationRequest;
+import com.vivacon.dto.response.AccountInfo;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.DetailProfile;
 import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.response.RecommendAccountResponse;
 import com.vivacon.dto.sorting_filtering.PageDTO;
-import com.vivacon.entity.Account;
 import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.FollowingService;
@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 public class ProfileController {
 
     private ProfileService profileService;
+
     private FollowingService followingService;
 
     private RecommendationService recommendationService;
@@ -89,9 +90,15 @@ public class ProfileController {
         return profileService.changeProfileAvatar(avatar);
     }
 
+    @ApiOperation(value = "Get the profile information")
+    @PostMapping("/profile/info")
+    public AccountInfo getProfileInformation() {
+        return profileService.getProfileInformation();
+    }
+
     @ApiOperation(value = "Edit the profile information")
     @PostMapping("/profile/edit")
-    public Account editProfileInformation(@Valid @RequestBody EditProfileInformationRequest editProfileInformationRequest) {
+    public AccountInfo editProfileInformation(@Valid @RequestBody EditProfileInformationRequest editProfileInformationRequest) {
         return profileService.editProfileInformation(editProfileInformationRequest);
     }
 

@@ -1,5 +1,6 @@
 package com.vivacon.mapper;
 
+import com.vivacon.dto.response.AccountInfo;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.response.OutlineAccount;
@@ -113,5 +114,9 @@ public class AccountMapper {
         recommendAccountResponse.setMutualFriends(mutualFriendAccounts);
 
         return recommendAccountResponse;
+    }
+
+    public AccountInfo toAccountInfo(Account account) {
+        return mapper.map(account, AccountInfo.class);
     }
 }
