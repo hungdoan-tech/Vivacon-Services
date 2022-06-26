@@ -7,6 +7,7 @@ import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.service.NewsfeedService;
 import com.vivacon.service.StatisticService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,5 +44,10 @@ public class NewsfeedController {
             @RequestParam(value = "limit") Optional<Integer> limit,
             @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
         return statisticService.getTheTopTrendingPost(limit.orElse(5), pageIndex.orElse(0));
+    }
+
+    @GetMapping("/checkHealth")
+    public ResponseEntity<Object> checkHealth() {
+        return ResponseEntity.ok("OK");
     }
 }
