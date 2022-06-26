@@ -13,7 +13,9 @@ public enum SettingType {
 
     PUSH_NOTIFICATION_ON_LIKE(Boolean.class, String.valueOf(true)),
 
-    PUSH_NOTIFICATION_ON_FOLLOWING(Boolean.class, String.valueOf(true));
+    PUSH_NOTIFICATION_ON_FOLLOWING(Boolean.class, String.valueOf(true)),
+
+    PRIVACY_ON_ACTIVE_STATUS(Boolean.class, String.valueOf(true));
 
     Class valueType;
 

@@ -17,8 +17,8 @@ public interface ProfileService {
     AttachmentDTO changeProfileAvatar(AttachmentDTO avatarDto);
 
     PageDTO<AttachmentDTO> getProfileAvatarsByAccountId(Long accountId, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
-
-    PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
-
+    
     Account editProfileInformation(EditProfileInformationRequest editProfileInformationRequest);
+
+    PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 }

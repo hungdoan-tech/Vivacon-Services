@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +29,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     private AccountRepository accountRepository;
     private AccountMapper accountMapper;
     private List<AccountRelationship> accountRelationships = new LinkedList<>();
-    private static Map<Long, List<RecommendAccount>> recommendAccountsPerAccount = new HashMap<>();
+    private static Map<Long, List<RecommendAccount>> recommendAccountsPerAccount = new ConcurrentHashMap<>();
 
     public RecommendationServiceImpl(UserDAO userDAO,
                                      AccountMapper accountMapper,

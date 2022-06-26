@@ -59,6 +59,8 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
     public List<PostInteraction> getTheTopPostInteraction(int limit, int pageIndex) {
         StoredProcedureQuery procedureQuery;
         procedureQuery = entityManager.createStoredProcedureQuery("getTopPostInteraction");
+
+
         return this.fetchingTheTopPostInteractionData(procedureQuery, limit, pageIndex);
     }
 

@@ -41,9 +41,9 @@ public class NewsfeedServiceImpl implements NewsfeedService {
             return PageDTO.getEmptyPageInstance();
         }
         List<Long> listAccountId = followingAccounts.stream().map(Account::getId).collect(Collectors.toList());
-        PostFilter postFilter = new PostFilter(Optional.of(listAccountId), Optional.of(Arrays.asList(Privacy.PUBLIC,
-                Privacy.FOLLOWER)), false, true);
-        return postService.getAll(postFilter, Optional.empty(),
-                Optional.of("DESC"), Optional.of("lastModifiedAt"), pageSize, pageIndex);
+        PostFilter postFilter = new PostFilter(Optional.of(listAccountId),
+                Optional.of(Arrays.asList(Privacy.PUBLIC, Privacy.FOLLOWER)), false, true);
+        return postService.getAll(postFilter, Optional.empty(), Optional.of("DESC"),
+                Optional.of("lastModifiedAt"), pageSize, pageIndex);
     }
 }

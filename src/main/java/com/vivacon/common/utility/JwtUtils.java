@@ -48,6 +48,11 @@ public class JwtUtils {
         return claims.get("username", String.class);
     }
 
+    public Long getAccountId(String token) {
+        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        return claims.get("accountId", Long.class);
+    }
+
     /**
      * This method is used to generate a new JWT access token
      *
@@ -84,7 +89,8 @@ public class JwtUtils {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
-        } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+        } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException |
+                 IllegalArgumentException ex) {
             ex.printStackTrace();
             throw ex;
         }

@@ -38,9 +38,23 @@ public class ActiveSessionManagerImpl implements ActiveSessionManager {
      * @param sessionId String
      */
     @Override
-    public void removeSession(String sessionId) {
-        map.remove(sessionId);
-        notifyListeners();
+    public boolean removeSessionBySessionId(String sessionId) {
+        if (map.remove(sessionId) != null) {
+            notifyListeners();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeSessionByUsername(String username) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (username.equals(entry.getValue())) {
+                map.remove(entry.getKey());
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

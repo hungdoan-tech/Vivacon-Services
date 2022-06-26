@@ -1,7 +1,9 @@
 package com.vivacon.event.handler;
 
 import com.vivacon.common.utility.JwtUtils;
+import com.vivacon.entity.enum_type.SettingType;
 import com.vivacon.service.ActiveSessionManager;
+import com.vivacon.service.SettingService;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -17,14 +19,18 @@ import static com.vivacon.common.constant.Constants.STOMP_AUTHORIZATION_HEADER;
 
 @Component
 public class WebSocketSessionEventHandler implements ActiveSessionChangingListener {
+
+    private SettingService settingService;
     private SimpMessagingTemplate messagingTemplate;
     private ActiveSessionManager activeSessionManager;
     private JwtUtils jwtUtils;
 
     public WebSocketSessionEventHandler(SimpMessagingTemplate messagingTemplate,
+                                        SettingService settingService,
                                         ActiveSessionManager activeSessionManager,
                                         JwtUtils jwtUtils) {
         this.messagingTemplate = messagingTemplate;
+        this.settingService = settingService;
         this.activeSessionManager = activeSessionManager;
         this.jwtUtils = jwtUtils;
     }
@@ -58,8 +64,13 @@ public class WebSocketSessionEventHandler implements ActiveSessionChangingListen
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
         String token = accessor.getFirstNativeHeader(STOMP_AUTHORIZATION_HEADER);
         String username = jwtUtils.getUsername(token);
-        String sessionId = accessor.getSessionId();
-        activeSessionManager.addSession(sessionId, username);
+
+        Long loggedAccountId = jwtUtils.getAccountId(token);
+        Boolean isSetActiveStatus = (Boolean) settingService.evaluateSetting(loggedAccountId, SettingType.PRIVACY_ON_ACTIVE_STATUS);
+        if (isSetActiveStatus) {
+            String sessionId = accessor.getSessionId();
+            activeSessionManager.addSession(sessionId, username);
+        }
     }
 
     /**
@@ -72,7 +83,7 @@ public class WebSocketSessionEventHandler implements ActiveSessionChangingListen
     public void handleSessionDisconnect(SessionDisconnectEvent event) {
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        activeSessionManager.removeSession(sessionId);
+        activeSessionManager.removeSessionBySessionId(sessionId);
     }
 
     /**

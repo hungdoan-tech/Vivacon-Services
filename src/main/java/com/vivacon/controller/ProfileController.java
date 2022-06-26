@@ -63,11 +63,12 @@ public class ProfileController {
     @ApiOperation(value = "Get list outlinePost of an account")
     @GetMapping("/profile/{username}/outline-post")
     public PageDTO<OutlinePost> getAll(@PathVariable(value = "username") String username,
+                                       @RequestParam(value = "privacy", required = false) Optional<Privacy> privacy,
                                        @RequestParam(value = "_order", required = false) Optional<String> order,
                                        @RequestParam(value = "_sort", required = false) Optional<String> sort,
                                        @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
                                        @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return profileService.getOutlinePostByUsername(username, order, sort, pageSize, pageIndex);
+        return profileService.getOutlinePostByUsername(username, privacy, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get the list of the profile avatar of an specific account")
