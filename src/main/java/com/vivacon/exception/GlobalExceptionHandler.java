@@ -124,4 +124,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseDTO<Object> handleNotValidSortingFieldNameException(UnauthorizedWebSocketException ex) {
         return new ResponseDTO<>(HttpStatus.FORBIDDEN, ex.getMessage(), null);
     }
+
+    @ExceptionHandler(value = RestrictAccessUserResourceException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseDTO<Object> handleNotValidSortingFieldNameException(RestrictAccessUserResourceException ex) {
+        return new ResponseDTO<>(HttpStatus.FORBIDDEN, ex.getMessage(), null);
+    }
 }

@@ -167,7 +167,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public PageDTO<EssentialAccount> findByName(String name, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Account.class);
-        Page<Account> pageAccount = accountRepository.findByApproximatelyName(name, pageable);
+        Page<Account> pageAccount = accountRepository.findByApproximatelyName(name, RoleType.USER.toString(), pageable);
         return PageMapper.toPageDTO(pageAccount, account -> accountMapper.toEssentialAccount(account));
     }
 

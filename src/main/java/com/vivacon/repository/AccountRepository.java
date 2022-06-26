@@ -35,10 +35,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findByVerificationToken(String token);
 
-    @Query("Select a from Account a " +
-            "where " +
-            "a.username like CONCAT('%',:keyword,'%') or a.fullName like CONCAT('%',:keyword,'%')")
-    Page<Account> findByApproximatelyName(@Param("keyword") String keyword, Pageable pageable);
+    @Query("Select a " +
+            "from Account a " +
+            "where a.username like CONCAT('%',:keyword,'%') " +
+            "or a.fullName like CONCAT('%',:keyword,'%') and a.role.name = :roleName")
+    Page<Account> findByApproximatelyName(@Param("keyword") String keyword, @Param("roleName") String roleName, Pageable pageable);
 
     @Query("select count(a.id) from Account a where a.active = true")
     Long getAllAccountCounting();

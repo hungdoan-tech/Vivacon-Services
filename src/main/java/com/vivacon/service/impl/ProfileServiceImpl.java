@@ -1,5 +1,6 @@
 package com.vivacon.service.impl;
 
+import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.dto.request.EditProfileInformationRequest;
@@ -12,6 +13,7 @@ import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
 import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.exception.RecordNotFoundException;
+import com.vivacon.exception.RestrictAccessUserResourceException;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
@@ -76,6 +78,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public DetailProfile getProfileByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
+        if (!requestAccount.getRole().equals(RoleType.USER)) {
+            throw new RestrictAccessUserResourceException();
+        }
         return getProfile(requestAccount, order, sort, pageSize, pageIndex);
     }
 
@@ -89,6 +94,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
+        if (!requestAccount.getRole().equals(RoleType.USER)) {
+            throw new RestrictAccessUserResourceException();
+        }
         List<Privacy> privacyList = getSuitablePrivacyList(requestAccount);
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, privacyList, pageable);
