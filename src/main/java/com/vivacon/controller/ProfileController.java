@@ -53,11 +53,12 @@ public class ProfileController {
     @GetMapping("/profile/{username}")
     public DetailProfile getTheDetailProfile(
             @PathVariable(value = "username") String username,
+            @RequestParam(value = "_order", required = false) Optional<Privacy> privacy,
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return profileService.getProfileByUsername(username, order, sort, pageSize, pageIndex);
+        return profileService.getProfileByUsername(username, privacy, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Get list outlinePost of an account")

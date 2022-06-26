@@ -76,12 +76,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public DetailProfile getProfileByUsername(String username, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public DetailProfile getProfileByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
         if (!requestAccount.getRole().equals(RoleType.USER)) {
             throw new RestrictAccessUserResourceException();
         }
-        return getProfile(requestAccount, order, sort, pageSize, pageIndex);
+        return getProfile(requestAccount, privacy, order, sort, pageSize, pageIndex);
     }
 
     @Override
@@ -97,14 +97,15 @@ public class ProfileServiceImpl implements ProfileService {
         if (!requestAccount.getRole().equals(RoleType.USER)) {
             throw new RestrictAccessUserResourceException();
         }
-        List<Privacy> privacyList = getSuitablePrivacyList(requestAccount);
+        List<Privacy> privacyList = getSuitablePrivacyList(requestAccount, privacy);
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, privacyList, pageable);
         return PageMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
     }
 
 
-    private DetailProfile getProfile(Account requestAccount, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    private DetailProfile getProfile(Account requestAccount, Optional<Privacy> privacy, Optional<String> order,
+                                     Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account profile = accountRepository.findById(requestAccount.getId()).orElseThrow(RecordNotFoundException::new);
 
         Long postCounting = postRepository.getPostCountingByAccountId(profile.getId());
@@ -119,14 +120,14 @@ public class ProfileServiceImpl implements ProfileService {
         String avatarUrl = avatar.isPresent() ? avatar.get().getUrl() : BLANK_AVATAR_URL;
 
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        List<Privacy> privacyList = getSuitablePrivacyList(requestAccount);
+        List<Privacy> privacyList = getSuitablePrivacyList(requestAccount, privacy);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, privacyList, pageable);
         PageDTO<OutlinePost> listOutlinePost = PageMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
 
         return new DetailProfile(profile, avatarUrl, postCounting, followerCounting, followingCounting, following.isPresent(), listOutlinePost);
     }
 
-    private List<Privacy> getSuitablePrivacyList(Account requestAccount) {
+    private List<Privacy> getSuitablePrivacyList(Account requestAccount, Optional<Privacy> privacy) {
 
         List<Privacy> privacyList = new LinkedList<>();
         long fromAccountId = accountService.getCurrentAccount().getId();
@@ -139,9 +140,13 @@ public class ProfileServiceImpl implements ProfileService {
                 privacyList.add(Privacy.FOLLOWER);
             }
         } else {
-            privacyList.add(Privacy.PUBLIC);
-            privacyList.add(Privacy.FOLLOWER);
-            privacyList.add(Privacy.ONLY_ME);
+            if (privacy.isPresent()) {
+                privacyList.add(privacy.get());
+            } else {
+                privacyList.add(Privacy.PUBLIC);
+                privacyList.add(Privacy.FOLLOWER);
+                privacyList.add(Privacy.ONLY_ME);
+            }
         }
         return privacyList;
     }
