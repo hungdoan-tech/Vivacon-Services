@@ -51,6 +51,7 @@ public class ActiveSessionManagerImpl implements ActiveSessionManager {
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (username.equals(entry.getValue())) {
                 map.remove(entry.getKey());
+                notifyListeners();
                 return true;
             }
         }

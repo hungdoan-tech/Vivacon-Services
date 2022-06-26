@@ -53,7 +53,8 @@ public class SettingServiceImpl implements SettingService {
 
         SettingType type = changeSettingRequest.getSettingType();
         if (type.isValidValue(changeSettingRequest.getValue())) {
-            if (type == SettingType.PRIVACY_ON_ACTIVE_STATUS) {
+            if (type == SettingType.PRIVACY_ON_ACTIVE_STATUS
+                    && Boolean.FALSE == Boolean.valueOf(changeSettingRequest.getValue())) {
                 activeSessionManager.removeSessionByUsername(username);
             }
             String value = type.serialize(changeSettingRequest.getValue());

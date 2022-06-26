@@ -281,5 +281,11 @@ VALUES (1, 1, 'EMAIL_ON_REPORTING_RESULT', 'false'),
        (27, 6, 'EMAIL_ON_MISSED_ACTIVITIES', 'false'),
        (28, 6, 'PUSH_NOTIFICATION_ON_COMMENT', 'true'),
        (29, 6, 'PUSH_NOTIFICATION_ON_LIKE', 'true'),
-       (30, 6, 'PUSH_NOTIFICATION_ON_FOLLOWING', 'true');
+       (30, 6, 'PUSH_NOTIFICATION_ON_FOLLOWING', 'true'),
+       (31, 1, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
+       (32, 2, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
+       (33, 3, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
+       (34, 4, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
+       (35, 5, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
+       (36, 6, 'PRIVACY_ON_ACTIVE_STATUS', 'true');
 SELECT setval('setting_id_seq', (SELECT MAX(id) FROM setting) + 1);
