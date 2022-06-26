@@ -165,6 +165,7 @@ RETURN QUERY
 		p.id postId,
 		p.caption,
 		p.created_at,
+		p.privacy,
 		a.username,
 		a.full_name,
 		att.url,

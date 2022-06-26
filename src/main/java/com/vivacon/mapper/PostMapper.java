@@ -102,7 +102,7 @@ public class PostMapper {
         boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 1;
         Long likeCount = likeRepository.getCountingLike(post.getId());
         Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
-        return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
+        return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount, post.getPrivacy());
     }
 
     public DetailPost toDetailPost(Post post, Pageable commentPageable) {
@@ -144,7 +144,7 @@ public class PostMapper {
         boolean isMultipleImages = post.getLstAttachmentDTO().size() > 1;
         Long likeCount = post.getTotalLike().longValue();
         Long commentCount = post.getTotalComment().longValue();
-        return new OutlinePost(post.getPostId().longValue(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount);
+        return new OutlinePost(post.getPostId().longValue(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount, post.getPrivacy());
     }
 
     public PostInteractionDTO toPostInteraction(PostInteraction post) {

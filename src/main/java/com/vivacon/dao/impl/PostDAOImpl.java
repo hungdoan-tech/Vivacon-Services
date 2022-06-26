@@ -6,6 +6,7 @@ import com.vivacon.dao.StatisticDAO;
 import com.vivacon.dto.response.PostInteraction;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
+import com.vivacon.entity.enum_type.Privacy;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -59,8 +60,6 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
     public List<PostInteraction> getTheTopPostInteraction(int limit, int pageIndex) {
         StoredProcedureQuery procedureQuery;
         procedureQuery = entityManager.createStoredProcedureQuery("getTopPostInteraction");
-
-
         return this.fetchingTheTopPostInteractionData(procedureQuery, limit, pageIndex);
     }
 
@@ -83,18 +82,20 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
             List<Object[]> resultList = procedureQuery.getResultList();
 
             for (int currentIndex = 0; currentIndex < resultList.size(); currentIndex++) {
-                BigInteger postId = (BigInteger) resultList.get(currentIndex)[0];
-                String caption = (String) resultList.get(currentIndex)[1];
-                Timestamp createdAt = (Timestamp) resultList.get(currentIndex)[2];
-                String userName = (String) resultList.get(currentIndex)[3];
-                String fullName = (String) resultList.get(currentIndex)[4];
-                String url = (String) resultList.get(currentIndex)[5];
-                BigInteger totalComment = (BigInteger) resultList.get(currentIndex)[6];
-                BigInteger totalLike = (BigInteger) resultList.get(currentIndex)[7];
-                BigInteger totalInteraction = (BigInteger) resultList.get(currentIndex)[8];
+                Object[] eachPost = resultList.get(currentIndex);
+                BigInteger postId = (BigInteger) eachPost[0];
+                String caption = (String) eachPost[1];
+                Timestamp createdAt = (Timestamp) eachPost[2];
+                Privacy privacy = Privacy.valueOf(eachPost[2].toString());
+                String userName = (String) eachPost[4];
+                String fullName = (String) eachPost[5];
+                String url = (String) eachPost[6];
+                BigInteger totalComment = (BigInteger) eachPost[7];
+                BigInteger totalLike = (BigInteger) eachPost[8];
+                BigInteger totalInteraction = (BigInteger) eachPost[9];
 
-                postsTopInteractionList.add(new PostInteraction(postId, caption, createdAt.toLocalDateTime(), userName, fullName, url,
-                        totalComment, totalLike, totalInteraction));
+                postsTopInteractionList.add(new PostInteraction(postId, caption, createdAt.toLocalDateTime(), privacy,
+                        userName, fullName, url, totalComment, totalLike, totalInteraction));
             }
 
             return postsTopInteractionList;

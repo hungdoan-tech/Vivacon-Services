@@ -88,20 +88,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
-        Account principal = accountService.getCurrentAccount();
         Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
-
-        List<Privacy> privacyList = new LinkedList<>();
-        if (principal.getId().equals(requestAccount.getId())) {
-            privacyList = getSuitablePrivacyList(requestAccount);
-        } else {
-            if (privacy.isPresent()) {
-                privacyList.add(privacy.get());
-            } else {
-                getSuitablePrivacyList(requestAccount);
-            }
-        }
-
+        List<Privacy> privacyList = getSuitablePrivacyList(requestAccount);
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, privacyList, pageable);
         return PageMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
@@ -142,7 +130,6 @@ public class ProfileServiceImpl implements ProfileService {
             if (following.isPresent()) {
                 privacyList.add(Privacy.FOLLOWER);
             }
-            return privacyList;
         } else {
             privacyList.add(Privacy.PUBLIC);
             privacyList.add(Privacy.FOLLOWER);
