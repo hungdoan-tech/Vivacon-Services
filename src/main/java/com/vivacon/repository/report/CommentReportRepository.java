@@ -15,7 +15,7 @@ public interface CommentReportRepository extends JpaRepository<CommentReport, Lo
     @Query("select c from CommentReport c where c.active = :active")
     Page<CommentReport> findAllByActive(@Param("active") boolean active, Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE CommentReport c SET c.active = false WHERE c.id = :id")
     int deactivateById(@Param("id") Long id);
 

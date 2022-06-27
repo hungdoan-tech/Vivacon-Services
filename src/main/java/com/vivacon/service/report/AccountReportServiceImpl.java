@@ -8,6 +8,7 @@ import com.vivacon.entity.report.AccountReport;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountReportMapper;
 import com.vivacon.mapper.PageMapper;
+import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.report.AccountReportRepository;
 import com.vivacon.service.AccountService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,10 +31,14 @@ public class AccountReportServiceImpl implements AccountReportService {
 
     private AccountService accountService;
 
-    public AccountReportServiceImpl(AccountReportMapper accountReportMapper, AccountReportRepository accountReportRepository, AccountService accountService) {
+    private AccountRepository accountRepository;
+
+    public AccountReportServiceImpl(AccountReportMapper accountReportMapper, AccountReportRepository accountReportRepository,
+                                    AccountService accountService, AccountRepository accountRepository) {
         this.accountReportMapper = accountReportMapper;
         this.accountReportRepository = accountReportRepository;
         this.accountService = accountService;
+        this.accountRepository = accountRepository;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
@@ -58,7 +63,7 @@ public class AccountReportServiceImpl implements AccountReportService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean approvedAccountReport(long id) {
         AccountReport report = accountReportRepository.findById(id).orElseThrow(RecordNotFoundException::new);
-        accountService.deactivate(report.getAccount().getId());
+        accountService.ban(report.getAccount().getId());
         return accountReportRepository.deactivateById(id) > 0;
     }
 

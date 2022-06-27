@@ -10,6 +10,7 @@ import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
+import com.vivacon.entity.enum_type.AccountStatus;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
 import com.vivacon.exception.InvalidPasswordException;
@@ -25,16 +26,19 @@ import com.vivacon.service.DeviceService;
 import com.vivacon.service.PostService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -117,6 +121,7 @@ public class AccountServiceImpl implements AccountService {
                     .role(roleRepository.findByName(RoleType.USER.toString()))
                     .active(false)
                     .publicKey("each-person-publickey")
+                    .accountStatus(AccountStatus.STILL_NOT_ACTIVE)
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);
             applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount));
@@ -127,12 +132,28 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public Account activeAccount(String verificationCode) {
         Optional<Account> account = accountRepository.findByVerificationToken(verificationCode);
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
-            accountRepository.activateByVerificationToken(verificationCode);
+            accountRepository.activateByVerificationToken(verificationCode, AccountStatus.ACTIVE);
             return account.get();
+        } else {
+            throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
+        }
+    }
+
+    @Override
+    public Account verifyAccount(HttpServletRequest request, String code) {
+        Optional<Account> account = accountRepository.findByVerificationToken(code);
+        if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
+
+            Account existingAccount = account.get();
+            deviceService.verifyDevice(request, existingAccount, VerifyDeviceContext.VERIFY);
+            existingAccount.setAccountStatus(AccountStatus.ACTIVE);
+            accountRepository.save(existingAccount);
+
+            return existingAccount;
         } else {
             throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
         }
@@ -179,20 +200,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account verifyAccount(HttpServletRequest request, String code) {
-        Optional<Account> account = accountRepository.findByVerificationToken(code);
-        if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
-            deviceService.verifyDevice(request, account.get(), VerifyDeviceContext.VERIFY);
-            return account.get();
-        } else {
-            throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
-        }
-    }
-
-    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean deactivate(Long accountId) {
         List<Long> allIdPost = postService.getAllIdByAccountId(accountId);
         this.postService.deactivatePost(allIdPost);
         return accountRepository.deactivateById(accountId) > 0;
+    }
+
+    @Override
+    public boolean ban(Long accountId) {
+        List<Long> allIdPost = postService.getAllIdByAccountId(accountId);
+        this.postService.deactivatePost(allIdPost);
+        accountRepository.banById(accountId, AccountStatus.BANNED);
+        return false;
     }
 }

@@ -39,4 +39,6 @@ public interface AccountService {
     Account verifyAccount(HttpServletRequest request, String code);
 
     boolean deactivate(Long id);
+
+    boolean ban(Long id);
 }

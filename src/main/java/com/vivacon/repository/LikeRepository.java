@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("DELETE FROM Like liking WHERE liking.post.id = :postId and liking.account.id = :accountId")
     void unlikeByAccountIdAndPostId(@Param("accountId") long accountId, @Param("postId") long postId);
 

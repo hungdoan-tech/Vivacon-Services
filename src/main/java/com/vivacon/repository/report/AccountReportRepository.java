@@ -15,8 +15,7 @@ public interface AccountReportRepository extends JpaRepository<AccountReport, Lo
     @Query("select a from AccountReport a where a.active = :active")
     Page<AccountReport> findAllByActive(@Param("active") boolean active, Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE AccountReport a SET a.active = false WHERE a.id = :id")
     int deactivateById(@Param("id") Long id);
-
 }

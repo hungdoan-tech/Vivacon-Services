@@ -116,11 +116,12 @@ public class AuthenticationController {
                 return ResponseEntity.status(1002).body(null);
             }
             case ACTIVE: {
-                boolean isCheckOnNewDeviceLocation = Boolean.parseBoolean(settingService.evaluateSetting(account.getId(),
+                boolean isNotifyOnNewDeviceLocation = Boolean.parseBoolean(settingService.evaluateSetting(account.getId(),
                         SettingType.PRIVACY_ON_NEW_DEVICE_LOCATION).toString());
-                if (isCheckOnNewDeviceLocation) {
-                    boolean isExistingDevice = deviceService.verifyDevice(request, account, VerifyDeviceContext.LOGIN);
-                    if (isExistingDevice) {
+                if (isNotifyOnNewDeviceLocation) {
+
+                    boolean isDeviceAlreadyExist = deviceService.verifyDevice(request, account, VerifyDeviceContext.LOGIN);
+                    if (isDeviceAlreadyExist) {
                         AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
                                 userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
                         return ResponseEntity.ok(authenticationResponse);

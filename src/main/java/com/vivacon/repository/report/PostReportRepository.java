@@ -15,7 +15,7 @@ public interface PostReportRepository extends JpaRepository<PostReport, Long> {
     @Query("select p from PostReport p where p.active = :active")
     Page<PostReport> findAllByActive(@Param("active") boolean active, Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE PostReport p " +
             "SET p.active = false " +
             "WHERE p.id = :id")
