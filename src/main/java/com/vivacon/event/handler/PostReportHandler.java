@@ -53,7 +53,7 @@ public class PostReportHandler {
         approvingNotifications.stream().forEach(notification -> {
 
             if (notification.getType() == NotificationType.POST_REPORT_APPROVING_ACTION_AUTHOR) {
-                Boolean isEmailOnReportResult = Boolean.valueOf(settingService.evaluateSetting(
+                boolean isEmailOnReportResult = Boolean.parseBoolean(settingService.evaluateSetting(
                         postReport.getCreatedBy().getId(), EMAIL_ON_REPORTING_RESULT).toString());
                 if (isEmailOnReportResult) {
                     emailSender.sendNotification(notification);

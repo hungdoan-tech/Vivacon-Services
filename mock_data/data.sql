@@ -287,5 +287,11 @@ VALUES (1, 1, 'EMAIL_ON_REPORTING_RESULT', 'false'),
        (33, 3, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
        (34, 4, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
        (35, 5, 'PRIVACY_ON_ACTIVE_STATUS', 'true'),
-       (36, 6, 'PRIVACY_ON_ACTIVE_STATUS', 'true');
+       (36, 6, 'PRIVACY_ON_ACTIVE_STATUS', 'true')
+       (37, 1, 'PRIVACY_ON_NEW_DEVICE_LOCATION', 'true'),
+       (38, 2, 'PRIVACY_ON_NEW_DEVICE_LOCATION', 'true'),
+       (39, 3, 'PRIVACY_ON_NEW_DEVICE_LOCATION', 'true'),
+       (40, 4, 'PRIVACY_ON_NEW_DEVICE_LOCATION', 'true'),
+       (41, 5, 'PRIVACY_ON_NEW_DEVICE_LOCATION', 'true'),
+       (42, 6, 'PRIVACY_ON_NEW_DEVICE_LOCATION', 'true');
 SELECT setval('setting_id_seq', (SELECT MAX(id) FROM setting) + 1);

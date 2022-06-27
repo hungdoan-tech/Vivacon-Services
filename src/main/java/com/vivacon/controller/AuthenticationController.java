@@ -11,12 +11,14 @@ import com.vivacon.dto.request.TokenRefreshRequest;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.entity.Account;
+import com.vivacon.entity.enum_type.SettingType;
 import com.vivacon.event.StillNotActiveAccountLoginEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.TokenRefreshException;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.DeviceService;
 import com.vivacon.service.RefreshTokenService;
+import com.vivacon.service.SettingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,18 +63,22 @@ public class AuthenticationController {
 
     private ApplicationEventPublisher applicationEventPublisher;
 
+    private SettingService settingService;
+
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     JwtUtils jwtTokenUtil,
                                     RefreshTokenService refreshTokenService,
                                     AccountService accountService,
                                     DeviceService deviceService,
+                                    SettingService settingService,
                                     ApplicationEventPublisher applicationEventPublisher) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtils = jwtTokenUtil;
         this.refreshTokenService = refreshTokenService;
         this.accountService = accountService;
         this.deviceService = deviceService;
+        this.settingService = settingService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -109,10 +115,16 @@ public class AuthenticationController {
                 return ResponseEntity.status(1002).body(null);
             }
             case ACTIVE: {
-                deviceService.verifyDevice(account, request);
-                AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
-                        userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
-                return ResponseEntity.ok(authenticationResponse);
+                boolean isCheckOnNewDeviceLocation = Boolean.parseBoolean(settingService.evaluateSetting(account.getId(),
+                        SettingType.PRIVACY_ON_NEW_DEVICE_LOCATION).toString());
+                if (isCheckOnNewDeviceLocation) {
+                    deviceService.verifyDevice(account, request);
+                } else {
+                    AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
+                            userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+                    return ResponseEntity.ok(authenticationResponse);
+                }
+                break;
             }
             default: {
                 return null;
