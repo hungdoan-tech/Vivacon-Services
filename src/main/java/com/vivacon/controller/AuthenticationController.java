@@ -14,8 +14,8 @@ import com.vivacon.entity.Account;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.TokenRefreshException;
 import com.vivacon.service.AccountService;
+import com.vivacon.service.DeviceService;
 import com.vivacon.service.RefreshTokenService;
-import com.vivacon.service.impl.DeviceServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -56,14 +55,14 @@ public class AuthenticationController {
 
     private AccountService accountService;
 
-    private DeviceServiceImpl deviceService;
+    private DeviceService deviceService;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     JwtUtils jwtTokenUtil,
                                     RefreshTokenService refreshTokenService,
                                     AccountService accountService,
-                                    DeviceServiceImpl deviceService) {
+                                    DeviceService deviceService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtils = jwtTokenUtil;
         this.refreshTokenService = refreshTokenService;
@@ -89,16 +88,32 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "Login to the system")
     @PostMapping("/login")
-    public AuthenticationResponse login(final HttpServletRequest request,
-                                        final HttpServletResponse response,
-                                        @Valid @RequestBody LoginRequest loginRequest) {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+    public ResponseEntity<?> login(final HttpServletRequest request,
+                                   @Valid @RequestBody LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
         Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         UserDetails userDetail = (UserDetails) authenticate.getPrincipal();
         Account account = accountService.getAccountByUsernameIgnoreCase(userDetail.getUsername());
+
+        switch (account.getAccountStatus()) {
+            case BANNED: {
+                return ResponseEntity.status(101).body(null);
+            }
+            case STILL_NOT_ACTIVE: {
+                return ResponseEntity.status(102).body(null);
+            }
+            case ACTIVE: {
+                AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
+                        userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+                return ResponseEntity.ok(authenticationResponse);
+            }
+            default: {
+
+            }
+        }
         deviceService.verifyDevice(account, request);
-        return generateAuthenticationResponse(userDetail.getUsername(),
-                userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+
     }
 
     /**

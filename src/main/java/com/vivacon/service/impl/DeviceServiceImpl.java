@@ -36,18 +36,18 @@ public class DeviceServiceImpl implements DeviceService {
     public void verifyDevice(Account account, HttpServletRequest request) {
 
         String ip = extractIp(request);
-        String location = getIpLocation(ip);
-        String deviceDetails = getDeviceDetails(request.getHeader("account-agent"));
-        Optional<DeviceMetadata> existingDevice = deviceMetadataRepository.find(account.getId(), location, deviceDetails);
+        String location = getLocation(ip);
+        String device = getDevice(request.getHeader("account-agent"));
+        Optional<DeviceMetadata> existingDevice = deviceMetadataRepository.find(account.getId(), location, device);
 
         if (existingDevice.isEmpty()) {
-            unknownDeviceNotification(deviceDetails, location, ip, account.getEmail());
             DeviceMetadata deviceMetadata = new DeviceMetadata();
             deviceMetadata.setAccount(account);
             deviceMetadata.setLocation(location);
-            deviceMetadata.setDevice(deviceDetails);
+            deviceMetadata.setDevice(device);
             deviceMetadata.setLastLoggedIn(LocalDateTime.now());
             deviceMetadataRepository.save(deviceMetadata);
+            unknownDeviceNotification(device, location, ip, account.getEmail());
         } else {
             DeviceMetadata deviceMetadata = existingDevice.get();
             deviceMetadata.setLastLoggedIn(LocalDateTime.now());
@@ -70,7 +70,7 @@ public class DeviceServiceImpl implements DeviceService {
         return header.split(" *, *")[0];
     }
 
-    private String getDeviceDetails(String userAgent) {
+    private String getDevice(String userAgent) {
         String deviceDetails = "UNKNOWN";
         Client client = parser.parse(userAgent);
         if (Objects.nonNull(client)) {
@@ -80,14 +80,18 @@ public class DeviceServiceImpl implements DeviceService {
         return deviceDetails;
     }
 
-    private String getIpLocation(String ip) {
+    private String getLocation(String ip) {
         String location = "UNKNOWN";
         try {
-            InetAddress ipAddress = null;
-            ipAddress = InetAddress.getByName(ip);
+            InetAddress ipAddress = InetAddress.getByName(ip);
             CityResponse cityResponse = databaseReader.city(ipAddress);
+            Double latitude = cityResponse.getLocation().getLatitude();
+            Double longitude = cityResponse.getLocation().getLongitude();
             if (Objects.nonNull(cityResponse) && Objects.nonNull(cityResponse.getCity()) && cityResponse.getCity().getName() != null) {
-                location = cityResponse.getCity().getName();
+
+                Integer cityGeoNameId = cityResponse.getCountry().getGeoNameId();
+                Integer nationGeoNameId = cityResponse.getCity().getGeoNameId();
+                location = cityResponse.getCountry().getName() + " - " + cityResponse.getCity().getName();
             }
         } catch (IOException | GeoIp2Exception e) {
         } finally {

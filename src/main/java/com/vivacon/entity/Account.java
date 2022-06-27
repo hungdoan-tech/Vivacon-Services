@@ -1,6 +1,7 @@
 package com.vivacon.entity;
 
 import com.vivacon.common.enum_type.Gender;
+import com.vivacon.entity.enum_type.AccountStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -67,6 +68,10 @@ public class Account extends AuditableEntity {
 
     @Column(name = "public_key")
     private String publicKey;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_status", nullable = false)
+    private AccountStatus accountStatus;
 
     public Account() {
 
@@ -244,90 +249,113 @@ public class Account extends AuditableEntity {
         this.publicKey = publicKey;
     }
 
-    public static class AccountBuilder {
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
 
-        private String username;
+    public void setAccountStatus(AccountStatus accountStatus) {
+        this.accountStatus = accountStatus;
+    }
 
-        private String email;
+    public static final class AccountBuilder {
+        private Account account;
 
-        private String password;
+        public AccountBuilder() {
+            account = new Account();
+        }
 
-        private String fullName;
-
-        private Role role;
-
-        private String bio;
-
-        private String phoneNumber;
-
-        private Gender gender;
-
-        private boolean active;
-
-        private String publicKey;
+        public AccountBuilder id(Long id) {
+            account.setId(id);
+            return this;
+        }
 
         public AccountBuilder username(String username) {
-            this.username = username;
+            account.setUsername(username);
             return this;
         }
 
         public AccountBuilder username() {
-            if (this.fullName != null) {
-                this.username = fullName.replace(" ", "") + UUID.randomUUID();
+            if (account.fullName != null) {
+                account.username = account.fullName.replace(" ", "") + UUID.randomUUID();
                 return this;
             } else {
-                this.username = UUID.randomUUID().toString();
+                account.username = UUID.randomUUID().toString();
                 return this;
             }
         }
 
         public AccountBuilder email(String email) {
-            this.email = email;
+            account.setEmail(email);
             return this;
         }
 
         public AccountBuilder password(String password) {
-            this.password = password;
+            account.setPassword(password);
             return this;
         }
 
         public AccountBuilder fullName(String fullName) {
-            this.fullName = fullName;
+            account.setFullName(fullName);
             return this;
         }
 
         public AccountBuilder role(Role role) {
-            this.role = role;
+            account.setRole(role);
             return this;
         }
 
         public AccountBuilder bio(String bio) {
-            this.bio = bio;
+            account.setBio(bio);
             return this;
         }
 
         public AccountBuilder phoneNumber(String phoneNumber) {
-            this.phoneNumber = phoneNumber;
+            account.setPhoneNumber(phoneNumber);
             return this;
         }
 
         public AccountBuilder gender(Gender gender) {
-            this.gender = gender;
-            return this;
-        }
-
-        public AccountBuilder active(boolean active) {
-            this.active = active;
+            account.setGender(gender);
             return this;
         }
 
         public AccountBuilder publicKey(String publicKey) {
-            this.publicKey = publicKey;
+            account.setPublicKey(publicKey);
+            return this;
+        }
+
+        public AccountBuilder createdBy(Account createdBy) {
+            account.setCreatedBy(createdBy);
+            return this;
+        }
+
+        public AccountBuilder createdAt(LocalDateTime createdAt) {
+            account.setCreatedAt(createdAt);
+            return this;
+        }
+
+        public AccountBuilder lastModifiedBy(Account lastModifiedBy) {
+            account.setLastModifiedBy(lastModifiedBy);
+            return this;
+        }
+
+        public AccountBuilder lastModifiedAt(LocalDateTime lastModifiedAt) {
+            account.setLastModifiedAt(lastModifiedAt);
+            return this;
+        }
+
+        public AccountBuilder active(Boolean active) {
+            account.setActive(active);
+            return this;
+        }
+
+        public AccountBuilder accountStatus(AccountStatus accountStatus) {
+            account.setAccountStatus(accountStatus);
             return this;
         }
 
         public Account build() {
-            return new Account(username, email, password, fullName, role, bio, phoneNumber, gender, active, publicKey);
+            return account;
         }
     }
 }
