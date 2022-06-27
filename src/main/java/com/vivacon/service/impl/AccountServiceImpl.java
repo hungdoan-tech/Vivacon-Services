@@ -182,6 +182,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public Account changePassword(ChangePasswordRequest changePasswordRequest) {
         Account account = getCurrentAccount();
         if (passwordEncoder.matches(changePasswordRequest.getOldPassword(), account.getPassword())) {
@@ -208,6 +209,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean ban(Long accountId) {
         List<Long> allIdPost = postService.getAllIdByAccountId(accountId);
         this.postService.deactivatePost(allIdPost);
