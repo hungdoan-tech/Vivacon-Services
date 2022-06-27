@@ -6,6 +6,7 @@ import com.vivacon.entity.Setting;
 import com.vivacon.entity.enum_type.SettingType;
 import com.vivacon.event.GeneratingVerificationTokenEvent;
 import com.vivacon.event.RegistrationCompleteEvent;
+import com.vivacon.event.StillNotActiveAccountLoginEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.SettingRepository;
@@ -98,6 +99,28 @@ public class VerificationTokenEventHandler {
         String subject = "Renew your verification token";
         String content = "Dear [[name]],<br/>"
                 + "Please use the code below to verify your account:<br/>"
+                + "<h3>[[code]]</h3><br/>"
+                + "Please notice that your code is unique and only take effect in <strong> [[expirationTime]] minutes</strong><br/>"
+                + "Thank you,<br/>"
+                + "Vivacon Service.";
+        content = content.replace("[[name]]", account.getFullName());
+        content = content.replace("[[code]]", code);
+        content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
+
+        Notification notification = new Notification(subject, content, account);
+        emailSender.sendNotification(notification);
+    }
+
+    @Async
+    @EventListener
+    public void handleStillNotActiveAccountLoginEvent(StillNotActiveAccountLoginEvent stillNotActiveAccountLoginEvent) {
+        Account account = stillNotActiveAccountLoginEvent.getAccount();
+        String code = generateVerificationCodePerUsername(account);
+        Integer expirationInMinutes = verifiedTokenExpirationInMiliseconds / 60000;
+
+        String subject = "Your account still not be activated, please activate it";
+        String content = "Dear [[name]],<br/>"
+                + "Please use the code below to verify and active your new account to continue the login process and explore Vivacon world with us:<br/>"
                 + "<h3>[[code]]</h3><br/>"
                 + "Please notice that your code is unique and only take effect in <strong> [[expirationTime]] minutes</strong><br/>"
                 + "Thank you,<br/>"

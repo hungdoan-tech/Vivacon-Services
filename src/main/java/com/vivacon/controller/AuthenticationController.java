@@ -11,6 +11,7 @@ import com.vivacon.dto.request.TokenRefreshRequest;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.entity.Account;
+import com.vivacon.event.StillNotActiveAccountLoginEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.TokenRefreshException;
 import com.vivacon.service.AccountService;
@@ -19,6 +20,7 @@ import com.vivacon.service.RefreshTokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,26 +59,28 @@ public class AuthenticationController {
 
     private DeviceService deviceService;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     JwtUtils jwtTokenUtil,
                                     RefreshTokenService refreshTokenService,
                                     AccountService accountService,
-                                    DeviceService deviceService) {
+                                    DeviceService deviceService,
+                                    ApplicationEventPublisher applicationEventPublisher) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtils = jwtTokenUtil;
         this.refreshTokenService = refreshTokenService;
         this.accountService = accountService;
         this.deviceService = deviceService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     private AuthenticationResponse generateAuthenticationResponse(String username, List<String> authorities) {
         Account account = accountService.getAccountByUsernameIgnoreCase(username);
         List<String> roles = authorities;
-
         String accessToken = jwtTokenUtils.generateAccessToken(account, roles);
         String refreshToken = refreshTokenService.createRefreshToken(username);
-
         return new AuthenticationResponse(accessToken, refreshToken);
     }
 
@@ -98,22 +102,22 @@ public class AuthenticationController {
 
         switch (account.getAccountStatus()) {
             case BANNED: {
-                return ResponseEntity.status(101).body(null);
+                return ResponseEntity.status(1001).body(null);
             }
             case STILL_NOT_ACTIVE: {
-                return ResponseEntity.status(102).body(null);
+                applicationEventPublisher.publishEvent(new StillNotActiveAccountLoginEvent(this, account));
+                return ResponseEntity.status(1002).body(null);
             }
             case ACTIVE: {
+                deviceService.verifyDevice(account, request);
                 AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
                         userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
                 return ResponseEntity.ok(authenticationResponse);
             }
             default: {
-
+                return null;
             }
         }
-        deviceService.verifyDevice(account, request);
-
     }
 
     /**
@@ -164,7 +168,7 @@ public class AuthenticationController {
         return generateAuthenticationResponse(account.getUsername(), Arrays.asList(account.getRole().toString()));
     }
 
-    @ApiOperation(value = "Active new account by verification token")
+    @ApiOperation(value = "Endpoint for verify account by verification token or changing password and verify new device purpose")
     @PostMapping("/account/verify")
     public ResponseEntity<Object> verifyAccount(@NotEmpty @RequestBody String code) {
         accountService.verifyAccount(code);
