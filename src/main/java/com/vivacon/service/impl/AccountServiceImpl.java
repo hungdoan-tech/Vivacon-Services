@@ -1,6 +1,7 @@
 package com.vivacon.service.impl;
 
 import com.vivacon.common.enum_type.RoleType;
+import com.vivacon.common.enum_type.VerifyDeviceContext;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.ChangePasswordRequest;
 import com.vivacon.dto.request.ForgotPasswordRequest;
@@ -20,6 +21,7 @@ import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.RoleRepository;
 import com.vivacon.security.UserDetailImpl;
 import com.vivacon.service.AccountService;
+import com.vivacon.service.DeviceService;
 import com.vivacon.service.PostService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -46,11 +49,14 @@ public class AccountServiceImpl implements AccountService {
     private ApplicationEventPublisher applicationEventPublisher;
     private PostService postService;
 
+    private DeviceService deviceService;
+
     public AccountServiceImpl(AccountRepository accountRepository,
                               RoleRepository roleRepository,
                               PasswordEncoder passwordEncoder,
                               AccountMapper accountMapper,
                               PostService postService,
+                              DeviceService deviceService,
                               ApplicationEventPublisher applicationEventPublisher) {
         this.accountRepository = accountRepository;
         this.roleRepository = roleRepository;
@@ -58,6 +64,7 @@ public class AccountServiceImpl implements AccountService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.postService = postService;
         this.accountMapper = accountMapper;
+        this.deviceService = deviceService;
     }
 
     @Override
@@ -171,9 +178,11 @@ public class AccountServiceImpl implements AccountService {
         return PageMapper.toPageDTO(pageAccount, account -> accountMapper.toEssentialAccount(account));
     }
 
-    public Account verifyAccount(String code) {
+    @Override
+    public Account verifyAccount(HttpServletRequest request, String code) {
         Optional<Account> account = accountRepository.findByVerificationToken(code);
         if (account.isPresent() && account.get().getVerificationExpiredDate().isAfter(Instant.now())) {
+            deviceService.verifyDevice(request, account.get(), VerifyDeviceContext.VERIFY);
             return account.get();
         } else {
             throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");

@@ -190,8 +190,9 @@ public class AuthenticationController {
 
     @ApiOperation(value = "Endpoint for verify account by verification token or changing password and verify new device purpose")
     @PostMapping("/account/verify")
-    public ResponseEntity<Object> verifyAccount(@NotEmpty @RequestBody String code) {
-        accountService.verifyAccount(code);
+    public ResponseEntity<Object> verifyAccount(final HttpServletRequest request,
+                                                @NotEmpty @RequestBody String code) {
+        accountService.verifyAccount(request, code);
         return ResponseEntity.ok(null);
     }
 
