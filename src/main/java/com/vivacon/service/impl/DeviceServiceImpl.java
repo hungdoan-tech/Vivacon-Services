@@ -3,10 +3,13 @@ package com.vivacon.service.impl;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
+import com.vivacon.common.enum_type.VerifyDeviceContext;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.DeviceMetadata;
+import com.vivacon.event.NewDeviceLocationLoginEvent;
 import com.vivacon.repository.DeviceMetadataRepository;
 import com.vivacon.service.DeviceService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import ua_parser.Client;
 import ua_parser.Parser;
@@ -24,34 +27,54 @@ public class DeviceServiceImpl implements DeviceService {
     private DatabaseReader databaseReader;
     private Parser parser;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public DeviceServiceImpl(DeviceMetadataRepository deviceMetadataRepository,
                              DatabaseReader databaseReader,
-                             Parser parser) {
+                             Parser parser,
+                             ApplicationEventPublisher applicationEventPublisher) {
         this.deviceMetadataRepository = deviceMetadataRepository;
         this.databaseReader = databaseReader;
         this.parser = parser;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
-    public void verifyDevice(Account account, HttpServletRequest request) {
+    public boolean verifyDevice(HttpServletRequest request, Account account, VerifyDeviceContext context) {
 
         String ip = extractIp(request);
-        String location = getLocation(ip);
+        CityResponse location = getLocation(ip);
         String device = getDevice(request.getHeader("account-agent"));
-        Optional<DeviceMetadata> existingDevice = deviceMetadataRepository.find(account.getId(), location, device);
+
+        String country = location.getCountry().getName();
+        String city = location.getCity().getName();
+        Optional<DeviceMetadata> existingDevice = deviceMetadataRepository.find(account.getId(), country, city, device);
 
         if (existingDevice.isEmpty()) {
-            DeviceMetadata deviceMetadata = new DeviceMetadata();
-            deviceMetadata.setAccount(account);
-            deviceMetadata.setLocation(location);
-            deviceMetadata.setDevice(device);
-            deviceMetadata.setLastLoggedIn(LocalDateTime.now());
-            deviceMetadataRepository.save(deviceMetadata);
-            unknownDeviceNotification(device, location, ip, account.getEmail());
+            switch (context) {
+                case VERIFY: {
+                    DeviceMetadata deviceMetadata = new DeviceMetadata.DeviceMetadataBuilder()
+                            .account(account)
+                            .country(country)
+                            .city(city)
+                            .device(device)
+                            .lastLoggedIn(LocalDateTime.now())
+                            .latitude(location.getLocation().getLatitude())
+                            .longitude(location.getLocation().getLongitude())
+                            .build();
+                    deviceMetadataRepository.save(deviceMetadata);
+                    return true;
+                }
+                default: {
+                    applicationEventPublisher.publishEvent(new NewDeviceLocationLoginEvent(this, account, device, location, ip));
+                    return false;
+                }
+            }
         } else {
             DeviceMetadata deviceMetadata = existingDevice.get();
             deviceMetadata.setLastLoggedIn(LocalDateTime.now());
             deviceMetadataRepository.save(deviceMetadata);
+            return true;
         }
     }
 
@@ -80,27 +103,14 @@ public class DeviceServiceImpl implements DeviceService {
         return deviceDetails;
     }
 
-    private String getLocation(String ip) {
-        String location = "UNKNOWN";
+    private CityResponse getLocation(String ip) {
+        CityResponse cityResponse;
         try {
             InetAddress ipAddress = InetAddress.getByName(ip);
-            CityResponse cityResponse = databaseReader.city(ipAddress);
-            Double latitude = cityResponse.getLocation().getLatitude();
-            Double longitude = cityResponse.getLocation().getLongitude();
-            if (Objects.nonNull(cityResponse) && Objects.nonNull(cityResponse.getCity()) && cityResponse.getCity().getName() != null) {
-
-                Integer cityGeoNameId = cityResponse.getCountry().getGeoNameId();
-                Integer nationGeoNameId = cityResponse.getCity().getGeoNameId();
-                location = cityResponse.getCountry().getName() + " - " + cityResponse.getCity().getName();
-            }
+            cityResponse = databaseReader.city(ipAddress);
         } catch (IOException | GeoIp2Exception e) {
-        } finally {
-            return location;
+            cityResponse = null;
         }
-    }
-
-    private void unknownDeviceNotification(String deviceDetails, String location, String ip, String email) {
-        final String subject = "New Login Notification";
-        String text = deviceDetails + location + ip;
+        return cityResponse;
     }
 }

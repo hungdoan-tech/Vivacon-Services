@@ -1,6 +1,7 @@
 package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
+import com.vivacon.common.enum_type.VerifyDeviceContext;
 import com.vivacon.common.utility.JwtUtils;
 import com.vivacon.common.validation.UniqueEmail;
 import com.vivacon.dto.request.ChangePasswordRequest;
@@ -118,13 +119,20 @@ public class AuthenticationController {
                 boolean isCheckOnNewDeviceLocation = Boolean.parseBoolean(settingService.evaluateSetting(account.getId(),
                         SettingType.PRIVACY_ON_NEW_DEVICE_LOCATION).toString());
                 if (isCheckOnNewDeviceLocation) {
-                    deviceService.verifyDevice(account, request);
+                    boolean isExistingDevice = deviceService.verifyDevice(request, account, VerifyDeviceContext.LOGIN);
+                    if (isExistingDevice) {
+                        AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
+                                userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+                        return ResponseEntity.ok(authenticationResponse);
+                    } else {
+                        applicationEventPublisher.publishEvent(new StillNotActiveAccountLoginEvent(this, account));
+                        return ResponseEntity.status(1003).body(null);
+                    }
                 } else {
                     AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
                             userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
                     return ResponseEntity.ok(authenticationResponse);
                 }
-                break;
             }
             default: {
                 return null;
