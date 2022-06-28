@@ -16,7 +16,7 @@ public class DeviceMetadataGenerator extends DataGenerator {
                 new GeoLocation("China", 35, 45, 112, 120),
         };
 
-        String insertStatement = "INSERT INTO \"DeviceMetadata\" (\"id\", \"account_id\", \"device\", \"country\", \"city\", \"latitude\", \"longitude\") \nVALUES ";
+        String insertStatement = "INSERT INTO \"device_metadata\" (\"id\", \"account_id\", \"device\", \"country\", \"city\", \"latitude\", \"longitude\") \nVALUES ";
         values.add(insertStatement);
 
         long counting = 1L;

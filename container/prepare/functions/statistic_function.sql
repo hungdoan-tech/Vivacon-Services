@@ -404,24 +404,28 @@ $$
 LANGUAGE plpgsql;
 
 
+DROP FUNCTION if exists getLastestLoginLocationPerAccount;
 
+CREATE
+OR REPLACE FUNCTION getLastestLoginLocationPerAccount()
+RETURNS TABLE
+(accountId bigint,
+country character varying(255),
+latitude double precision,
+longitude double precision)
+as $$
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+BEGIN
+RETURN QUERY
+    WITH summary AS (
+      		SELECT d.account_id as accountId,
+           		   d.country as country,
+		   		   d.latitude as latitude,
+		   		   d.longitude as longitude,
+           		   ROW_NUMBER() OVER(PARTITION BY d.account_id ORDER BY d.last_logged_in DESC) AS rank
+      		FROM device_metadata d)
+    SELECT s.accountId, s.country, s.latitude, s.longitude FROM summary s WHERE rank = 1;
+END;
+$$
+LANGUAGE plpgsql;
 
