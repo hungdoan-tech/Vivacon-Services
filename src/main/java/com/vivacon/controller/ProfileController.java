@@ -91,9 +91,10 @@ public class ProfileController {
     }
 
     @ApiOperation(value = "Get the profile information")
-    @PostMapping("/profile/info")
+    @GetMapping("/profile/info")
     public AccountInfo getProfileInformation() {
-        return profileService.getProfileInformation();
+        AccountInfo profileInformation = profileService.getProfileInformation();
+        return profileInformation;
     }
 
     @ApiOperation(value = "Edit the profile information")

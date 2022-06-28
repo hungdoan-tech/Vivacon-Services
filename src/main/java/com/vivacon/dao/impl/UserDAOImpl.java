@@ -5,6 +5,7 @@ import com.vivacon.dao.StatisticDAO;
 import com.vivacon.dao.UserDAO;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserGeoLocation;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -99,5 +100,10 @@ public class UserDAOImpl extends StatisticDAO implements UserDAO {
 
         entityManager.close();
         return valueBuilder.toString();
+    }
+
+    @Override
+    public List<UserGeoLocation> getLoginLocationPerAccount() {
+        return null;
     }
 }
