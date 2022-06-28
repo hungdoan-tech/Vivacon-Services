@@ -109,11 +109,11 @@ public class AuthenticationController {
 
         switch (account.getAccountStatus()) {
             case BANNED: {
-                return ResponseEntity.status(1001).body(null);
+                return ResponseEntity.status(403).body(1001);
             }
             case STILL_NOT_ACTIVE: {
                 applicationEventPublisher.publishEvent(new StillNotActiveAccountLoginEvent(this, account));
-                return ResponseEntity.status(1002).body(null);
+                return ResponseEntity.status(403).body(1002);
             }
             case ACTIVE: {
                 boolean isNotifyOnNewDeviceLocation = Boolean.parseBoolean(settingService.evaluateSetting(account.getId(),
@@ -127,7 +127,7 @@ public class AuthenticationController {
                         return ResponseEntity.ok(authenticationResponse);
                     } else {
                         applicationEventPublisher.publishEvent(new StillNotActiveAccountLoginEvent(this, account));
-                        return ResponseEntity.status(1003).body(null);
+                        return ResponseEntity.status(403).body(1003);
                     }
                 } else {
                     AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),

@@ -9,6 +9,8 @@ import com.vivacon.entity.DeviceMetadata;
 import com.vivacon.event.NewDeviceLocationLoginEvent;
 import com.vivacon.repository.DeviceMetadataRepository;
 import com.vivacon.service.DeviceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import ua_parser.Client;
@@ -22,10 +24,11 @@ import java.util.Optional;
 
 @Service
 public class DeviceServiceImpl implements DeviceService {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     private DeviceMetadataRepository deviceMetadataRepository;
     private DatabaseReader databaseReader;
     private Parser parser;
-
     private ApplicationEventPublisher applicationEventPublisher;
 
     public DeviceServiceImpl(DeviceMetadataRepository deviceMetadataRepository,
@@ -43,11 +46,12 @@ public class DeviceServiceImpl implements DeviceService {
 
         String ip = extractIp(request);
         CityResponse location = getLocation(ip);
-        String device = getDevice(request.getHeader("account-agent"));
+        String device = getDevice(request.getHeader("User-Agent"));
 
-        if (location != null && !"UNKNOWN".equals(device)) {
+        logger.info(" ip : " + ip + "  location " + location + " device " + device);
+        if (location != null) {
             String country = location.getCountry().getName();
-            String city = location.getCity().getName();
+            String city = location.getLocation().getTimeZone();
             Optional<DeviceMetadata> existingDevice = deviceMetadataRepository.find(account.getId(), country, city, device);
 
             if (existingDevice.isEmpty()) {
@@ -83,6 +87,7 @@ public class DeviceServiceImpl implements DeviceService {
     private String extractIp(HttpServletRequest request) {
         String clientIp;
         String clientXForwardedForIp = request.getHeader("x-forwarded-for");
+        logger.info(" clientXForwarded : " + clientXForwardedForIp);
         if (clientXForwardedForIp != null) {
             clientIp = parseXForwardedHeader(clientXForwardedForIp);
         } else {
@@ -98,6 +103,7 @@ public class DeviceServiceImpl implements DeviceService {
     private String getDevice(String userAgent) {
         String deviceDetails = "UNKNOWN";
         Client client = parser.parse(userAgent);
+        logger.info("User agent " + userAgent + " client user agent : " + client.userAgent + " client os " + client.os + " client device " + client.device);
         if (client.userAgent != null && client.os != null) {
             deviceDetails = client.userAgent.family + " " + client.userAgent.major + "." + client.userAgent.minor +
                     " - " + client.os.family + " " + client.os.major + "." + client.os.minor;

@@ -40,6 +40,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,6 +122,7 @@ public class AccountServiceImpl implements AccountService {
                     .role(roleRepository.findByName(RoleType.USER.toString()))
                     .active(false)
                     .publicKey("each-person-publickey")
+                    .createdAt(LocalDateTime.now())
                     .accountStatus(AccountStatus.STILL_NOT_ACTIVE)
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);

@@ -11,6 +11,8 @@ import com.vivacon.event.StillNotActiveAccountLoginEvent;
 import com.vivacon.event.notification_provider.NotificationProvider;
 import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.SettingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
@@ -26,6 +28,7 @@ import java.util.Random;
 @Component
 public class VerificationTokenEventHandler {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     private Environment environment;
 
     @Qualifier("emailSender")
@@ -161,13 +164,14 @@ public class VerificationTokenEventHandler {
         content = content.replace("[[ip]]", event.getIp());
         content = content.replace("[[device]]", event.getDevice());
         content = content.replace("[[country]]", event.getLocation().getCountry().getName());
-        content = content.replace("[[city]]", event.getLocation().getCity().getName());
+        content = content.replace("[[city]]", event.getLocation().getLocation().getTimeZone());
         content = content.replace("[[latitude]]", event.getLocation().getLocation().getLatitude().toString());
         content = content.replace("[[longitude]]", event.getLocation().getLocation().getLongitude().toString());
         content = content.replace("[[code]]", code);
         content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
 
         Notification notification = new Notification(subject, content, account);
+        logger.info(content);
         emailSender.sendNotification(notification);
     }
 
