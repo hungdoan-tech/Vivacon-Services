@@ -1,6 +1,8 @@
 package com.vivacon.repository;
 
 import com.vivacon.entity.DeviceMetadata;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +20,10 @@ public interface DeviceMetadataRepository extends JpaRepository<DeviceMetadata, 
                                   @Param("country") String country,
                                   @Param("city") String city,
                                   @Param("device") String device);
+
+
+    @Query("select d " +
+            "from DeviceMetadata d " +
+            "where d.account.id = :accountId")
+    Page<DeviceMetadata> findAll(@Param("accountId") Long accountId, Pageable pageable);
 }

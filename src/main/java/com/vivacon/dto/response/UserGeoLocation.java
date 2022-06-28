@@ -1,5 +1,7 @@
 package com.vivacon.dto.response;
 
+import java.time.LocalDateTime;
+
 public class UserGeoLocation {
 
     private long id;
@@ -13,6 +15,8 @@ public class UserGeoLocation {
     private double latitude;
 
     private double longitude;
+
+    private LocalDateTime lastLoggedIn;
 
     public long getId() {
         return id;
@@ -60,6 +64,17 @@ public class UserGeoLocation {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public LocalDateTime getLastLoggedIn() {
+        return lastLoggedIn;
+    }
+
+    public void setLastLoggedIn(LocalDateTime lastLoggedIn) {
+        this.lastLoggedIn = lastLoggedIn;
+    }
+
+    public UserGeoLocation() {
     }
 
     public UserGeoLocation(long id, long accountId, String device, String country, double latitude, double longitude) {

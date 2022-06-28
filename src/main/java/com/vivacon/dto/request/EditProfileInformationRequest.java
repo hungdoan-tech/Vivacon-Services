@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 public class EditProfileInformationRequest {
 
     @NotBlank
-    private String userName;
+    private String username;
 
     @NotEmpty
     @Email
@@ -18,10 +18,8 @@ public class EditProfileInformationRequest {
     @NotBlank
     private String fullName;
 
-    @NotBlank
     private String bio;
 
-    @NotBlank
     private String phoneNumber;
 
     private Gender gender;
@@ -30,8 +28,8 @@ public class EditProfileInformationRequest {
 
     }
 
-    public EditProfileInformationRequest(String userName, String email, String fullName, String bio, String phoneNumber, Gender gender) {
-        this.userName = userName;
+    public EditProfileInformationRequest(String username, String email, String fullName, String bio, String phoneNumber, Gender gender) {
+        this.username = username;
         this.email = email;
         this.fullName = fullName;
         this.bio = bio;
@@ -39,12 +37,12 @@ public class EditProfileInformationRequest {
         this.gender = gender;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
