@@ -111,20 +111,29 @@ public class StatisticServiceImpl implements StatisticService {
         LocalDateTime endDate = LocalDateTime.now();
 
         switch (timeSection) {
-            case DAY: {
+            case DAYS: {
                 startDate = endDate.minus(1, ChronoUnit.DAYS);
+                break;
             }
-            case WEEK: {
+            case WEEKS: {
                 startDate = endDate.minus(1, ChronoUnit.WEEKS);
+                break;
             }
-            case MONTH: {
+            case MONTHS: {
                 startDate = endDate.minus(1, ChronoUnit.MONTHS);
+                break;
             }
-            case YEAR: {
+            case QUARTERS: {
+                startDate = endDate.minus(3, ChronoUnit.MONTHS);
+                break;
+            }
+            case YEARS: {
                 startDate = endDate.minus(1, ChronoUnit.YEARS);
+                break;
             }
             default: {
                 startDate = endDate.minus(1, ChronoUnit.YEARS);
+                break;
             }
         }
 

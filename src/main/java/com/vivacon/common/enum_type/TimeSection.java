@@ -2,11 +2,13 @@ package com.vivacon.common.enum_type;
 
 public enum TimeSection {
 
-    DAY,
+    DAYS,
 
-    WEEK,
+    WEEKS,
 
-    MONTH,
+    MONTHS,
 
-    YEAR
+    QUARTERS,
+
+    YEARS
 }
