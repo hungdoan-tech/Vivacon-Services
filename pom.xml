@@ -175,6 +175,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${parent.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -182,6 +183,7 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <maxmem>2024m</maxmem>
                 </configuration>
             </plugin>
         </plugins>
@@ -202,7 +204,13 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
+                        <configuration>
+                            <nonFilteredFileExtensions>
+                                <nonFilteredFileExtension>mmdb</nonFilteredFileExtension>
+                            </nonFilteredFileExtensions>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>

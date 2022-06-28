@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,36 +45,39 @@ public class DeviceServiceImpl implements DeviceService {
         CityResponse location = getLocation(ip);
         String device = getDevice(request.getHeader("account-agent"));
 
-        String country = location.getCountry().getName();
-        String city = location.getCity().getName();
-        Optional<DeviceMetadata> existingDevice = deviceMetadataRepository.find(account.getId(), country, city, device);
+        if (location != null && !"UNKNOWN".equals(device)) {
+            String country = location.getCountry().getName();
+            String city = location.getCity().getName();
+            Optional<DeviceMetadata> existingDevice = deviceMetadataRepository.find(account.getId(), country, city, device);
 
-        if (existingDevice.isEmpty()) {
-            switch (context) {
-                case VERIFY: {
-                    DeviceMetadata deviceMetadata = new DeviceMetadata.DeviceMetadataBuilder()
-                            .account(account)
-                            .country(country)
-                            .city(city)
-                            .device(device)
-                            .lastLoggedIn(LocalDateTime.now())
-                            .latitude(location.getLocation().getLatitude())
-                            .longitude(location.getLocation().getLongitude())
-                            .build();
-                    deviceMetadataRepository.save(deviceMetadata);
-                    return true;
+            if (existingDevice.isEmpty()) {
+                switch (context) {
+                    case VERIFY: {
+                        DeviceMetadata deviceMetadata = new DeviceMetadata.DeviceMetadataBuilder()
+                                .account(account)
+                                .country(country)
+                                .city(city)
+                                .device(device)
+                                .lastLoggedIn(LocalDateTime.now())
+                                .latitude(location.getLocation().getLatitude())
+                                .longitude(location.getLocation().getLongitude())
+                                .build();
+                        deviceMetadataRepository.save(deviceMetadata);
+                        return true;
+                    }
+                    default: {
+                        applicationEventPublisher.publishEvent(new NewDeviceLocationLoginEvent(this, account, device, location, ip));
+                        return false;
+                    }
                 }
-                default: {
-                    applicationEventPublisher.publishEvent(new NewDeviceLocationLoginEvent(this, account, device, location, ip));
-                    return false;
-                }
+            } else {
+                DeviceMetadata deviceMetadata = existingDevice.get();
+                deviceMetadata.setLastLoggedIn(LocalDateTime.now());
+                deviceMetadataRepository.save(deviceMetadata);
+                return true;
             }
-        } else {
-            DeviceMetadata deviceMetadata = existingDevice.get();
-            deviceMetadata.setLastLoggedIn(LocalDateTime.now());
-            deviceMetadataRepository.save(deviceMetadata);
-            return true;
         }
+        return true;
     }
 
     private String extractIp(HttpServletRequest request) {
@@ -96,7 +98,7 @@ public class DeviceServiceImpl implements DeviceService {
     private String getDevice(String userAgent) {
         String deviceDetails = "UNKNOWN";
         Client client = parser.parse(userAgent);
-        if (Objects.nonNull(client)) {
+        if (client.userAgent != null && client.os != null) {
             deviceDetails = client.userAgent.family + " " + client.userAgent.major + "." + client.userAgent.minor +
                     " - " + client.os.family + " " + client.os.major + "." + client.os.minor;
         }

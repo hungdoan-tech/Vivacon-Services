@@ -17,7 +17,7 @@ public enum SettingType {
 
     PRIVACY_ON_ACTIVE_STATUS(Boolean.class, String.valueOf(true)),
 
-    PRIVACY_ON_NEW_DEVICE_LOCATION(Boolean.class, String.valueOf(true));
+    PRIVACY_ON_NEW_DEVICE_LOCATION(Boolean.class, String.valueOf(false));
 
     Class valueType;
 
