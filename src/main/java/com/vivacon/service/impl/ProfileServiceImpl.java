@@ -91,7 +91,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public DetailProfile getProfileByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
-        if (!requestAccount.getRole().equals(RoleType.USER)) {
+        if (!requestAccount.getRole().getName().equals(RoleType.USER.toString())) {
             throw new RestrictAccessUserResourceException();
         }
         return getProfile(requestAccount, privacy, order, sort, pageSize, pageIndex);
@@ -107,7 +107,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
-        if (!requestAccount.getRole().equals(RoleType.USER)) {
+        if (!requestAccount.getRole().getName().equals(RoleType.USER.toString())) {
             throw new RestrictAccessUserResourceException();
         }
         List<Privacy> privacyList = getSuitablePrivacyList(requestAccount, privacy);
@@ -115,7 +115,6 @@ public class ProfileServiceImpl implements ProfileService {
         Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, privacyList, pageable);
         return PageMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
     }
-
 
     private DetailProfile getProfile(Account requestAccount, Optional<Privacy> privacy, Optional<String> order,
                                      Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
