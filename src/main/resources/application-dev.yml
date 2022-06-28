@@ -6,9 +6,9 @@ spring:
   name: Vivacon
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://vivacon-database.cadyqzt0yluv.ap-southeast-2.rds.amazonaws.com:5432/innovation?useSSL=false&useUnicode=true
+    url: jdbc:postgresql://localhost:5432/vivacon?useSSL=false&useUnicode=true
     username: postgres
-    password: sx5nPMQb2LLJyvPWhFW9
+    password: Admin123*
   jpa:
     generate-ddl: true
     hibernate:

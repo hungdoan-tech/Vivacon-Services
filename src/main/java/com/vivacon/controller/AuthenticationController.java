@@ -126,7 +126,6 @@ public class AuthenticationController {
                                 userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
                         return ResponseEntity.ok(authenticationResponse);
                     } else {
-                        applicationEventPublisher.publishEvent(new StillNotActiveAccountLoginEvent(this, account));
                         return ResponseEntity.status(403).body(1003);
                     }
                 } else {

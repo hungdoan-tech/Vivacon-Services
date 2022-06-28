@@ -105,8 +105,7 @@ public class DeviceServiceImpl implements DeviceService {
         Client client = parser.parse(userAgent);
         logger.info("User agent " + userAgent + " client user agent : " + client.userAgent + " client os " + client.os + " client device " + client.device);
         if (client.userAgent != null && client.os != null) {
-            deviceDetails = client.userAgent.family + " " + client.userAgent.major + "." + client.userAgent.minor +
-                    " - " + client.os.family + " " + client.os.major + "." + client.os.minor;
+            deviceDetails = client.userAgent.family + " " + client.userAgent.major + "." + client.userAgent.minor;
         }
         return deviceDetails;
     }

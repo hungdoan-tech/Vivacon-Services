@@ -160,6 +160,14 @@ public class VerificationTokenEventHandler {
                 + " We also suggest you should check on your Device - Location wizard tab on your settings in our platform to remove abnormal and unused device <br/>"
                 + "Thanks you !";
 
+//        String content = "Dear [[name]],<br/>"
+//                + "- If it is actually you, you can verify to go further on the login process via the below code <br/>"
+//                + "<h3>[[code]]</h3><br/>"
+//                + "Please notice that your code is unique and only take effect in <strong> [[expirationTime]] minutes</strong><br/><br/>"
+//                + "- If it not you. You still be safe, but not share this above verification code to anyone else. <br/>"
+//                + " We also suggest you should check on your Device - Location wizard tab on your settings in our platform to remove abnormal and unused device <br/>"
+//                + "Thanks you !";
+
         content = content.replace("[[name]]", account.getFullName());
         content = content.replace("[[ip]]", event.getIp());
         content = content.replace("[[device]]", event.getDevice());
@@ -169,6 +177,11 @@ public class VerificationTokenEventHandler {
         content = content.replace("[[longitude]]", event.getLocation().getLocation().getLongitude().toString());
         content = content.replace("[[code]]", code);
         content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
+
+
+//        content = content.replace("[[name]]", account.getFullName());
+//        content = content.replace("[[code]]", code);
+//        content = content.replace("[[expirationTime]]", String.valueOf(expirationInMinutes));
 
         Notification notification = new Notification(subject, content, account);
         logger.info(content);
