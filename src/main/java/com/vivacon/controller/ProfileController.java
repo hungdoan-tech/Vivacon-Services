@@ -98,7 +98,7 @@ public class ProfileController {
     }
 
     @ApiOperation(value = "Edit the profile information")
-    @PostMapping("/profile/edit")
+    @PutMapping("/profile/edit")
     public AccountInfo editProfileInformation(@Valid @RequestBody EditProfileInformationRequest editProfileInformationRequest) {
         return profileService.editProfileInformation(editProfileInformationRequest);
     }
