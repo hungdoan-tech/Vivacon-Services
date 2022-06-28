@@ -7,6 +7,7 @@ import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.StatisticDataQuantity;
 import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserGeoLocation;
 import com.vivacon.service.StatisticService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -88,5 +89,11 @@ public class StatisticController {
     @GetMapping("/user/in/years")
     public List<PostsQuantityInCertainTime> getUserQuantityStatisticInYears() {
         return this.statisticService.getTheUserQuantityStatisticInTimePeriods(TimePeriod.YEAR);
+    }
+
+    @ApiOperation(value = "Get latest login location per account")
+    @GetMapping("/user/location")
+    public List<UserGeoLocation> getLoginLocationPerAccount() {
+        return this.statisticService.getLoginLocationPerAccount();
     }
 }

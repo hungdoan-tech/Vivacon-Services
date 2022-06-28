@@ -7,6 +7,7 @@ import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.StatisticDataQuantity;
 import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserGeoLocation;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface StatisticService {
     List<OutlinePost> getTheTopTrendingPost(Integer limit, Integer pageIndex);
 
     List<PostNewest> getTopNewestPost(Integer limit);
+
+    List<UserGeoLocation> getLoginLocationPerAccount();
 }

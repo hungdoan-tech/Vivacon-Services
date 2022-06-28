@@ -2,7 +2,11 @@ package com.vivacon.dto.response;
 
 public class UserGeoLocation {
 
+    private long id;
+
     private long accountId;
+
+    private String device;
 
     private String country;
 
@@ -10,12 +14,28 @@ public class UserGeoLocation {
 
     private double longitude;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getAccountId() {
         return accountId;
     }
 
     public void setAccountId(long accountId) {
         this.accountId = accountId;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
     }
 
     public String getCountry() {
@@ -39,6 +59,15 @@ public class UserGeoLocation {
     }
 
     public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public UserGeoLocation(long id, long accountId, String device, String country, double latitude, double longitude) {
+        this.id = id;
+        this.accountId = accountId;
+        this.device = device;
+        this.country = country;
+        this.latitude = latitude;
         this.longitude = longitude;
     }
 }

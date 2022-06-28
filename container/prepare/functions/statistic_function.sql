@@ -409,7 +409,9 @@ DROP FUNCTION if exists getLastestLoginLocationPerAccount;
 CREATE
 OR REPLACE FUNCTION getLastestLoginLocationPerAccount()
 RETURNS TABLE
-(accountId bigint,
+(id bigint,
+accountId bigint,
+device character varying(255),
 country character varying(255),
 latitude double precision,
 longitude double precision)
@@ -418,14 +420,15 @@ as $$
 BEGIN
 RETURN QUERY
     WITH summary AS (
-      		SELECT d.account_id as accountId,
+      		SELECT d.id,
+				   d.account_id as accountId,
+				   d.device as device,
            		   d.country as country,
 		   		   d.latitude as latitude,
 		   		   d.longitude as longitude,
            		   ROW_NUMBER() OVER(PARTITION BY d.account_id ORDER BY d.last_logged_in DESC) AS rank
       		FROM device_metadata d)
-    SELECT s.accountId, s.country, s.latitude, s.longitude FROM summary s WHERE rank = 1;
+SELECT s.id, s.accountId, s.device, s.country, s.latitude, s.longitude FROM summary s WHERE rank = 1;
 END;
 $$
 LANGUAGE plpgsql;
-

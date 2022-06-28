@@ -14,6 +14,7 @@ import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -104,6 +105,25 @@ public class UserDAOImpl extends StatisticDAO implements UserDAO {
 
     @Override
     public List<UserGeoLocation> getLoginLocationPerAccount() {
-        return null;
+        List<UserGeoLocation> geoLocations = new LinkedList<>();
+
+        StoredProcedureQuery procedureQuery;
+        procedureQuery = entityManager.createStoredProcedureQuery("getLastestLoginLocationPerAccount");
+        procedureQuery.execute();
+        List<Object[]> resultList = procedureQuery.getResultList();
+        for (int currentIndex = 0; currentIndex < resultList.size(); currentIndex++) {
+
+            Object[] result = resultList.get(currentIndex);
+
+            long id = ((BigInteger) result[0]).longValue();
+            long accountId = ((BigInteger) result[1]).longValue();
+            String device = (String) result[2];
+            String country = (String) result[3];
+            double latitude = (double) result[4];
+            double longitude = (double) result[4];
+
+            geoLocations.add(new UserGeoLocation(id, accountId, device, country, latitude, longitude));
+        }
+        return geoLocations;
     }
 }
