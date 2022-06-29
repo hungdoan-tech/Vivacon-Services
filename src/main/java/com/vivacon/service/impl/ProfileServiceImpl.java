@@ -144,6 +144,23 @@ public class ProfileServiceImpl implements ProfileService {
         return new DetailProfile(profile, avatarUrl, postCounting, followerCounting, followingCounting, following.isPresent(), listOutlinePost);
     }
 
+    @Override
+    public DetailProfile getProfileByUsernameAdminRole(long accountId) {
+        Account requestAccount = accountRepository
+                .findById(accountId)
+                .orElseThrow(RecordNotFoundException::new);
+        DetailProfile profile = getProfile(requestAccount, Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty());
+
+        Pageable pageable = PageableBuilder.buildPage(Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Post.class);
+        List<Privacy> privacyList = getSuitablePrivacyList(requestAccount, Optional.empty());
+        Page<Post> pagePost = postRepository.getAllByAccountId(requestAccount.getId(), pageable);
+        PageDTO<OutlinePost> listOutlinePost = PageMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
+        profile.setPagePost(listOutlinePost);
+        return profile;
+    }
+
     private List<Privacy> getSuitablePrivacyList(Account requestAccount, Optional<Privacy> privacy) {
 
         List<Privacy> privacyList = new LinkedList<>();

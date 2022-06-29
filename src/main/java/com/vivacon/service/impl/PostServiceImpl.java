@@ -130,7 +130,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Long> getAllIdByAccountId(Long accountId) {
-        return postRepository.getAllByAccountId(accountId)
+        return postRepository.getAllActivePostByAccountId(accountId)
                 .stream()
                 .map(post -> post.getId())
                 .collect(Collectors.toList());

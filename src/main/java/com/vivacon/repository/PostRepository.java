@@ -50,5 +50,10 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     @Query("select p " +
             "from Post p " +
             "where p.createdBy.id = :accountId and p.active = true")
-    List<Post> getAllByAccountId(@Param("accountId") Long accountId);
+    List<Post> getAllActivePostByAccountId(@Param("accountId") Long accountId);
+
+    @Query("select p " +
+            "from Post p " +
+            "where p.createdBy.id = :accountId")
+    Page<Post> getAllByAccountId(@Param("accountId") Long accountId, Pageable pageable);
 }
