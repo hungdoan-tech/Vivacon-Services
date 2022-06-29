@@ -2,7 +2,6 @@ package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
 import com.vivacon.dto.response.NewsfeedPost;
-import com.vivacon.dto.response.OutlinePost;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.service.NewsfeedService;
 import com.vivacon.service.StatisticService;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,10 +37,11 @@ public class NewsfeedController {
 
     @ApiOperation(value = "Get top trending post")
     @GetMapping("/trending")
-    public PageDTO<OutlinePost> getTopTrendingPost(@RequestParam(value = "limit") Optional<Integer> limit,
-                                                   @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
-        PageDTO<OutlinePost> pageResponse = new PageDTO<>();
-        pageResponse.setContent(statisticService.getTheTopTrendingPost(limit.orElse(5), pageIndex.orElse(0)));
+    public PageDTO<NewsfeedPost> getTopTrendingPost(@RequestParam(value = "limit") Optional<Integer> limit,
+                                                    @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
+        List<NewsfeedPost> newsfeedPost = newsfeedService.getTrendingNewsfeedPost(limit, pageIndex);
+        PageDTO<NewsfeedPost> pageResponse = new PageDTO<>();
+        pageResponse.setContent(newsfeedPost);
         pageResponse.setLast(false);
         return pageResponse;
     }
