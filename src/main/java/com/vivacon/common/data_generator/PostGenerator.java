@@ -29,7 +29,7 @@ public class PostGenerator extends DataGenerator {
                 String createdAt = getRandomTimestamp();
                 String lastModifiedAt = getRandomTimestamp();
                 String caption = generateSentence(10, true);
-                int privacy = RANDOM.nextInt(2);
+                int privacy = ThreadLocalRandom.current().nextInt(1, 3);
 
                 value = value.replace("[[id]]", String.valueOf(counting++));
                 value = value.replace("[[created_at]]", createdAt);

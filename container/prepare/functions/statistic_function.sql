@@ -174,7 +174,11 @@ SELECT
     totalLikeCount.likeQuantity totalLike,
     (totalCommentCount.commentQuantity + totalLikeCount.likeQuantity) totalInteraction
 FROM
-    post p
+    (
+        select *
+        from Post po
+        where po.privacy = 2
+    ) p
         INNER JOIN
     (
         SELECT
