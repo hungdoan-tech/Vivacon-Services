@@ -402,48 +402,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
--- CREATE
--- OR REPLACE FUNCTION getTopTrendingHashTagInCertainTime(startDate timestamp, endDate timestamp, limit_value int)
--- RETURNS TABLE
--- (quantity bigint,
--- id bigint,
--- name character varying(1500)
--- )
--- as $$
-
--- BEGIN
-
--- RETURN QUERY
-	
--- 	SELECT
--- 		COUNT(hr.hashtag_id) quantity,
--- 		h.id,
--- 		h."name"
--- 	FROM
--- 		hashtag_rel_post hr
--- 	INNER JOIN
--- 		hashtag h
--- 	ON h.id = hr.hashtag_id
--- 	INNER JOIN
--- 		post p
--- 	ON p.id = hr.post_id
--- 	WHERE
--- 		p.created_at BETWEEN startDate AND endDate
--- 	GROUP BY
--- 		hr.hashtag_id,
--- 		h.id,
--- 		h."name"
--- 	ORDER BY
--- 		quantity DESC
--- 	LIMIT limit_value;
-
--- END;
--- $$
--- LANGUAGE plpgsql;
-
---SELECT * FROM getTopTrendingHashTagInCertainTime('2020-06-30 18:47:42.43', '2022-06-30 18:47:42.43', 6)
-
-
+-- Select top trending hashtag by time
 -- Select top trending hashtag by time
 DROP FUNCTION if exists getTopTrendingHashTagInCertainTime;
 
@@ -455,21 +414,21 @@ as $$
 BEGIN
 
 execute
-    'create local temporary table top_contributors AS
-    select h."name" as hashtag_name, count(hr.hashtag_id) as counting_value, ROW_NUMBER() OVER (ORDER BY (COUNT(hr.hashtag_id)) DESC) AS counter
+    'DROP table if exists top_hashtags; create local temporary table top_hashtags AS
+    select h."name" as hashtag_name, count(hr.id) as counting_value, ROW_NUMBER() OVER (ORDER BY (COUNT(hr.id)) DESC) AS counter
     from hashtag_rel_post hr inner join hashtag h on h.id = hr.hashtag_id inner join post p on p.id = hr.post_id
-    where p.created_at between $1 and $2 and p.active = true
-    group by hr.hashtag_id, h."name"
-    order by count(hr.hashtag_id) desc;'
+    where p.last_modified_at between $1 and $2
+    group by h."name"
+    order by count(hr.id) desc;'
     using start_date, end_date;
 
 return query
 SELECT hashtag_name as name_value, counting_value as counting_final
-FROM top_contributors
+FROM top_hashtags
 WHERE counter <= limit_value
 UNION ALL
 SELECT 'Other', SUM(counting_value)
-FROM top_contributors
+FROM top_hashtags
 WHERE counter > limit_value;
 
 Drop table if exists top_contributors;

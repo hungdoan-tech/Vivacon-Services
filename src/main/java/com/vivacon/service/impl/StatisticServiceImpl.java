@@ -108,7 +108,6 @@ public class StatisticServiceImpl implements StatisticService {
 
             return hashTagDAO.getTopTrendingHashTagInCertainTime(startDateTime, endDateTime, limit);
         }
-
         return null;
     }
 

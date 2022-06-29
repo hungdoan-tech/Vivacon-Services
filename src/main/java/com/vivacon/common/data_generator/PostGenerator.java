@@ -21,7 +21,7 @@ public class PostGenerator extends DataGenerator {
         long counting = 1L;
         for (int accountId = startAccountIndex; accountId <= endAccountIndex; accountId++) {
 
-            int postCount = ThreadLocalRandom.current().nextInt(5, 20);
+            int postCount = ThreadLocalRandom.current().nextInt(10, 20);
             for (int postIndex = 1; postIndex <= postCount; postIndex++) {
 
                 value = "([[id]], '[[created_at]]', '[[last_modified_at]]', '[[caption]]', [[privacy]], [[created_by_account_id]], NULL, true),\n";
