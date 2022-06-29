@@ -1,6 +1,7 @@
 package com.vivacon.dto.response;
 
 import com.vivacon.dto.AttachmentDTO;
+import com.vivacon.entity.enum_type.Privacy;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -28,6 +29,8 @@ public class PostInteraction {
 
     private List<AttachmentDTO> lstAttachmentDTO;
 
+    private Privacy privacy;
+
     public PostInteraction(BigInteger postId, String caption, LocalDateTime createdAt, String userName, String fullName, String url, BigInteger totalComment, BigInteger totalLike, BigInteger totalInteraction, List<AttachmentDTO> lstAttachmentDTO) {
         this.postId = postId;
         this.caption = caption;
@@ -41,10 +44,12 @@ public class PostInteraction {
         this.lstAttachmentDTO = lstAttachmentDTO;
     }
 
-    public PostInteraction(BigInteger postId, String caption, LocalDateTime createdAt, String userName, String fullName, String url, BigInteger totalComment, BigInteger totalLike, BigInteger totalInteraction) {
+    public PostInteraction(BigInteger postId, String caption, LocalDateTime createdAt, Privacy privacy, String userName,
+                           String fullName, String url, BigInteger totalComment, BigInteger totalLike, BigInteger totalInteraction) {
         this.postId = postId;
         this.caption = caption;
         this.createdAt = createdAt;
+        this.privacy = privacy;
         this.userName = userName;
         this.fullName = fullName;
         this.url = url;
@@ -131,5 +136,13 @@ public class PostInteraction {
 
     public void setLstAttachmentDTO(List<AttachmentDTO> lstAttachmentDTO) {
         this.lstAttachmentDTO = lstAttachmentDTO;
+    }
+
+    public Privacy getPrivacy() {
+        return privacy;
+    }
+
+    public void setPrivacy(Privacy privacy) {
+        this.privacy = privacy;
     }
 }

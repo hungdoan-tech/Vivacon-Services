@@ -12,6 +12,7 @@ import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.StatisticDataQuantity;
 import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserGeoLocation;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
@@ -141,5 +142,10 @@ public class StatisticServiceImpl implements StatisticService {
         localDateTimeList.add(endDate);
 
         return localDateTimeList;
+    }
+
+    @Override
+    public List<UserGeoLocation> getLoginLocationPerAccount() {
+        return userDAO.getLoginLocationPerAccount();
     }
 }

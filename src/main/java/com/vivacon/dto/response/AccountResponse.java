@@ -10,6 +10,8 @@ public class AccountResponse {
 
     private String username;
 
+    private String email;
+
     private String avatar;
 
     private boolean isFollowing;
@@ -53,5 +55,13 @@ public class AccountResponse {
 
     public void setFollowing(boolean following) {
         isFollowing = following;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

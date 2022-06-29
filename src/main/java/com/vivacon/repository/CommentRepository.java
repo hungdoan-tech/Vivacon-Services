@@ -36,14 +36,20 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
     @Query("SELECT comment " +
             "FROM Comment comment " +
             "WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = true")
-    Page<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId,
-                                            Pageable pageable);
+    Page<Comment> findAllActiveFirstLevelComments(@Param(value = "postId") Long postId,
+                                                  Pageable pageable);
 
     @Query("SELECT comment " +
             "FROM Comment comment " +
             "WHERE comment.parentComment.id is null and comment.post.id= :postId AND comment.active = :isActive")
     List<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId,
                                             @Param(value = "isActive") boolean isActive);
+
+    @Query("SELECT comment " +
+            "FROM Comment comment " +
+            "WHERE comment.parentComment.id is null and comment.post.id= :postId")
+    Page<Comment> findAllFirstLevelComments(@Param(value = "postId") Long postId,
+                                            Pageable pageable);
 
     @Query("SELECT COUNT(comment.id) " +
             "FROM Comment comment " +

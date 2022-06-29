@@ -2,8 +2,8 @@ package com.vivacon.mapper;
 
 import com.vivacon.common.utility.AuditableHelper;
 import com.vivacon.dto.request.AccountReportRequest;
-import com.vivacon.entity.AccountReport;
 import com.vivacon.entity.AuditableEntity;
+import com.vivacon.entity.report.AccountReport;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

@@ -1,5 +1,7 @@
 package com.vivacon.dto.response;
 
+import com.vivacon.entity.enum_type.Privacy;
+
 public class OutlinePost {
 
     private Long id;
@@ -12,16 +14,19 @@ public class OutlinePost {
 
     private Long commentCount;
 
+    private Privacy privacy;
+
     public OutlinePost() {
 
     }
 
-    public OutlinePost(Long id, String firstImage, Boolean isMultipleImages, Long likeCount, Long commentCount) {
+    public OutlinePost(Long id, String firstImage, Boolean isMultipleImages, Long likeCount, Long commentCount, Privacy privacy) {
         this.id = id;
         this.firstImage = firstImage;
         this.isMultipleImages = isMultipleImages;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
+        this.privacy = privacy;
     }
 
     public Long getId() {
@@ -62,5 +67,13 @@ public class OutlinePost {
 
     public void setCommentCount(Long commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public Privacy getPrivacy() {
+        return privacy;
+    }
+
+    public void setPrivacy(Privacy privacy) {
+        this.privacy = privacy;
     }
 }

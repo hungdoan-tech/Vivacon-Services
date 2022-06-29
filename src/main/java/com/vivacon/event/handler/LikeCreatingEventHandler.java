@@ -26,7 +26,7 @@ public class LikeCreatingEventHandler {
     @Qualifier("emailSender")
     private NotificationProvider emailSender;
 
-    @Qualifier("emailSender")
+    @Qualifier("webSocketSender")
     private NotificationProvider websocketSender;
 
     private SettingService settingService;

@@ -7,8 +7,6 @@ import com.vivacon.entity.AuditableEntity;
 import com.vivacon.entity.Comment;
 import com.vivacon.repository.CommentRepository;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -23,8 +21,7 @@ public class CommentMapper {
 
     public CommentMapper(ModelMapper mapper,
                          AuditableHelper auditableHelper,
-                         CommentRepository commentRepository
-    ) {
+                         CommentRepository commentRepository) {
         this.mapper = mapper;
         this.auditableHelper = auditableHelper;
         this.commentRepository = commentRepository;
@@ -39,9 +36,12 @@ public class CommentMapper {
 
     public CommentResponse toResponse(Comment comment) {
         CommentResponse commentResponse = mapper.map(comment, CommentResponse.class);
+        auditableHelper.setupDisplayAuditableFields(comment, commentResponse);
+
         Long postId = comment.getPost().getId();
         long totalCountComment = commentRepository.getCountingChildComments(comment.getId(), postId);
         commentResponse.setTotalChildComments(totalCountComment);
+        
         return commentResponse;
     }
 }

@@ -21,7 +21,7 @@ public class FollowingEventHandler {
     @Qualifier("emailSender")
     private NotificationProvider emailSender;
 
-    @Qualifier("emailSender")
+    @Qualifier("webSocketSender")
     private NotificationProvider websocketSender;
 
     private NotificationRepository notificationRepository;

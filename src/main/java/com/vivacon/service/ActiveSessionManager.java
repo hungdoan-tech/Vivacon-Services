@@ -7,7 +7,9 @@ import java.util.Set;
 public interface ActiveSessionManager {
     void addSession(String sessionId, String username);
 
-    void removeSession(String sessionId);
+    boolean removeSessionBySessionId(String sessionId);
+
+    boolean removeSessionByUsername(String username);
 
     Set<String> getAll();
 

@@ -5,6 +5,7 @@ import com.vivacon.dao.StatisticDAO;
 import com.vivacon.dao.UserDAO;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserGeoLocation;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -99,5 +101,29 @@ public class UserDAOImpl extends StatisticDAO implements UserDAO {
 
         entityManager.close();
         return valueBuilder.toString();
+    }
+
+    @Override
+    public List<UserGeoLocation> getLoginLocationPerAccount() {
+        List<UserGeoLocation> geoLocations = new LinkedList<>();
+
+        StoredProcedureQuery procedureQuery;
+        procedureQuery = entityManager.createStoredProcedureQuery("getLastestLoginLocationPerAccount");
+        procedureQuery.execute();
+        List<Object[]> resultList = procedureQuery.getResultList();
+        for (int currentIndex = 0; currentIndex < resultList.size(); currentIndex++) {
+
+            Object[] result = resultList.get(currentIndex);
+
+            long id = ((BigInteger) result[0]).longValue();
+            long accountId = ((BigInteger) result[1]).longValue();
+            String device = (String) result[2];
+            String country = (String) result[3];
+            double latitude = (double) result[4];
+            double longitude = (double) result[5];
+
+            geoLocations.add(new UserGeoLocation(id, accountId, device, country, latitude, longitude));
+        }
+        return geoLocations;
     }
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 
 public abstract class DataGenerator {
 
-    public static final int AMOUNT_OF_USER = 100;
+    public static final int AMOUNT_OF_USER = 50;
 
     protected static final String BASE_DIRECTORY_PATH = "./mock_data/sql/";
 
@@ -57,6 +57,8 @@ public abstract class DataGenerator {
         generator = new SettingGenerator();
         generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "setting");
 
+        generator = new DeviceMetadataGenerator();
+        generator.exportMockDataToSQLFile(1, AMOUNT_OF_USER, "device_metadata");
     }
 
     public abstract List<String> generateSQLStatements(int startIndex, int endIndex);
@@ -72,7 +74,6 @@ public abstract class DataGenerator {
         }
         return sentence.toString();
     }
-
 
     protected String getRandomTimestamp() {
         Timestamp rand = new Timestamp(START_OFFSET + (long) (Math.random() * DIFF_OFFSET));

@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HashTagRelPostRepository extends JpaRepository<HashTagRelPost, Long> {
-    @Query("SELECT new com.vivacon.dto.response.TopHashTagResponse(hashTagRel.hashTag.id, hashTag.name, COUNT(hashTagRel.id)) " +
+    @Query("SELECT new com.vivacon.dto.response.TopHashTagResponse(hashTagRel.hashTag.id, hashTagRel.hashTag.name, COUNT(hashTagRel.id)) " +
             "FROM HashTagRelPost hashTagRel " +
-            "GROUP BY hashTagRel.hashTag.id, hashTag.name " +
+            "GROUP BY hashTagRel.hashTag.id, hashTagRel.hashTag.name " +
             "ORDER BY COUNT(hashTagRel.id) DESC")
     Page<TopHashTagResponse> findTopHashTag(Pageable pageable);
 

@@ -8,6 +8,7 @@ import com.vivacon.dto.response.EssentialAccount;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public interface AccountService {
@@ -32,10 +33,12 @@ public interface AccountService {
 
     Account changePassword(ChangePasswordRequest changePasswordRequest);
 
-    PageDTO<EssentialAccount> findByName(String name, Optional<String> order, 
-            Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
-    
-    Account verifyAccount(String code);
+    PageDTO<EssentialAccount> findByName(String name, Optional<String> order,
+                                         Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+
+    Account verifyAccount(HttpServletRequest request, String code);
 
     boolean deactivate(Long id);
+
+    boolean ban(Long id);
 }

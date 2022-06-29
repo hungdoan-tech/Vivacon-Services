@@ -156,4 +156,62 @@ public class Notification {
     public void setTraceId(Long traceId) {
         this.traceId = traceId;
     }
+
+
+    public static final class NotificationBuilder {
+        private Notification notification;
+
+        public NotificationBuilder() {
+            notification = new Notification();
+        }
+
+        public NotificationBuilder type(NotificationType type) {
+            notification.setType(type);
+            return this;
+        }
+
+        public NotificationBuilder presentationId(Long presentationId) {
+            notification.setPresentationId(presentationId);
+            return this;
+        }
+
+        public NotificationBuilder traceId(Long traceId) {
+            notification.setTraceId(traceId);
+            return this;
+        }
+
+        public NotificationBuilder actionAuthor(Account actionAuthor) {
+            notification.setActionAuthor(actionAuthor);
+            return this;
+        }
+
+        public NotificationBuilder receiver(Account receiver) {
+            notification.setReceiver(receiver);
+            return this;
+        }
+
+        public NotificationBuilder title(String title) {
+            notification.setTitle(title);
+            return this;
+        }
+
+        public NotificationBuilder content(String content) {
+            notification.setContent(content);
+            return this;
+        }
+
+        public NotificationBuilder status(MessageStatus status) {
+            notification.setStatus(status);
+            return this;
+        }
+
+        public NotificationBuilder timestamp(LocalDateTime timestamp) {
+            notification.setTimestamp(timestamp);
+            return this;
+        }
+
+        public Notification build() {
+            return notification;
+        }
+    }
 }

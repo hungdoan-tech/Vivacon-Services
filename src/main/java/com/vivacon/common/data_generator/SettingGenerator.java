@@ -4,7 +4,6 @@ import com.vivacon.entity.enum_type.SettingType;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class SettingGenerator extends DataGenerator {
 
@@ -21,7 +20,6 @@ public class SettingGenerator extends DataGenerator {
         long counting = 1L;
         for (int accountId = startAccountIndex; accountId <= endAccountIndex; accountId++) {
 
-            int settingCount = ThreadLocalRandom.current().nextInt(5, 20);
             for (int settingIndex = 0; settingIndex < settingTypes.length; settingIndex++) {
                 value = "([[id]], '[[type]]', '[[value]]', [[account_id]]),\n";
 

@@ -9,6 +9,7 @@ import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
 import com.vivacon.dto.response.StatisticDataQuantity;
 import com.vivacon.dto.response.UserAccountMostFollower;
+import com.vivacon.dto.response.UserGeoLocation;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,4 +32,6 @@ public interface StatisticService {
     List<PostNewest> getTopNewestPost(Integer limit);
 
     List<HashTagQuantityInCertainTime> getTopTrendingHashTagInCertainTime(Optional<TimeSection> timeSection, Optional<LocalDateTime> startDate, Optional<LocalDateTime> endDate, Integer limit);
+
+ 	List<UserGeoLocation> getLoginLocationPerAccount();
 }

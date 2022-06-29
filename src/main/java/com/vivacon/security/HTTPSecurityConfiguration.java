@@ -121,7 +121,7 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(urlWhitelistArray).permitAll()
                 .antMatchers("/actuator/**").permitAll()
-                .antMatchers(API_V1 + "/admin/**").hasAnyAuthority(RoleType.SUPER_ADMIN.toString())
+                .antMatchers(API_V1 + "/admin/**").hasAnyAuthority(RoleType.SUPER_ADMIN.toString(), RoleType.ADMIN.toString())
                 .antMatchers(HttpMethod.POST, API_V1 + "/account/password").permitAll()
                 .antMatchers(HttpMethod.DELETE, API_V1 + "/comment/{id}").access("@resourceRestrictionService.isAccessibleToCommentResource(#id)")
                 .antMatchers(HttpMethod.DELETE, API_V1 + "/post/{id}").access("@resourceRestrictionService.isAccessibleToPostResource(#id)")

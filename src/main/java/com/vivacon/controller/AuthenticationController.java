@@ -1,6 +1,7 @@
 package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
+import com.vivacon.common.enum_type.VerifyDeviceContext;
 import com.vivacon.common.utility.JwtUtils;
 import com.vivacon.common.validation.UniqueEmail;
 import com.vivacon.dto.request.ChangePasswordRequest;
@@ -11,13 +12,18 @@ import com.vivacon.dto.request.TokenRefreshRequest;
 import com.vivacon.dto.response.AccountResponse;
 import com.vivacon.dto.response.AuthenticationResponse;
 import com.vivacon.entity.Account;
+import com.vivacon.entity.enum_type.SettingType;
+import com.vivacon.event.StillNotActiveAccountLoginEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.TokenRefreshException;
 import com.vivacon.service.AccountService;
+import com.vivacon.service.DeviceService;
 import com.vivacon.service.RefreshTokenService;
+import com.vivacon.service.SettingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -53,24 +60,34 @@ public class AuthenticationController {
 
     private AccountService accountService;
 
+    private DeviceService deviceService;
+
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    private SettingService settingService;
+
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     JwtUtils jwtTokenUtil,
                                     RefreshTokenService refreshTokenService,
-                                    AccountService accountService) {
+                                    AccountService accountService,
+                                    DeviceService deviceService,
+                                    SettingService settingService,
+                                    ApplicationEventPublisher applicationEventPublisher) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtils = jwtTokenUtil;
         this.refreshTokenService = refreshTokenService;
         this.accountService = accountService;
+        this.deviceService = deviceService;
+        this.settingService = settingService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     private AuthenticationResponse generateAuthenticationResponse(String username, List<String> authorities) {
         Account account = accountService.getAccountByUsernameIgnoreCase(username);
         List<String> roles = authorities;
-
         String accessToken = jwtTokenUtils.generateAccessToken(account, roles);
         String refreshToken = refreshTokenService.createRefreshToken(username);
-
         return new AuthenticationResponse(accessToken, refreshToken);
     }
 
@@ -82,13 +99,45 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "Login to the system")
     @PostMapping("/login")
-    public AuthenticationResponse login(@Valid @RequestBody LoginRequest loginRequest) {
-
-        Authentication authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    public ResponseEntity<?> login(final HttpServletRequest request,
+                                   @Valid @RequestBody LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+        Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         UserDetails userDetail = (UserDetails) authenticate.getPrincipal();
-        return generateAuthenticationResponse(userDetail.getUsername(),
-                userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        Account account = accountService.getAccountByUsernameIgnoreCase(userDetail.getUsername());
+
+        switch (account.getAccountStatus()) {
+            case BANNED: {
+                return ResponseEntity.status(403).body(1001);
+            }
+            case STILL_NOT_ACTIVE: {
+                applicationEventPublisher.publishEvent(new StillNotActiveAccountLoginEvent(this, account));
+                return ResponseEntity.status(403).body(1002);
+            }
+            case ACTIVE: {
+                boolean isNotifyOnNewDeviceLocation = Boolean.parseBoolean(settingService.evaluateSetting(account.getId(),
+                        SettingType.PRIVACY_ON_NEW_DEVICE_LOCATION).toString());
+                if (isNotifyOnNewDeviceLocation) {
+
+                    boolean isDeviceAlreadyExist = deviceService.verifyDevice(request, account, VerifyDeviceContext.LOGIN);
+                    if (isDeviceAlreadyExist) {
+                        AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
+                                userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+                        return ResponseEntity.ok(authenticationResponse);
+                    } else {
+                        return ResponseEntity.status(403).body(1003);
+                    }
+                } else {
+                    AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
+                            userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+                    return ResponseEntity.ok(authenticationResponse);
+                }
+            }
+            default: {
+                return null;
+            }
+        }
     }
 
     /**
@@ -112,7 +161,7 @@ public class AuthenticationController {
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, Constants.REFRESH_TOKEN_NOT_STORE));
     }
 
-    @ApiOperation(value = "Check new unique username")
+    @ApiOperation(value = "Check unique username/email")
     @GetMapping("/account/check")
     public AccountResponse checkUniqueUsername(@RequestParam(value = "username", required = false) Optional<String> username,
                                                @RequestParam(value = "email", required = false) Optional<String> email) {
@@ -139,10 +188,11 @@ public class AuthenticationController {
         return generateAuthenticationResponse(account.getUsername(), Arrays.asList(account.getRole().toString()));
     }
 
-    @ApiOperation(value = "Active new account by verification token")
+    @ApiOperation(value = "Endpoint for verify account by verification token or changing password and verify new device purpose")
     @PostMapping("/account/verify")
-    public ResponseEntity<Object> verifyAccount(@NotEmpty @RequestBody String code) {
-        accountService.verifyAccount(code);
+    public ResponseEntity<Object> verifyAccount(final HttpServletRequest request,
+                                                @NotEmpty @RequestBody String code) {
+        accountService.verifyAccount(request, code);
         return ResponseEntity.ok(null);
     }
 
