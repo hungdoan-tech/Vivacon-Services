@@ -6,9 +6,12 @@ public class StatisticDataQuantity {
 
     private Long totalAccountCount;
 
-    public StatisticDataQuantity(Long totalPostCount, Long totalAccountCount) {
+    private Long totalHashTagCount;
+
+    public StatisticDataQuantity(Long totalPostCount, Long totalAccountCount, Long totalHashTagCount) {
         this.totalPostCount = totalPostCount;
         this.totalAccountCount = totalAccountCount;
+        this.totalHashTagCount = totalHashTagCount;
     }
 
     public Long getTotalPostCount() {
@@ -25,5 +28,13 @@ public class StatisticDataQuantity {
 
     public void setTotalAccountCount(Long totalAccountCount) {
         this.totalAccountCount = totalAccountCount;
+    }
+
+    public Long getTotalHashTagCount() {
+        return totalHashTagCount;
+    }
+
+    public void setTotalHashTagCount(Long totalHashTagCount) {
+        this.totalHashTagCount = totalHashTagCount;
     }
 }

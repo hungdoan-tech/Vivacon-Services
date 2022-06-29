@@ -20,4 +20,7 @@ public interface HashTagRelPostRepository extends JpaRepository<HashTagRelPost, 
 
     @Query("SELECT h.post FROM HashTagRelPost h WHERE h.hashTag.id = :id")
     Page<Post> findByHashTagId(@Param("id") Long id, Pageable pageable);
+
+    @Query("select count(h.id) from HashTagRelPost h")
+    Long getAllHashTagCounting();
 }
