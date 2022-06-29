@@ -67,7 +67,7 @@ public class AccountGenerator extends DataGenerator {
         }
 
         // super admin section
-        String statement = "([[id]], '[[full_name]]', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, '[[username]]', 3, '[[created_at]]', NULL, NULL, NULL, '[[bio]]', '[[email]]', NULL, NULL, true, 'ACTIVE'),\n";
+        String statement = "([[id]], '[[full_name]]', '$2a$10$9y6WAausHYtvwMUOHj9qQuLQTgaZn.Bz04w2EG6pSAn1w9wvUtPXi', NULL, NULL, '[[username]]', 0, '[[created_at]]', NULL, NULL, NULL, '[[bio]]', '[[email]]', NULL, NULL, true, 'ACTIVE'),\n";
         String createdAt = getRandomTimestamp();
 
         statement = statement.replace("[[id]]", String.valueOf(accountId));

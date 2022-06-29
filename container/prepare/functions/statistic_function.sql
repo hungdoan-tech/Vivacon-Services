@@ -188,7 +188,7 @@ FROM
         INNER JOIN account a ON a.id = p.created_by_account_id
 
 ORDER BY
-    totalInteraction DESC
+    (totalComment + totalLike) DESC
     LIMIT limit_value OFFSET limit_value * page_index;
 
 END;
@@ -434,8 +434,5 @@ WHERE counter > limit_value;
 Drop table if exists top_contributors;
 END;
 $$;
-
-
-
 
 
