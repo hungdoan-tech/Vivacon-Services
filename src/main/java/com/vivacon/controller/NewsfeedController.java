@@ -39,7 +39,6 @@ public class NewsfeedController {
     @GetMapping("/trending")
     public PageDTO<OutlinePost> getTopTrendingPost(@RequestParam(value = "limit") Optional<Integer> limit,
                                                    @RequestParam(value = "pageIndex") Optional<Integer> pageIndex) {
-
         PageDTO<OutlinePost> pageResponse = new PageDTO<>();
         pageResponse.setContent(statisticService.getTheTopTrendingPost(limit.orElse(5), pageIndex.orElse(0)));
         pageResponse.setLast(false);

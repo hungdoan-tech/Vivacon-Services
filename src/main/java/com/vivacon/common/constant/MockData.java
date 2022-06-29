@@ -33,7 +33,11 @@ public class MockData {
             "#life",
             "#love",
             "#king",
-            "#queen"
+            "#queen",
+            "#family",
+            "#music",
+            "#balance",
+            "#sky"
     )));
 
     private MockData() {

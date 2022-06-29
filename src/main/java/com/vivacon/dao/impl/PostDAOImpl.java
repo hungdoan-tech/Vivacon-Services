@@ -86,7 +86,7 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
                 BigInteger postId = (BigInteger) eachPost[0];
                 String caption = (String) eachPost[1];
                 Timestamp createdAt = (Timestamp) eachPost[2];
-                Privacy privacy = Privacy.valueOf(eachPost[2].toString());
+                Privacy privacy = Privacy.values()[(Integer) eachPost[3]];
                 String userName = (String) eachPost[4];
                 String fullName = (String) eachPost[5];
                 String url = (String) eachPost[6];

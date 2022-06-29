@@ -150,6 +150,7 @@ RETURNS TABLE
 (postId bigint,
 caption character varying(255),
 created_at timestamp without time zone,
+privacy int,
 username character varying(255),
 fullname character varying(255),
 url character varying(255),
@@ -161,64 +162,64 @@ as $$
 BEGIN
 
 RETURN QUERY
-	SELECT
-		p.id postId,
-		p.caption,
-		p.created_at,
-		p.privacy,
-		a.username,
-		a.full_name,
-		att.url,
-		totalCommentCount.commentQuantity totalComment,
-		totalLikeCount.likeQuantity totalLike,
-		(totalCommentCount.commentQuantity + totalLikeCount.likeQuantity) totalInteraction
-	FROM
-		post p
-		INNER JOIN
-		(
-			SELECT
-				p.id postId,
-				COUNT(c.id) commentQuantity
-			FROM
-				post p
-			INNER JOIN
-				"comment" c
-			ON 
-				p.id = c.post_id
-			GROUP BY
-				p.id
-		) totalCommentCount
-		ON 
-			p.id = totalCommentCount.postId
-		INNER JOIN
-		(
-			SELECT
-				p.id postId,
-				COUNT(l.id) likeQuantity
-			FROM
-				post p
-			INNER JOIN
-				liking l
-			ON 
-				p.id = l.post_id
-			GROUP BY
-				p.id
-		) totalLikeCount
-		ON 
-			p.id = totalLikeCount.postId
-		INNER JOIN
-			account a
-		ON
-			a.id = p.created_by_account_id
-		LEFT JOIN
-			attachment att
-		ON
-			att.profile_id = a.id
-	ORDER BY
-		totalInteraction DESC
-	LIMIT limit_value
-	OFFSET page_index
-	;
+SELECT
+    p.id postId,
+    p.caption,
+    p.created_at,
+    p.privacy,
+    a.username,
+    a.full_name,
+    att.url,
+    totalCommentCount.commentQuantity totalComment,
+    totalLikeCount.likeQuantity totalLike,
+    (totalCommentCount.commentQuantity + totalLikeCount.likeQuantity) totalInteraction
+FROM
+    post p
+        INNER JOIN
+    (
+        SELECT
+            p.id postId,
+            COUNT(c.id) commentQuantity
+        FROM
+            post p
+                INNER JOIN
+            "comment" c
+            ON
+                    p.id = c.post_id
+        GROUP BY
+            p.id
+    ) totalCommentCount
+    ON
+            p.id = totalCommentCount.postId
+        INNER JOIN
+    (
+        SELECT
+            p.id postId,
+            COUNT(l.id) likeQuantity
+        FROM
+            post p
+                INNER JOIN
+            liking l
+            ON
+                    p.id = l.post_id
+        GROUP BY
+            p.id
+    ) totalLikeCount
+    ON
+            p.id = totalLikeCount.postId
+        INNER JOIN
+    account a
+    ON
+            a.id = p.created_by_account_id
+        LEFT JOIN
+    attachment att
+    ON
+            att.profile_id = a.id
+ORDER BY
+    totalInteraction DESC
+    LIMIT limit_value
+OFFSET page_index
+;
 
 END;
 $$
