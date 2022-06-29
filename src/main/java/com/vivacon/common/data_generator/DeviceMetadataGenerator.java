@@ -11,8 +11,8 @@ public class DeviceMetadataGenerator extends DataGenerator {
         List<String> values = new LinkedList<>();
         String[] devices = {"Chrome", "Samsung Phone", "Apple Phone", "Firefox", "Opera"};
         GeoLocation[] geoLocations = {
-                new GeoLocation("Viet Nam", 9, 15, 104, 109),
-                new GeoLocation("Thai Land", 12, 14, 99, 102),
+                new GeoLocation("Vietnam", 9, 15, 104, 109),
+                new GeoLocation("Thailand", 12, 14, 99, 102),
                 new GeoLocation("China", 35, 45, 112, 120),
         };
 
