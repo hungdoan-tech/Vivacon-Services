@@ -3,14 +3,18 @@ package com.vivacon.service.report;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.CommentReportRequest;
 import com.vivacon.dto.sorting_filtering.PageDTO;
+import com.vivacon.entity.Account;
 import com.vivacon.entity.Comment;
 import com.vivacon.entity.report.CommentReport;
+import com.vivacon.event.CommentReportApprovingEvent;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.CommentReportMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.report.CommentReportRepository;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.CommentService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -33,14 +38,22 @@ public class CommentReportServiceImpl implements CommentReportService {
 
     private CommentService commentService;
 
+    private AccountService accountService;
+
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public CommentReportServiceImpl(CommentReportMapper commentReportMapper,
                                     CommentReportRepository commentReportRepository,
                                     CommentRepository commentRepository,
-                                    CommentService commentService) {
+                                    CommentService commentService,
+                                    AccountService accountService,
+                                    ApplicationEventPublisher applicationEventPublisher) {
         this.commentReportMapper = commentReportMapper;
         this.commentReportRepository = commentReportRepository;
         this.commentRepository = commentRepository;
         this.commentService = commentService;
+        this.accountService = accountService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
@@ -54,18 +67,27 @@ public class CommentReportServiceImpl implements CommentReportService {
     }
 
     @Override
-    public PageDTO<CommentReport> getAll(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+    public PageDTO<CommentReport> getAll(Optional<Boolean> isActive, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, CommentReport.class);
-        Page<CommentReport> commentReportPage = commentReportRepository.findAllByActive(true, pageable);
+        boolean isActiveReport = isActive.isPresent() ? isActive.get() : true;
+        Page<CommentReport> commentReportPage = commentReportRepository.findAllByActive(isActiveReport, pageable);
         return PageMapper.toPageDTO(commentReportPage);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     public boolean approvedCommentReport(long id) {
+        Account principal = accountService.getCurrentAccount();
+
         CommentReport commentReport = commentReportRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+        commentReport.setLastModifiedBy(principal);
+        commentReport.setLastModifiedAt(LocalDateTime.now());
+        commentReport.setActive(false);
+
         commentService.deactivateComment(commentReport.getComment().getId());
-        return commentReportRepository.deactivateById(id) > 0;
+        commentReportRepository.saveAndFlush(commentReport);
+        applicationEventPublisher.publishEvent(new CommentReportApprovingEvent(this, commentReport));
+        return true;
     }
 
     @Override

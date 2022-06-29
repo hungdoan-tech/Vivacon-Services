@@ -2,6 +2,8 @@ package com.vivacon.controller;
 
 import com.vivacon.common.constant.Constants;
 import com.vivacon.common.enum_type.TimePeriod;
+import com.vivacon.common.enum_type.TimeSection;
+import com.vivacon.dto.response.HashTagQuantityInCertainTime;
 import com.vivacon.dto.response.PostInteractionDTO;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,10 +93,18 @@ public class StatisticController {
     public List<PostsQuantityInCertainTime> getUserQuantityStatisticInYears() {
         return this.statisticService.getTheUserQuantityStatisticInTimePeriods(TimePeriod.YEAR);
     }
-
-    @ApiOperation(value = "Get latest login location per account")
+	@ApiOperation(value = "Get latest login location per account")
     @GetMapping("/user/location")
     public List<UserGeoLocation> getLoginLocationPerAccount() {
         return this.statisticService.getLoginLocationPerAccount();
+    }
+
+	@ApiOperation(value = "Get top trending hashtag by post statistic in time")
+    @GetMapping("/hashtag/in/time")
+    public List<HashTagQuantityInCertainTime> getTopTrendingHashTagInCertainTime(@RequestParam(value = "timeSection") Optional<TimeSection> timeSection,
+                                                                                 @RequestParam(value = "startDate") Optional<LocalDateTime> startDate,
+                                                                                 @RequestParam(value = "endDate") Optional<LocalDateTime> endDate,
+                                                                                 @RequestParam(value = "limit") Optional<Integer> limit) {
+        return this.statisticService.getTopTrendingHashTagInCertainTime(timeSection, startDate, endDate, limit.orElse(5));
     }
 }

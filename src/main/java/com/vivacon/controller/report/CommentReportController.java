@@ -46,11 +46,12 @@ public class CommentReportController {
     @ApiOperation(value = "Get list comment report based on criteria")
     @GetMapping()
     public PageDTO<CommentReport> getAll(
+            @RequestParam(value = "isActive", required = false) Optional<Boolean> isActive,
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return commentReportService.getAll(order, sort, pageSize, pageIndex);
+        return commentReportService.getAll(isActive, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Approved a comment report")

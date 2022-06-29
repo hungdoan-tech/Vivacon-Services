@@ -46,11 +46,12 @@ public class AccountReportController {
     @ApiOperation(value = "Get list account report based on criteria")
     @GetMapping()
     public PageDTO<AccountReport> getAll(
+            @RequestParam(value = "isActive", required = false) Optional<Boolean> isActive,
             @RequestParam(value = "_order", required = false) Optional<String> order,
             @RequestParam(value = "_sort", required = false) Optional<String> sort,
             @RequestParam(value = "limit", required = false) Optional<Integer> pageSize,
             @RequestParam(value = "page", required = false) Optional<Integer> pageIndex) {
-        return accountReportService.getAll(order, sort, pageSize, pageIndex);
+        return accountReportService.getAll(isActive, order, sort, pageSize, pageIndex);
     }
 
     @ApiOperation(value = "Approved a account report")
@@ -65,5 +66,11 @@ public class AccountReportController {
     public ResponseEntity<Object> rejectedAccountReport(@PathVariable(name = "id") Long id) {
         this.accountReportService.rejectedAccountReport(id);
         return ResponseEntity.ok(null);
+    }
+
+    @ApiOperation(value = "Get detail account report")
+    @GetMapping(value = "/{id}")
+    public AccountReport getDetailAccountReport(@PathVariable(name = "id") Long accountReportId) {
+        return accountReportService.getDetailAccountReport(accountReportId);
     }
 }

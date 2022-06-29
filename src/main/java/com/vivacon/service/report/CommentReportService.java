@@ -15,7 +15,7 @@ public interface CommentReportService {
 
     CommentReport createCommentReport(CommentReportRequest commentReportRequest);
 
-    PageDTO<CommentReport> getAll(Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
+    PageDTO<CommentReport> getAll(Optional<Boolean> isActive, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
     boolean approvedCommentReport(long id);
