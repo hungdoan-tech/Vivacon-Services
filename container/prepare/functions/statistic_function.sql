@@ -153,10 +153,8 @@ created_at timestamp without time zone,
 privacy int,
 username character varying(255),
 fullname character varying(255),
-url character varying(255),
 totalComment bigint,
-totalLike bigint,
-totalInteraction bigint)
+totalLike bigint)
 as $$
 
 BEGIN
@@ -169,67 +167,33 @@ SELECT
     p.privacy,
     a.username,
     a.full_name,
-    att.url,
     totalCommentCount.commentQuantity totalComment,
-    totalLikeCount.likeQuantity totalLike,
-    (totalCommentCount.commentQuantity + totalLikeCount.likeQuantity) totalInteraction
+    totalLikeCount.likeQuantity totalLike
 FROM
-    (
-        select *
-        from Post po
-        where po.privacy = 2
-    ) p
+    Post p
+
         INNER JOIN
     (
-        SELECT
-            p.id postId,
-            COUNT(c.id) commentQuantity
-        FROM
-            post p
-                INNER JOIN
-            "comment" c
-            ON
-                    p.id = c.post_id
-        GROUP BY
-            p.id
-    ) totalCommentCount
-    ON
-            p.id = totalCommentCount.postId
-        INNER JOIN
-    (
-        SELECT
-            p.id postId,
-            COUNT(l.id) likeQuantity
-        FROM
-            post p
-                INNER JOIN
-            liking l
-            ON
-                    p.id = l.post_id
-        GROUP BY
-            p.id
-    ) totalLikeCount
-    ON
-            p.id = totalLikeCount.postId
-        INNER JOIN
-    account a
-    ON
-            a.id = p.created_by_account_id
-        LEFT JOIN
-    attachment att
-    ON
-            att.profile_id = a.id
+        SELECT c.post_id, COUNT(c.id) commentQuantity
+        FROM "comment" c
+        GROUP BY c.post_id
+    ) totalCommentCount ON p.id = totalCommentCount.post_id
+
+        INNER JOIN (
+        SELECT l.post_id, COUNT(l.id) likeQuantity
+        FROM liking l
+        GROUP BY l.post_id
+    ) totalLikeCount ON p.id = totalLikeCount.post_id
+
+        INNER JOIN account a ON a.id = p.created_by_account_id
+
 ORDER BY
     totalInteraction DESC
-    LIMIT limit_value
-OFFSET page_index
-;
+    LIMIT limit_value OFFSET limit_value * page_index;
 
 END;
 $$
 LANGUAGE plpgsql;
-
---SELECT * FROM getTopPostInteraction(5, 3)
 
 
 -- Select newest posts

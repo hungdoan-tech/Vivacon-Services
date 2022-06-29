@@ -17,8 +17,6 @@ public class PostInteractionDTO {
 
     private String fullName;
 
-    private String url;
-
     private Long totalComment;
 
     private Long totalLike;
@@ -31,13 +29,12 @@ public class PostInteractionDTO {
 
     }
 
-    public PostInteractionDTO(Long postId, String caption, LocalDateTime createdAt, String userName, String fullName, String url, Long totalComment, Long totalLike, Long totalInteraction, List<AttachmentDTO> lstAttachmentDTO) {
+    public PostInteractionDTO(Long postId, String caption, LocalDateTime createdAt, String userName, String fullName, Long totalComment, Long totalLike, Long totalInteraction, List<AttachmentDTO> lstAttachmentDTO) {
         this.postId = postId;
         this.caption = caption;
         this.createdAt = createdAt;
         this.userName = userName;
         this.fullName = fullName;
-        this.url = url;
         this.totalComment = totalComment;
         this.totalLike = totalLike;
         this.totalInteraction = totalInteraction;
@@ -82,14 +79,6 @@ public class PostInteractionDTO {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public Long getTotalComment() {

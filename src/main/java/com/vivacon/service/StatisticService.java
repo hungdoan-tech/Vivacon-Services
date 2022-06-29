@@ -3,7 +3,7 @@ package com.vivacon.service;
 import com.vivacon.common.enum_type.TimePeriod;
 import com.vivacon.common.enum_type.TimeSection;
 import com.vivacon.dto.response.HashTagQuantityInCertainTime;
-import com.vivacon.dto.response.OutlinePost;
+import com.vivacon.dto.response.NewsfeedPost;
 import com.vivacon.dto.response.PostInteractionDTO;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
@@ -27,11 +27,11 @@ public interface StatisticService {
 
     List<PostInteractionDTO> getTheTopPostInteraction(Integer limit, Integer pageIndex);
 
-    List<OutlinePost> getTheTopTrendingPost(Integer limit, Integer pageIndex);
+    List<NewsfeedPost> getTheTopTrendingPost(Integer limit, Integer pageIndex);
 
     List<PostNewest> getTopNewestPost(Integer limit);
 
     List<HashTagQuantityInCertainTime> getTopTrendingHashTagInCertainTime(Optional<TimeSection> timeSection, Optional<LocalDateTime> startDate, Optional<LocalDateTime> endDate, Integer limit);
 
- 	List<UserGeoLocation> getLoginLocationPerAccount();
+    List<UserGeoLocation> getLoginLocationPerAccount();
 }

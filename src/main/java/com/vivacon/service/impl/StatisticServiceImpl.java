@@ -6,7 +6,8 @@ import com.vivacon.dao.HashTagDAO;
 import com.vivacon.dao.PostDAO;
 import com.vivacon.dao.UserDAO;
 import com.vivacon.dto.response.HashTagQuantityInCertainTime;
-import com.vivacon.dto.response.OutlinePost;
+import com.vivacon.dto.response.NewsfeedPost;
+import com.vivacon.dto.response.PostInteraction;
 import com.vivacon.dto.response.PostInteractionDTO;
 import com.vivacon.dto.response.PostNewest;
 import com.vivacon.dto.response.PostsQuantityInCertainTime;
@@ -82,12 +83,14 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public List<PostInteractionDTO> getTheTopPostInteraction(Integer limit, Integer pageIndex) {
-        return PageMapper.toDTOs(this.postDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toPostInteraction(post));
+        List<PostInteraction> topPostInteractions = postDAO.getTheTopPostInteraction(limit, pageIndex);
+        return PageMapper.toDTOs(topPostInteractions, post -> this.postMapper.toPostInteraction(post));
     }
 
     @Override
-    public List<OutlinePost> getTheTopTrendingPost(Integer limit, Integer pageIndex) {
-        return PageMapper.toDTOs(this.postDAO.getTheTopPostInteraction(limit, pageIndex), post -> this.postMapper.toOutlinePost(post));
+    public List<NewsfeedPost> getTheTopTrendingPost(Integer limit, Integer pageIndex) {
+        List<PostInteraction> postInteractions = postDAO.getTheTopPostInteraction(limit, pageIndex);
+        return PageMapper.toDTOs(postInteractions, post -> this.postMapper.toNewsfeedPost(post));
     }
 
     @Override

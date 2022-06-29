@@ -1,11 +1,9 @@
 package com.vivacon.dto.response;
 
-import com.vivacon.dto.AttachmentDTO;
 import com.vivacon.entity.enum_type.Privacy;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class PostInteraction {
 
@@ -19,44 +17,13 @@ public class PostInteraction {
 
     private String fullName;
 
-    private String url;
-
     private BigInteger totalComment;
 
     private BigInteger totalLike;
 
     private BigInteger totalInteraction;
 
-    private List<AttachmentDTO> lstAttachmentDTO;
-
     private Privacy privacy;
-
-    public PostInteraction(BigInteger postId, String caption, LocalDateTime createdAt, String userName, String fullName, String url, BigInteger totalComment, BigInteger totalLike, BigInteger totalInteraction, List<AttachmentDTO> lstAttachmentDTO) {
-        this.postId = postId;
-        this.caption = caption;
-        this.createdAt = createdAt;
-        this.userName = userName;
-        this.fullName = fullName;
-        this.url = url;
-        this.totalComment = totalComment;
-        this.totalLike = totalLike;
-        this.totalInteraction = totalInteraction;
-        this.lstAttachmentDTO = lstAttachmentDTO;
-    }
-
-    public PostInteraction(BigInteger postId, String caption, LocalDateTime createdAt, Privacy privacy, String userName,
-                           String fullName, String url, BigInteger totalComment, BigInteger totalLike, BigInteger totalInteraction) {
-        this.postId = postId;
-        this.caption = caption;
-        this.createdAt = createdAt;
-        this.privacy = privacy;
-        this.userName = userName;
-        this.fullName = fullName;
-        this.url = url;
-        this.totalComment = totalComment;
-        this.totalLike = totalLike;
-        this.totalInteraction = totalInteraction;
-    }
 
     public BigInteger getPostId() {
         return postId;
@@ -98,14 +65,6 @@ public class PostInteraction {
         this.fullName = fullName;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public BigInteger getTotalComment() {
         return totalComment;
     }
@@ -130,19 +89,69 @@ public class PostInteraction {
         this.totalInteraction = totalInteraction;
     }
 
-    public List<AttachmentDTO> getLstAttachmentDTO() {
-        return lstAttachmentDTO;
-    }
-
-    public void setLstAttachmentDTO(List<AttachmentDTO> lstAttachmentDTO) {
-        this.lstAttachmentDTO = lstAttachmentDTO;
-    }
-
     public Privacy getPrivacy() {
         return privacy;
     }
 
     public void setPrivacy(Privacy privacy) {
         this.privacy = privacy;
+    }
+
+
+    public static final class PostInteractionBuilder {
+        private PostInteraction postInteraction;
+
+        public PostInteractionBuilder() {
+            postInteraction = new PostInteraction();
+        }
+
+        public PostInteractionBuilder postId(BigInteger postId) {
+            postInteraction.setPostId(postId);
+            return this;
+        }
+
+        public PostInteractionBuilder caption(String caption) {
+            postInteraction.setCaption(caption);
+            return this;
+        }
+
+        public PostInteractionBuilder createdAt(LocalDateTime createdAt) {
+            postInteraction.setCreatedAt(createdAt);
+            return this;
+        }
+
+        public PostInteractionBuilder userName(String userName) {
+            postInteraction.setUserName(userName);
+            return this;
+        }
+
+        public PostInteractionBuilder fullName(String fullName) {
+            postInteraction.setFullName(fullName);
+            return this;
+        }
+
+        public PostInteractionBuilder totalComment(BigInteger totalComment) {
+            postInteraction.setTotalComment(totalComment);
+            return this;
+        }
+
+        public PostInteractionBuilder totalLike(BigInteger totalLike) {
+            postInteraction.setTotalLike(totalLike);
+            return this;
+        }
+
+        public PostInteractionBuilder totalInteraction(BigInteger totalInteraction) {
+            postInteraction.setTotalInteraction(totalInteraction);
+            return this;
+        }
+
+        public PostInteractionBuilder privacy(Privacy privacy) {
+            postInteraction.setPrivacy(privacy);
+            return this;
+        }
+
+        public PostInteraction build() {
+            return postInteraction;
+        }
     }
 }

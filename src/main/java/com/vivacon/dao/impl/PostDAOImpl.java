@@ -60,17 +60,6 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
     public List<PostInteraction> getTheTopPostInteraction(int limit, int pageIndex) {
         StoredProcedureQuery procedureQuery;
         procedureQuery = entityManager.createStoredProcedureQuery("getTopPostInteraction");
-        return this.fetchingTheTopPostInteractionData(procedureQuery, limit, pageIndex);
-    }
-
-    @Override
-    public List<PostNewest> getTopNewestPost(int limit) {
-        StoredProcedureQuery procedureQuery;
-        procedureQuery = entityManager.createStoredProcedureQuery("getTopNewestPost");
-        return this.fetchingTheNewestPostData(procedureQuery, limit);
-    }
-
-    private List<PostInteraction> fetchingTheTopPostInteractionData(StoredProcedureQuery procedureQuery, int limit, int pageIndex) {
         List<PostInteraction> postsTopInteractionList = new ArrayList<>();
 
         procedureQuery.registerStoredProcedureParameter("limit_value", Integer.class, ParameterMode.IN);
@@ -89,13 +78,22 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
                 Privacy privacy = Privacy.values()[(Integer) eachPost[3]];
                 String userName = (String) eachPost[4];
                 String fullName = (String) eachPost[5];
-                String url = (String) eachPost[6];
-                BigInteger totalComment = (BigInteger) eachPost[7];
-                BigInteger totalLike = (BigInteger) eachPost[8];
-                BigInteger totalInteraction = (BigInteger) eachPost[9];
+                BigInteger totalComment = (BigInteger) eachPost[6];
+                BigInteger totalLike = (BigInteger) eachPost[7];
+                BigInteger totalInteraction = totalComment.add(totalLike);
 
-                postsTopInteractionList.add(new PostInteraction(postId, caption, createdAt.toLocalDateTime(), privacy,
-                        userName, fullName, url, totalComment, totalLike, totalInteraction));
+                PostInteraction postInteraction = new PostInteraction.PostInteractionBuilder()
+                        .postId(postId)
+                        .caption(caption)
+                        .createdAt(createdAt.toLocalDateTime())
+                        .privacy(privacy)
+                        .userName(userName)
+                        .fullName(fullName)
+                        .totalComment(totalComment)
+                        .totalLike(totalLike)
+                        .totalInteraction(totalInteraction)
+                        .build();
+                postsTopInteractionList.add(postInteraction);
             }
 
             return postsTopInteractionList;
@@ -104,9 +102,12 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
         }
     }
 
-    private List<PostNewest> fetchingTheNewestPostData(StoredProcedureQuery procedureQuery, int limit) {
-        List<PostNewest> postsNewestList = new ArrayList<>();
+    @Override
+    public List<PostNewest> getTopNewestPost(int limit) {
+        StoredProcedureQuery procedureQuery;
+        procedureQuery = entityManager.createStoredProcedureQuery("getTopNewestPost");
 
+        List<PostNewest> postsNewestList = new ArrayList<>();
         procedureQuery.registerStoredProcedureParameter("limit_value", Integer.class, ParameterMode.IN);
         procedureQuery.setParameter("limit_value", limit);
 
@@ -124,8 +125,8 @@ public class PostDAOImpl extends StatisticDAO implements PostDAO {
                 String fullName = (String) resultList.get(currentIndex)[7];
                 String url = (String) resultList.get(currentIndex)[8];
 
-                postsNewestList.add(new PostNewest(postId, isActived, createdAt.toLocalDateTime(), lastModifiedAt.toLocalDateTime(), caption, privacy,
-                        userName, fullName, url));
+                postsNewestList.add(new PostNewest(postId, isActived, createdAt.toLocalDateTime(),
+                        lastModifiedAt.toLocalDateTime(), caption, privacy, userName, fullName, url));
             }
 
             return postsNewestList;

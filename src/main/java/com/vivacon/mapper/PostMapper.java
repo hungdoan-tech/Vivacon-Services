@@ -21,6 +21,7 @@ import com.vivacon.repository.AccountRepository;
 import com.vivacon.repository.AttachmentRepository;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.LikeRepository;
+import com.vivacon.repository.PostRepository;
 import com.vivacon.security.UserDetailImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -50,12 +51,15 @@ public class PostMapper {
 
     private AccountRepository accountRepository;
 
+    private PostRepository postRepository;
+
     public PostMapper(ModelMapper mapper,
                       AuditableHelper auditableHelper,
                       AttachmentRepository attachmentRepository,
                       CommentRepository commentRepository,
                       LikeRepository likeRepository,
                       AccountRepository accountRepository,
+                      PostRepository postRepository,
                       CommentMapper commentMapper) {
         this.mapper = mapper;
         this.auditableHelper = auditableHelper;
@@ -63,6 +67,7 @@ public class PostMapper {
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
         this.accountRepository = accountRepository;
+        this.postRepository = postRepository;
         this.commentMapper = commentMapper;
     }
 
@@ -141,20 +146,6 @@ public class PostMapper {
         return detailPost;
     }
 
-    public OutlinePost toOutlinePost(PostInteraction post) {
-        List<AttachmentDTO> attachmentDTOS = attachmentRepository
-                .findByPostId(post.getPostId().longValue())
-                .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
-                .collect(Collectors.toList());
-        post.setLstAttachmentDTO(attachmentDTOS);
-
-        AttachmentDTO firstImage = post.getLstAttachmentDTO().get(0);
-        boolean isMultipleImages = post.getLstAttachmentDTO().size() > 1;
-        Long likeCount = post.getTotalLike().longValue();
-        Long commentCount = post.getTotalComment().longValue();
-        return new OutlinePost(post.getPostId().longValue(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount, post.getPrivacy());
-    }
-
     public PostInteractionDTO toPostInteraction(PostInteraction post) {
         PostInteractionDTO postInteractionDTO = mapper.map(post, PostInteractionDTO.class);
 
@@ -165,6 +156,34 @@ public class PostMapper {
         postInteractionDTO.setLstAttachmentDTO(attachmentDTOS);
 
         return postInteractionDTO;
+    }
+
+    public NewsfeedPost toNewsfeedPost(PostInteraction interactionPost) {
+        Post post = postRepository.findByIdAndActive(interactionPost.getPostId().longValue(), true)
+                .orElseThrow(RecordNotFoundException::new);
+        NewsfeedPost newsfeedPost = mapper.map(post, NewsfeedPost.class);
+
+        List<AttachmentDTO> attachmentDTOS = attachmentRepository
+                .findByPostId(post.getId())
+                .stream().map(attachment -> new AttachmentDTO(attachment.getActualName(), attachment.getUniqueName(), attachment.getUrl()))
+                .collect(Collectors.toList());
+        newsfeedPost.setAttachments(attachmentDTOS);
+
+        Long commentCount = interactionPost.getTotalComment().longValue();
+        newsfeedPost.setCommentCount(commentCount);
+
+        Long likeCount = interactionPost.getTotalLike().longValue();
+        newsfeedPost.setLikeCount(likeCount);
+
+        UserDetailImpl principal = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account currentAccount = accountRepository
+                .findByUsernameIgnoreCase(principal.getUsername())
+                .orElseThrow(RecordNotFoundException::new);
+        Optional<Like> like = likeRepository.findByIdComposition(currentAccount.getId(), post.getId());
+        newsfeedPost.setLiked(like.isPresent());
+
+        auditableHelper.setupDisplayAuditableFields(post, newsfeedPost);
+        return newsfeedPost;
     }
 }
 
