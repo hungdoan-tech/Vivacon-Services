@@ -53,12 +53,10 @@ public class PostReportHandler {
         approvingNotifications.stream().forEach(notification -> {
 
             websocketSender.sendNotification(notification);
-            if (notification.getType() == NotificationType.POST_REPORT_APPROVING_ACTION_AUTHOR) {
-                boolean isEmailOnReportResult = Boolean.parseBoolean(settingService.evaluateSetting(
-                        postReport.getCreatedBy().getId(), EMAIL_ON_REPORTING_RESULT).toString());
-                if (isEmailOnReportResult) {
-                    emailSender.sendNotification(notification);
-                }
+            boolean isEmailOnReportResult = Boolean.parseBoolean(settingService.evaluateSetting(
+                    postReport.getCreatedBy().getId(), EMAIL_ON_REPORTING_RESULT).toString());
+            if (isEmailOnReportResult) {
+                emailSender.sendNotification(notification);
             }
         });
     }
