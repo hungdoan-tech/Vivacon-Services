@@ -216,6 +216,6 @@ public class AccountServiceImpl implements AccountService {
         List<Long> allIdPost = postService.getAllIdByAccountId(accountId);
         this.postService.deactivatePost(allIdPost);
         accountRepository.banById(accountId, AccountStatus.BANNED);
-        return false;
+        return true;
     }
 }

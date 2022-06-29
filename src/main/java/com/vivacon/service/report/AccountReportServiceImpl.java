@@ -74,7 +74,7 @@ public class AccountReportServiceImpl implements AccountReportService {
         accountReport.setLastModifiedAt(LocalDateTime.now());
         accountReport.setActive(false);
 
-        accountService.deactivate(accountReport.getAccount().getId());
+        accountService.ban(accountReport.getAccount().getId());
         accountReportRepository.saveAndFlush(accountReport);
         applicationEventPublisher.publishEvent(new AccountReportApprovingEvent(this, accountReport));
         return true;

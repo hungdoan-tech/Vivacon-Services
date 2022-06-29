@@ -53,6 +53,12 @@ public class JwtUtils {
         return claims.get("accountId", Long.class);
     }
 
+    public String getRole(String token) {
+        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        List roles = claims.get("roles", List.class);
+        return (String) roles.get(0);
+    }
+
     /**
      * This method is used to generate a new JWT access token
      *

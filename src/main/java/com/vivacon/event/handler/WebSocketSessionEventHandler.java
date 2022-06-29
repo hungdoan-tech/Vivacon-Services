@@ -1,5 +1,6 @@
 package com.vivacon.event.handler;
 
+import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.JwtUtils;
 import com.vivacon.entity.enum_type.SettingType;
 import com.vivacon.service.ActiveSessionManager;
@@ -65,11 +66,13 @@ public class WebSocketSessionEventHandler implements ActiveSessionChangingListen
         String token = accessor.getFirstNativeHeader(STOMP_AUTHORIZATION_HEADER);
         String username = jwtUtils.getUsername(token);
 
-        Long loggedAccountId = jwtUtils.getAccountId(token);
-        Boolean isSetActiveStatus = (Boolean) settingService.evaluateSetting(loggedAccountId, SettingType.PRIVACY_ON_ACTIVE_STATUS);
-        if (isSetActiveStatus) {
-            String sessionId = accessor.getSessionId();
-            activeSessionManager.addSession(sessionId, username);
+        if (jwtUtils.getRole(token).equals(RoleType.USER.toString())) {
+            Long loggedAccountId = jwtUtils.getAccountId(token);
+            Boolean isSetActiveStatus = (Boolean) settingService.evaluateSetting(loggedAccountId, SettingType.PRIVACY_ON_ACTIVE_STATUS);
+            if (isSetActiveStatus) {
+                String sessionId = accessor.getSessionId();
+                activeSessionManager.addSession(sessionId, username);
+            }
         }
     }
 
