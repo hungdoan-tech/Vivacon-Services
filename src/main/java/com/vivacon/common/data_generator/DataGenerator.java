@@ -75,7 +75,6 @@ public abstract class DataGenerator {
         return sentence.toString();
     }
 
-
     protected String getRandomTimestamp() {
         Timestamp rand = new Timestamp(START_OFFSET + (long) (Math.random() * DIFF_OFFSET));
         return rand.toString();

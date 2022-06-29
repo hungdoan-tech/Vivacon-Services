@@ -116,7 +116,10 @@ public class Account extends AuditableEntity {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Account(Long id, String username, String email, String password, String fullName, Role role, String bio, String refreshToken, Instant tokenExpiredDate, String verificationToken, Instant verificationExpiredDate, String phoneNumber, Gender gender, Account createdBy, LocalDateTime createdAt, Account lastModifiedBy, boolean active) {
+    public Account(Long id, String username, String email, String password, String fullName, Role role, String bio,
+                   String refreshToken, Instant tokenExpiredDate, String verificationToken, Instant verificationExpiredDate,
+                   String phoneNumber, Gender gender, Account createdBy, LocalDateTime createdAt, Account lastModifiedBy,
+                   boolean active, AccountStatus accountStatus) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -135,6 +138,7 @@ public class Account extends AuditableEntity {
         this.lastModifiedBy = lastModifiedBy;
         this.lastModifiedAt = LocalDateTime.now();
         this.active = active;
+        this.accountStatus = accountStatus;
     }
 
     public Long getId() {

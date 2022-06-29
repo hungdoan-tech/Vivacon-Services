@@ -16,7 +16,7 @@ public class DeviceMetadataGenerator extends DataGenerator {
                 new GeoLocation("China", 35, 45, 112, 120),
         };
 
-        String insertStatement = "INSERT INTO \"device_metadata\" (\"id\", \"account_id\", \"device\", \"country\", \"city\", \"latitude\", \"longitude\") \nVALUES ";
+        String insertStatement = "INSERT INTO \"device_metadata\" (\"id\", \"account_id\", \"device\", \"country\", \"city\", \"latitude\", \"longitude\", \"last_logged_in\") \nVALUES ";
         values.add(insertStatement);
 
         long counting = 1L;
@@ -29,7 +29,7 @@ public class DeviceMetadataGenerator extends DataGenerator {
                 int randomGeoLocationId = ThreadLocalRandom.current().nextInt(0, geoLocations.length);
                 GeoLocation geoLocation = geoLocations[randomGeoLocationId];
 
-                String value = "([[id]], [[account_id]], '[[device]]', '[[country]]', '[[city]]', [[latitude]], [[longitude]]),\n";
+                String value = "([[id]], [[account_id]], '[[device]]', '[[country]]', '[[city]]', [[latitude]], [[longitude]], '[[last_logged_in]]'),\n";
                 value = value.replace("[[id]]", String.valueOf(counting));
                 value = value.replace("[[account_id]]", String.valueOf(accountId));
                 value = value.replace("[[device]]", devices[randomDeviceId]);
@@ -43,6 +43,7 @@ public class DeviceMetadataGenerator extends DataGenerator {
                 double longitude = ThreadLocalRandom.current().nextDouble(geoLocation.fromLongitude, geoLocation.toLongitude);
                 value = value.replace("[[longitude]]", String.valueOf(longitude));
 
+                value = value.replace("[[last_logged_in]]", getRandomTimestamp());
                 values.add(value);
                 counting++;
             }

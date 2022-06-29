@@ -74,14 +74,14 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public AccountInfo editProfileInformation(EditProfileInformationRequest editProfileInformationRequest) {
-        Account accountByEmail = accountService.getCurrentAccount();
-        Account updatingAccount = new Account(accountByEmail.getId(), accountByEmail.getUsername(),
-                accountByEmail.getEmail(), accountByEmail.getPassword(), editProfileInformationRequest.getFullName(),
-                accountByEmail.getRole(), editProfileInformationRequest.getBio(), accountByEmail.getRefreshToken(),
-                accountByEmail.getTokenExpiredDate(), accountByEmail.getVerificationToken(), accountByEmail.getVerificationExpiredDate(),
-                editProfileInformationRequest.getPhoneNumber(), editProfileInformationRequest.getGender(), accountByEmail.getCreatedBy(),
-                accountByEmail.getCreatedAt(), accountByEmail.getLastModifiedBy(), accountByEmail.getActive());
+    public AccountInfo editProfileInformation(EditProfileInformationRequest requestAccount) {
+        Account existingAccount = accountService.getCurrentAccount();
+        Account updatingAccount = new Account(existingAccount.getId(), requestAccount.getUsername(),
+                requestAccount.getEmail(), existingAccount.getPassword(), requestAccount.getFullName(),
+                existingAccount.getRole(), requestAccount.getBio(), existingAccount.getRefreshToken(),
+                existingAccount.getTokenExpiredDate(), existingAccount.getVerificationToken(), existingAccount.getVerificationExpiredDate(),
+                requestAccount.getPhoneNumber(), requestAccount.getGender(), existingAccount.getCreatedBy(),
+                existingAccount.getCreatedAt(), existingAccount.getLastModifiedBy(), existingAccount.getActive(), existingAccount.getAccountStatus());
         Account updatedAccount = accountRepository.save(updatingAccount);
         return accountMapper.toAccountInfo(updatedAccount);
     }

@@ -120,7 +120,7 @@ public class UserDAOImpl extends StatisticDAO implements UserDAO {
             String device = (String) result[2];
             String country = (String) result[3];
             double latitude = (double) result[4];
-            double longitude = (double) result[4];
+            double longitude = (double) result[5];
 
             geoLocations.add(new UserGeoLocation(id, accountId, device, country, latitude, longitude));
         }
