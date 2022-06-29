@@ -12,6 +12,7 @@ import com.vivacon.entity.Account;
 import com.vivacon.entity.Attachment;
 import com.vivacon.entity.Following;
 import com.vivacon.entity.Post;
+import com.vivacon.entity.enum_type.AccountStatus;
 import com.vivacon.entity.enum_type.Privacy;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.exception.RestrictAccessUserResourceException;
@@ -96,6 +97,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public DetailProfile getProfileByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
+        if (requestAccount.getAccountStatus().toString().equals(AccountStatus.BANNED.toString())) {
+            throw new RestrictAccessUserResourceException("Account has been banned");
+        }
         if (!requestAccount.getRole().getName().equals(RoleType.USER.toString())) {
             throw new RestrictAccessUserResourceException();
         }

@@ -15,6 +15,4 @@ public class CommentReportApprovingEvent extends ApplicationEvent {
     public CommentReport getCommentReport() {
         return commentReport;
     }
-
-
 }
