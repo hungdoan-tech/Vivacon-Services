@@ -17,7 +17,7 @@ import com.vivacon.dto.response.UserGeoLocation;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
-import com.vivacon.repository.HashTagRelPostRepository;
+import com.vivacon.repository.HashTagRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.StatisticService;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     private AccountRepository accountRepository;
 
-    private HashTagRelPostRepository hashTagRelPostRepository;
+    private HashTagRepository hashTagRepository;
 
     private UserDAO userDAO;
 
@@ -47,14 +47,14 @@ public class StatisticServiceImpl implements StatisticService {
 
     public StatisticServiceImpl(PostRepository postRepository,
                                 AccountRepository accountRepository,
-                                HashTagRelPostRepository hashTagRelPostRepository,
+                                HashTagRepository hashTagRepository,
                                 UserDAO userDAO,
                                 PostDAO postDAO,
                                 HashTagDAO hashTagDAO,
                                 PostMapper postMapper) {
         this.postRepository = postRepository;
         this.accountRepository = accountRepository;
-        this.hashTagRelPostRepository = hashTagRelPostRepository;
+        this.hashTagRepository = hashTagRepository;
         this.userDAO = userDAO;
         this.postDAO = postDAO;
         this.hashTagDAO = hashTagDAO;
@@ -63,7 +63,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public StatisticDataQuantity getStatisticData() {
-        return new StatisticDataQuantity(postRepository.getAllPostCounting(), accountRepository.getAllAccountCounting(), hashTagRelPostRepository.getAllHashTagCounting());
+        return new StatisticDataQuantity(postRepository.getAllPostCounting(), accountRepository.getAllAccountCounting(), hashTagRepository.getAllHashTagCounting());
     }
 
     @Override
