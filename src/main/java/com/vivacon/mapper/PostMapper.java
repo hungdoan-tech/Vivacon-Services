@@ -115,8 +115,8 @@ public class PostMapper {
                 .collect(Collectors.toList());
         detailPost.setAttachments(attachmentDTOS);
 
-        Page<Comment> pagefirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), commentPageable);
-        PageDTO<CommentResponse> commentResponsePage = PageMapper.toPageDTO(pagefirstLevelComments, commentMapper::toResponse);
+        Page<Comment> pageFirstLevelComments = commentRepository.findAllActiveFirstLevelComments(post.getId(), commentPageable);
+        PageDTO<CommentResponse> commentResponsePage = PageMapper.toPageDTO(pageFirstLevelComments, commentMapper::toResponse);
 
         Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
         detailPost.setCommentCount(commentCount);
@@ -130,6 +130,14 @@ public class PostMapper {
         detailPost.setLiked(like.isPresent());
         detailPost.setLikeCount(likeCount);
 
+        return detailPost;
+    }
+
+    public DetailPost toDetailPostAdminRole(Post post, Pageable commentPageable) {
+        DetailPost detailPost = toDetailPost(post, commentPageable);
+        Page<Comment> pageFirstLevelComments = commentRepository.findAllFirstLevelComments(post.getId(), commentPageable);
+        PageDTO<CommentResponse> commentResponsePage = PageMapper.toPageDTO(pageFirstLevelComments, commentMapper::toResponse);
+        detailPost.setComments(commentResponsePage);
         return detailPost;
     }
 

@@ -48,14 +48,15 @@ public class ActiveSessionManagerImpl implements ActiveSessionManager {
 
     @Override
     public boolean removeSessionByUsername(String username) {
+        boolean result = false;
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (username.equals(entry.getValue())) {
                 map.remove(entry.getKey());
                 notifyListeners();
-                return true;
+                result = true;
             }
         }
-        return false;
+        return result;
     }
 
     /**

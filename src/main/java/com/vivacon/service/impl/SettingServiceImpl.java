@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,9 +71,14 @@ public class SettingServiceImpl implements SettingService {
 
         SettingType type = changeSettingRequest.getSettingType();
         if (type.isValidValue(changeSettingRequest.getValue())) {
-            if (type == SettingType.PRIVACY_ON_ACTIVE_STATUS
-                    && Boolean.FALSE == Boolean.valueOf(changeSettingRequest.getValue())) {
-                activeSessionManager.removeSessionByUsername(username);
+            if (type == SettingType.PRIVACY_ON_ACTIVE_STATUS) {
+                if (Boolean.FALSE == Boolean.valueOf(changeSettingRequest.getValue())) {
+                    activeSessionManager.removeSessionByUsername(username);
+                } else {
+                    if (Boolean.TRUE == Boolean.valueOf(changeSettingRequest.getValue())) {
+                        activeSessionManager.addSession(UUID.randomUUID().toString(), username);
+                    }
+                }
             }
             String value = type.serialize(changeSettingRequest.getValue());
             return settingRepository.updateValueBySettingTypeAndAccountId(accountId, type, value) > 0;

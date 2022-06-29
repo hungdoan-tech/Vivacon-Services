@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public boolean deactivateComment(Long commentId) {
         Comment comment = commentRepository.findByIdAndActive(commentId, true)
-        .orElseThrow(RecordNotFoundException::new);
+                .orElseThrow(RecordNotFoundException::new);
         if (comment.getParentComment() == null) {
             deleteChildComments(comment.getId());
         }
@@ -97,7 +97,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public PageDTO<CommentResponse> getAllFirstLevelComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
-        Page<Comment> pageComment = commentRepository.findAllFirstLevelComments(postId, pageable);
+        Page<Comment> pageComment = commentRepository.findAllActiveFirstLevelComments(postId, pageable);
         return PageMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
     }
 

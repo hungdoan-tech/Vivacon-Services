@@ -99,8 +99,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public DetailPost getDetailPost(Long postId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Pageable commentPageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
-        Post post = postRepository.findById(postId).orElse(null);
+        Post post = postRepository.findByIdAndActive(postId, true).orElseThrow(RecordNotFoundException::new);
         return this.postMapper.toDetailPost(post, commentPageable);
+    }
+
+    @Override
+    public DetailPost getDetailPostAdminRole(long postId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
+        Pageable commentPageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
+        Post post = postRepository.findById(postId).orElseThrow(RecordNotFoundException::new);
+        return this.postMapper.toDetailPostAdminRole(post, commentPageable);
     }
 
     @Override

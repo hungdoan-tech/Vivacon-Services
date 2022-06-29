@@ -29,4 +29,6 @@ public interface PostService {
     boolean deactivatePost(List<Long> ids);
 
     List<Long> getAllIdByAccountId(Long accountId);
+
+    DetailPost getDetailPostAdminRole(long postId, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex);
 }
