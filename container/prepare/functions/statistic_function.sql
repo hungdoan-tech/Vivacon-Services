@@ -405,7 +405,8 @@ LANGUAGE plpgsql;
 
 
 DROP FUNCTION if exists getLastestLoginLocationPerAccount;
--- DROP FUNCTION if exists getTopTrendingHashTagInCertainTime;CREATE
+
+CREATE
 OR REPLACE FUNCTION getLastestLoginLocationPerAccount()
 RETURNS TABLE
 (id bigint,
@@ -431,6 +432,7 @@ SELECT s.id, s.accountId, s.device, s.country, s.latitude, s.longitude FROM summ
 END;
 $$
 LANGUAGE plpgsql;
+
 -- CREATE
 -- OR REPLACE FUNCTION getTopTrendingHashTagInCertainTime(startDate timestamp, endDate timestamp, limit_value int)
 -- RETURNS TABLE
@@ -439,27 +441,6 @@ LANGUAGE plpgsql;
 -- name character varying(1500)
 -- )
 -- as $$
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- BEGIN
 
@@ -491,13 +472,11 @@ LANGUAGE plpgsql;
 -- $$
 -- LANGUAGE plpgsql;
 
-
 --SELECT * FROM getTopTrendingHashTagInCertainTime('2020-06-30 18:47:42.43', '2022-06-30 18:47:42.43', 6)
 
 
 -- Select top trending hashtag by time
 DROP FUNCTION if exists getTopTrendingHashTagInCertainTime;
-
 
 CREATE
 OR REPLACE FUNCTION getTopTrendingHashTagInCertainTime(start_date timestamp, end_date timestamp, limit_value int)
@@ -527,3 +506,8 @@ WHERE counter > limit_value;
 Drop table if exists top_contributors;
 END;
 $$;
+
+
+
+
+
