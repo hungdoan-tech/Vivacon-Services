@@ -16,6 +16,7 @@ import com.vivacon.dto.response.UserGeoLocation;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.mapper.PostMapper;
 import com.vivacon.repository.AccountRepository;
+import com.vivacon.repository.HashTagRelPostRepository;
 import com.vivacon.repository.PostRepository;
 import com.vivacon.service.StatisticService;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,8 @@ public class StatisticServiceImpl implements StatisticService {
 
     private AccountRepository accountRepository;
 
+    private HashTagRelPostRepository hashTagRelPostRepository;
+
     private UserDAO userDAO;
 
     private PostDAO postDAO;
@@ -43,12 +46,14 @@ public class StatisticServiceImpl implements StatisticService {
 
     public StatisticServiceImpl(PostRepository postRepository,
                                 AccountRepository accountRepository,
+                                HashTagRelPostRepository hashTagRelPostRepository,
                                 UserDAO userDAO,
                                 PostDAO postDAO,
                                 HashTagDAO hashTagDAO,
                                 PostMapper postMapper) {
         this.postRepository = postRepository;
         this.accountRepository = accountRepository;
+        this.hashTagRelPostRepository = hashTagRelPostRepository;
         this.userDAO = userDAO;
         this.postDAO = postDAO;
         this.hashTagDAO = hashTagDAO;
@@ -57,7 +62,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public StatisticDataQuantity getStatisticData() {
-        return new StatisticDataQuantity(postRepository.getAllPostCounting(), accountRepository.getAllAccountCounting());
+        return new StatisticDataQuantity(postRepository.getAllPostCounting(), accountRepository.getAllAccountCounting(), hashTagRelPostRepository.getAllHashTagCounting());
     }
 
     @Override
