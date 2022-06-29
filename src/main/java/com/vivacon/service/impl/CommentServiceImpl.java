@@ -1,5 +1,6 @@
 package com.vivacon.service.impl;
 
+import com.vivacon.common.enum_type.RoleType;
 import com.vivacon.common.utility.PageableBuilder;
 import com.vivacon.dto.request.CommentRequest;
 import com.vivacon.dto.response.CommentResponse;
@@ -12,6 +13,7 @@ import com.vivacon.mapper.CommentMapper;
 import com.vivacon.mapper.PageMapper;
 import com.vivacon.repository.CommentRepository;
 import com.vivacon.repository.PostRepository;
+import com.vivacon.service.AccountService;
 import com.vivacon.service.CommentService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,15 +34,18 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
     private PostRepository postRepository;
     private CommentMapper commentMapper;
+    private AccountService accountService;
     private ApplicationEventPublisher applicationEventPublisher;
 
     public CommentServiceImpl(CommentRepository commentRepository,
                               PostRepository postRepository,
                               CommentMapper commentMapper,
+                              AccountService accountService,
                               ApplicationEventPublisher applicationEventPublisher) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.commentMapper = commentMapper;
+        this.accountService = accountService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -97,7 +102,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public PageDTO<CommentResponse> getAllFirstLevelComment(Optional<String> sort, Optional<String> order, Optional<Integer> pageSize, Optional<Integer> pageIndex, Long postId) {
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Comment.class);
-        Page<Comment> pageComment = commentRepository.findAllActiveFirstLevelComments(postId, pageable);
+        Page<Comment> pageComment;
+        if (accountService.getCurrentAccount().getRole().getName().equals(RoleType.USER.toString())) {
+            pageComment = commentRepository.findAllActiveFirstLevelComments(postId, pageable);
+        } else {
+            pageComment = commentRepository.findAllFirstLevelComments(postId, pageable);
+        }
         return PageMapper.toPageDTO(pageComment, comment -> commentMapper.toResponse(comment));
     }
 

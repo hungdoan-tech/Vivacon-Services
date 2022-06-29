@@ -113,11 +113,17 @@ public class ProfileServiceImpl implements ProfileService {
     public PageDTO<OutlinePost> getOutlinePostByUsername(String username, Optional<Privacy> privacy, Optional<String> order, Optional<String> sort, Optional<Integer> pageSize, Optional<Integer> pageIndex) {
         Account requestAccount = this.accountRepository.findByUsernameIgnoreCase(username).orElseThrow(RecordNotFoundException::new);
         if (!requestAccount.getRole().getName().equals(RoleType.USER.toString())) {
-            throw new RestrictAccessUserResourceException();
+            throw new RestrictAccessUserResourceException("Error ! You try to access to admin profile with user role account");
         }
         List<Privacy> privacyList = getSuitablePrivacyList(requestAccount, privacy);
         Pageable pageable = PageableBuilder.buildPage(order, sort, pageSize, pageIndex, Post.class);
-        Page<Post> pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, privacyList, pageable);
+
+        Page<Post> pagePost;
+        if (accountService.getCurrentAccount().getRole().getName().equals(RoleType.USER.toString())) {
+            pagePost = postRepository.findByAuthorIdAndActive(requestAccount.getId(), true, privacyList, pageable);
+        } else {
+            pagePost = postRepository.getAllByAccountId(requestAccount.getId(), pageable);
+        }
         return PageMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
     }
 
@@ -154,7 +160,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         Pageable pageable = PageableBuilder.buildPage(Optional.empty(), Optional.empty(), Optional.empty(),
                 Optional.empty(), Post.class);
-        List<Privacy> privacyList = getSuitablePrivacyList(requestAccount, Optional.empty());
+
         Page<Post> pagePost = postRepository.getAllByAccountId(requestAccount.getId(), pageable);
         PageDTO<OutlinePost> listOutlinePost = PageMapper.toPageDTO(pagePost, post -> postMapper.toOutlinePost(post));
         profile.setPagePost(listOutlinePost);
